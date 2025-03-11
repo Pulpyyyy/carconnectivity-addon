@@ -1,3 +1,10 @@
+## 0.1.5
+
+### 🛠️ Fixes & Updates
+- Allow empty username/password for MQTT (Thanks jonilala796)
+
+---
+
 ## 0.1.4
 
 ### 🛠️ Fixes & Updates

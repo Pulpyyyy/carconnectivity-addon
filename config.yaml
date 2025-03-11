@@ -1,5 +1,5 @@
 name: "CarConnectivity Addon"
-version: "0.1.4"
+version: "0.1.5"
 slug: "carconnectivity-addon"
 description: "Addon version of Carconnectivity made by Till (see https://github.com/tillsteinbach/CarConnectivity) throught MQTT"
 panel_icon: "mdi:car-wireless"
@@ -59,8 +59,8 @@ schema:
   connector_password_trionity: password?
   connector_interval_trionity: int(60,3600)?
   connector_spin_trionity: match(^\d{4}$)?
-  mqtt_username: str
-  mqtt_password: password
+  mqtt_username: str?
+  mqtt_password: password?
   mqtt_broker: str
   log_level: list(info|warning|error|debug)
   connector_username_webui: str
