@@ -1,3 +1,14 @@
+- **CarConnectivity-connector-seatcupra** → v
+- **CarConnectivity-connector-skoda** → v
+- **CarConnectivity-connector-volkswagen** → v
+- **CarConnectivity-connector-tronity** → v
+- **CarConnectivity-plugin-mqtt** → v
+- **CarConnectivity-plugin-mqtt_homeassistant** → v
+- **CarConnectivity** → v
+- **CarConnectivity-plugin-webui** → v
+
+ --- 
+
 ## 0.1.5
 
 ### 🛠️ Fixes & Updates
