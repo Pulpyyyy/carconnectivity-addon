@@ -82,15 +82,16 @@ jobs:
             local old_version=$(grep "${component}_VERSION" build.yaml | awk '{print $2}' | tr -d '"')
 
             local repo_url=$(echo "$SUBMODULE_REPOS" | grep "^${key}=" | cut -d '=' -f2)
-            local repo_name=$(basename "$repo_url" .git)  # Supprime ".git"
+            local repo_name=$(basename "$repo_url" .git)
 
             if [ -n "$old_version" ] && [ "$old_version" != "${!component}" ]; then
               echo "🔄 ${key}: $old_version → ${!component}"
               echo "- **${repo_name}** → v${!component}" >> new_changelog.md
             fi
+          }
 
           for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
-            compare_versions "LATEST_${key}_VERSION"
+            compare_versions "$key"
           done
 
       - name: Update build.yaml
