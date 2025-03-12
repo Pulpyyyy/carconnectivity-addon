@@ -1,3 +1,6 @@
+
+ --- 
+
 - **CarConnectivity-connector-seatcupra** → v
 - **CarConnectivity-connector-skoda** → v
 - **CarConnectivity-connector-volkswagen** → v
