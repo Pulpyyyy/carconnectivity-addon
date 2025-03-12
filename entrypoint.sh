@@ -12,6 +12,8 @@ term_handler() {
     exit 143 # 128 + 15 -- SIGTERM
 }
 
+# trap SIGTERM - sent when 'docker stop'
+trap 'term_handler' TERM
 
 echo ""
 echo ""
