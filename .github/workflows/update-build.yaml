@@ -9,7 +9,18 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  
+
+env:
+  SUBMODULE_REPOS: |
+    SEAT=https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git
+    SKODA=https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git
+    VW=https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
+    TRONITY=https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git
+    MQTT=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git
+    MQTTHA=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git
+    CC=https://github.com/tillsteinbach/CarConnectivity.git
+    WEBUI=https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git
+
 jobs:
   update-versions:
     runs-on: ubuntu-latest
@@ -32,16 +43,17 @@ jobs:
             git ls-remote --tags "$repo_url" | awk -F'/v' '/refs\/tags\/v/{print $2}' | grep -E '^[0-9]+(\.[0-9]+)*$' | sort -V | tail -n 1
           }
 
-          echo "LATEST_SEAT_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)" >> $GITHUB_ENV
-          echo "LATEST_SKODA_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)" >> $GITHUB_ENV
-          echo "LATEST_VW_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)" >> $GITHUB_ENV
-          echo "LATEST_TRONITY_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git)" >> $GITHUB_ENV
-          echo "LATEST_MQTT_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git)" >> $GITHUB_ENV
-          echo "LATEST_MQTT_HOMEASSISTANT_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)" >> $GITHUB_ENV
-          echo "LATEST_CC_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity.git)" >> $GITHUB_ENV
-          echo "LATEST_WEBUI_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)" >> $GITHUB_ENV
+          echo "Fetching latest versions for submodules..."
+          for repo_entry in $SUBMODULE_REPOS; do
+            name=$(echo "$repo_entry" | cut -d= -f1)
+            repo=$(echo "$repo_entry" | cut -d= -f2)
 
-      - name: Get latest versions of submodules beta
+            latest_version=$(get_latest_version "$repo")
+            echo "LATEST_${name}_VERSION=$latest_version" >> $GITHUB_ENV
+            echo "🔍 Found latest $name version: $latest_version"
+          done
+
+      - name: Get latest versions of submodules
         if: github.ref == 'refs/heads/beta'
         run: |
           export LC_ALL=C
@@ -51,14 +63,15 @@ jobs:
             git ls-remote --tags "$repo_url" | awk -F'/v' '/refs\/tags\/v/{print $2}' | sort -V | tail -n 1
           }
 
-          echo "LATEST_SEAT_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)" >> $GITHUB_ENV
-          echo "LATEST_SKODA_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)" >> $GITHUB_ENV
-          echo "LATEST_VW_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)" >> $GITHUB_ENV
-          echo "LATEST_TRONITY_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git)" >> $GITHUB_ENV
-          echo "LATEST_MQTT_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git)" >> $GITHUB_ENV
-          echo "LATEST_MQTT_HOMEASSISTANT_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)" >> $GITHUB_ENV
-          echo "LATEST_CC_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity.git)" >> $GITHUB_ENV
-          echo "LATEST_WEBUI_VERSION=$(get_latest_version https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)" >> $GITHUB_ENV
+          echo "Fetching latest versions for submodules..."
+          for repo_entry in $SUBMODULE_REPOS; do
+            name=$(echo "$repo_entry" | cut -d= -f1)
+            repo=$(echo "$repo_entry" | cut -d= -f2)
+
+            latest_version=$(get_latest_version "$repo")
+            echo "LATEST_${name}_VERSION=$latest_version" >> $GITHUB_ENV
+            echo "🔍 Found latest $name version: $latest_version"
+          done
 
       - name: Display old and new versions
         run: |
@@ -68,31 +81,24 @@ jobs:
             local component=$1
             local old_version=$(grep "${component}_VERSION" build.yaml | awk '{print $2}' | tr -d '"')
 
-            if [ -n "$old_version" ] && [ "$old_version" != "${!component}" ]; then
-              echo "🔄 ${component}: $old_version → ${!component}"
-            fi
-          }
+            local repo_url=$(echo "$SUBMODULE_REPOS" | grep "^${key}=" | cut -d '=' -f2)
+            local repo_name=$(basename "$repo_url" .git)  # Supprime ".git"
 
-          compare_versions "LATEST_SEAT_VERSION"
-          compare_versions "LATEST_SKODA_VERSION"
-          compare_versions "LATEST_VW_VERSION"
-          compare_versions "LATEST_TRONITY_VERSION"
-          compare_versions "LATEST_MQTT_VERSION"
-          compare_versions "LATEST_MQTT_HOMEASSISTANT_VERSION"
-          compare_versions "LATEST_CC_VERSION"
-          compare_versions "LATEST_WEBUI_VERSION"
+            if [ -n "$old_version" ] && [ "$old_version" != "${!component}" ]; then
+              echo "🔄 ${key}: $old_version → ${!component}"
+              echo "- **${repo_name}** → v${!component}" >> new_changelog.md
+            fi
+
+          for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
+            compare_versions "LATEST_${key}_VERSION"
+          done
 
       - name: Update build.yaml
         run: |
           echo "Updating build.yaml with new versions"
-          sed -i "s/SEAT_VERSION: .*/SEAT_VERSION: \"${LATEST_SEAT_VERSION}\"/" build.yaml
-          sed -i "s/SKODA_VERSION: .*/SKODA_VERSION: \"${LATEST_SKODA_VERSION}\"/" build.yaml
-          sed -i "s/VW_VERSION: .*/VW_VERSION: \"${LATEST_VW_VERSION}\"/" build.yaml
-          sed -i "s/TRONITY_VERSION: .*/TRONITY_VERSION: \"${LATEST_TRONITY_VERSION}\"/" build.yaml
-          sed -i "s/MQTT_VERSION: .*/MQTT_VERSION: \"${LATEST_MQTT_VERSION}\"/" build.yaml
-          sed -i "s/MQTTHA_VERSION: .*/MQTTHA_VERSION: \"${LATEST_MQTT_HOMEASSISTANT_VERSION}\"/" build.yaml
-          sed -i "s/CC_VERSION: .*/CC_VERSION: \"${LATEST_CC_VERSION}\"/" build.yaml
-          sed -i "s/WEBUI_VERSION: .*/WEBUI_VERSION: \"${LATEST_WEBUI_VERSION}\"/" build.yaml
+          for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
+            sed -i "s/${key}_VERSION: .*/${key}_VERSION: \"${!key}\"/" build.yaml
+          done
 
           if git diff --quiet build.yaml; then
             echo "No update needed."
@@ -100,6 +106,12 @@ jobs:
           else
             echo "Changes detected."
             echo "CHANGES=true" >> $GITHUB_ENV
+            
+            echo "" >> new_changelog.md
+            echo " --- " >> new_changelog.md
+            echo "" >> new_changelog.md
+            cat CHANGELOG.md >> new_changelog.md
+            mv new_changelog.md CHANGELOG.md
           fi
 
       - name: Commit and push changes on the Current Branch
@@ -112,6 +124,7 @@ jobs:
           echo "Committing changes on branch: $CURRENT_BRANCH"
 
           git add build.yaml
+          git add CHANGELOG.md
           git commit -m "Update build.yaml with latest submodule versions"
           git push origin "$CURRENT_BRANCH"
 
@@ -126,11 +139,4 @@ jobs:
           body: |
             Automatically generated by GitHub Actions.
 
-            - **SEAT_VERSION** → `${LATEST_SEAT_VERSION}`
-            - **SKODA_VERSION** → `${LATEST_SKODA_VERSION}`
-            - **VW_VERSION** → `${LATEST_VW_VERSION}`
-            - **TRONITY_VERSION** → `${LATEST_TRONITY_VERSION}`
-            - **MQTT_VERSION** → `${LATEST_MQTT_VERSION}`
-            - **MQTT_HOMEASSISTANT_VERSION** → `${LATEST_MQTT_HOMEASSISTANT_VERSION}`
-            - **CC_VERSION** → `${LATEST_CC_VERSION}`
-            - **WEBUI_VERSION** → `${LATEST_WEBUI_VERSION}`
+            $(for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do echo "- **${key}_VERSION** → `${!key}`"; done)
