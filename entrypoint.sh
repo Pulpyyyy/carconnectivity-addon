@@ -1,5 +1,18 @@
 #!/bin/sh
 set -e
+
+# Function to handle signals
+term_handler() {
+    echo "SIGTERM signal received, shutting down..."
+    # Add cleanup logic here if necessary
+    if [ "$child_pid" -ne 0 ]; then
+        kill -TERM "$child_pid"
+        wait "$child_pid"
+    fi
+    exit 143 # 128 + 15 -- SIGTERM
+}
+
+
 echo ""
 echo ""
 echo ""
@@ -14,4 +27,8 @@ if grep -q "debug" /data/options.json; then
     done
 fi
 /opt/venv/bin/carconnectivity carconnectivity.json
+
+# Get the PID of the child process
+child_pid=$!
 echo ">>>>>>>>> STARTED"
+wait "$child_pid"
