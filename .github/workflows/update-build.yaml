@@ -91,7 +91,7 @@ jobs:
           }
 
           for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
-            compare_versions "$key"
+            compare_versions "LATEST_${key}_VERSION"
           done
 
       - name: Update build.yaml
