@@ -4,8 +4,7 @@ set -e
 # Function to handle signals
 term_handler() {
     echo "SIGTERM signal received, shutting down..."
-    # Add cleanup logic here if necessary
-    if [ "$child_pid" -ne 0 ]; then
+    if [ -n "$child_pid" ] && kill -0 "$child_pid" 2>/dev/null; then
         kill -TERM "$child_pid"
         wait "$child_pid"
     fi
@@ -21,6 +20,7 @@ echo ""
 echo ">>>>>>>>> STARTING"
 cd /tmp
 tempio -conf /data/options.json -template carconnectivity.json.gtpl -out carconnectivity.json
+
 if grep -q "debug" /data/options.json; then
     for file in versions.txt carconnectivity.json; do
         echo ">>>>>>>>> $(basename "$file")"
@@ -28,9 +28,8 @@ if grep -q "debug" /data/options.json; then
         echo "<<<<<<<<<<" 
     done
 fi
-/opt/venv/bin/carconnectivity carconnectivity.json
 
-# Get the PID of the child process
+/opt/venv/bin/carconnectivity carconnectivity.json &
 child_pid=$!
 echo ">>>>>>>>> STARTED"
 wait "$child_pid"
