@@ -63,6 +63,9 @@ configuration:
   mqtt_broker:
     name: "Adresse du broker MQTT"
     description: "Entrez l'adresse IP ou le nom de domaine du serveur MQTT."
+  mqtt_port:
+    name: "Port du broker MQTT"
+    description: "Entrez le numéroe de port du serveur MQTT."
   log_level:
     name: "Niveau de journalisation"
     description: "Sélectionnez le niveau de journalisation souhaité (info, warning, error, debug)."
@@ -71,9 +74,9 @@ configuration:
     name: "Nom administrateur WebUI"
     description: "Nom administrateur pour l'accès à Carconnectivity WebUI"
   connector_password_webui:
-    name : "Mot de passe WebUI"
+    name: "Mot de passe WebUI"
     description: "Mot de passe  pour l'accès à Carconnectivity WebUI"
-  
+
   api_log_level:
     name: "Niveau de journalisation pour les api"
     description: "Sélectionnez le niveau de journalisation souhaité (info, warning, error, debug)."

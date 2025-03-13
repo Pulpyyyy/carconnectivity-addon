@@ -11,7 +11,7 @@ configuration:
   connector_spin_seatcupra:
     name: "SeatCupra PIN-Code"
     description: "Geben Sie den 4-stelligen PIN-Code ein, der für den Fernzugriff auf das Fahrzeug verwendet wird."
-  connector_interval_seatcupra: 
+  connector_interval_seatcupra:
     name: "SeatCupra Aktualisierungsintervall"
     description: "Geben Sie das Intervall in Sekunden zwischen zwei Fahrzeuginformationsabrufen ein. Beachten Sie, dass API-Aufrufe einem Kontingent unterliegen. Sobald das Kontingent überschritten ist, funktioniert die API für einen bestimmten Zeitraum nicht mehr."
 
@@ -24,7 +24,7 @@ configuration:
   connector_spin_skoda:
     name: "Skoda PIN-Code"
     description: "Geben Sie den 4-stelligen PIN-Code ein, der für den Fernzugriff auf das Fahrzeug verwendet wird."
-  connector_interval_skoda: 
+  connector_interval_skoda:
     name: "Skoda Aktualisierungsintervall"
     description: "Geben Sie das Intervall in Sekunden zwischen zwei Fahrzeuginformationsabrufen ein. Beachten Sie, dass API-Aufrufe einem Kontingent unterliegen. Sobald das Kontingent überschritten ist, funktioniert die API für einen bestimmten Zeitraum nicht mehr."
 
@@ -37,7 +37,7 @@ configuration:
   connector_spin_vw:
     name: "Volkswagen PIN-Code"
     description: "Geben Sie den 4-stelligen PIN-Code ein, der für den Fernzugriff auf das Fahrzeug verwendet wird."
-  connector_interval_vw: 
+  connector_interval_vw:
     name: "Volkswagen Aktualisierungsintervall"
     description: "Geben Sie das Intervall in Sekunden zwischen zwei Fahrzeuginformationsabrufen ein. Beachten Sie, dass API-Aufrufe einem Kontingent unterliegen. Sobald das Kontingent überschritten ist, funktioniert die API für einen bestimmten Zeitraum nicht mehr."
 
@@ -50,7 +50,7 @@ configuration:
   connector_spin_trionity:
     name: "Trionity PIN-Code"
     description: "Geben Sie den 4-stelligen PIN-Code ein, der für den Fernzugriff auf das Fahrzeug verwendet wird."
-  connector_interval_trionity: 
+  connector_interval_trionity:
     name: "Trionity Aktualisierungsintervall"
     description: "Geben Sie das Intervall in Sekunden zwischen zwei Fahrzeuginformationsabrufen ein. Beachten Sie, dass API-Aufrufe einem Kontingent unterliegen. Sobald das Kontingent überschritten ist, funktioniert die API für einen bestimmten Zeitraum nicht mehr."
 
@@ -63,6 +63,9 @@ configuration:
   mqtt_broker:
     name: "MQTT Broker-Adresse"
     description: "Geben Sie die IP-Adresse oder den Domainnamen des MQTT-Servers ein."
+  mqtt_port:
+    name: "MQTT-Broker-Port"
+    description: "Geben Sie die Portnummer des MQTT-Servers ein."
   log_level:
     name: "Protokollierungsstufe"
     description: "Wählen Sie die gewünschte Protokollierungsstufe aus (info, warning, error, debug)."
@@ -73,7 +76,7 @@ configuration:
   connector_password_webui:
     name: "WebUI-Passwort"
     description: "Passwort für den Zugriff auf Carconnectivity WebUI"
-  
+
   api_log_level:
     name: "Protokollierungsstufe für api"
     description: "Wählen Sie die gewünschte Protokollierungsstufe (info, warning, error, debug)."

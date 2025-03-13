@@ -37,6 +37,7 @@ options:
   mqtt_username: "mqtt"
   mqtt_password: "passwordmqtt"
   mqtt_broker: "core-mosquitto.local.hass.io"
+  mqtt_port: "1883"
   log_level: "info"
   connector_username_webui: "admin"
   connector_password_webui: "secret"
@@ -62,6 +63,7 @@ schema:
   mqtt_username: str?
   mqtt_password: password?
   mqtt_broker: str
+  mqtt_port: int
   log_level: list(info|warning|error|debug)
   connector_username_webui: str
   connector_password_webui: password?

@@ -63,6 +63,9 @@ configuration:
   mqtt_broker:
     name: "MQTT Broker Address"
     description: "Enter the IP address or domain name of the MQTT server."
+  mqtt_port:
+    name: "MQTT Broker port"
+    description: "Enter the port number of the MQTT server."
   log_level:
     name: "Log Level"
     description: "Select the desired log level (info, warning, error, debug)."
@@ -73,7 +76,7 @@ configuration:
   connector_password_webui:
     name: "WebUI password"
     description: "Password for access to Carconnectivity WebUI"
-  
+
   api_log_level:
     name: "Logging level for api"
     description: "Select the desired logging level (info, warning, error, debug)."

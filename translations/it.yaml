@@ -1,5 +1,5 @@
 configuration:
-  connector_brand_seatcupra :
+  connector_brand_seatcupra:
     name: "Marchio del produttore"
     description: "Attiva le opzioni specifiche del marchio."
   connector_username_seatcupra:
@@ -63,6 +63,9 @@ configuration:
   mqtt_broker:
     name: "Indirizzo del broker MQTT"
     description: "Inserisci l'indirizzo IP o il nome di dominio del server MQTT."
+  mqtt_port:
+    name: "Porta del broker MQTT"
+    description: "Inserisci il numero di porta del server MQTT."
   log_level:
     name: "Livello di log"
     description: "Seleziona il livello di log desiderato (info, warning, error, debug)."
@@ -73,7 +76,7 @@ configuration:
   connector_password_webui:
     name: "Password WebUI"
     description: "Password per l'accesso a Carconnectivity WebUI"
-  
+
   api_log_level:
     name: "Livello di log per l'api"
     description: "Selezionare il livello di log desiderato (info, warning, error, debug)"
