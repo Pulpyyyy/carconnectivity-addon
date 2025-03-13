@@ -81,7 +81,7 @@ jobs:
           compare_versions() {
             local component=$1
             local old_version=$(grep "${component}_VERSION" build.yaml | awk '{print $2}' | tr -d '"')
-            local new_version=VAR="LATEST_${key}_VERSION"
+            local new_version="LATEST_${key}_VERSION"
             
             local repo_url=$(echo "$SUBMODULE_REPOS" | grep "^${key}=" | cut -d '=' -f2)
             local repo_name=$(basename "$repo_url" .git)
