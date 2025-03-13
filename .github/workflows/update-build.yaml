@@ -87,7 +87,7 @@ jobs:
 
             if [ -n "$old_version" ] && [ "$old_version" != "${!new_version}" ]; then
               echo "🔄 ${key}_VERSION: $old_version → ${!new_version}"
-              echo "- **${repo_name}** → \[v${!new_version}\](${repo_url})" >> new_changelog.md
+              echo "- **${repo_name}** → (v${!new_version})\[${repo_url}\]" >> new_changelog.md
             fi
           }
 
@@ -99,7 +99,8 @@ jobs:
         run: |
           echo "Updating build.yaml with new versions"
           for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
-            sed -i "s/${key}_VERSION: .*/${key}_VERSION: \"${!key}\"/" build.yaml
+            local new_version="LATEST_${key}_VERSION"
+            sed -i "s/${key}_VERSION: .*/${key}_VERSION: \"${!new_version}\"/" build.yaml
           done
 
           if git diff --quiet build.yaml; then
