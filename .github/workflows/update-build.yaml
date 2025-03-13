@@ -119,16 +119,14 @@ jobs:
           
       - name: Increment version
         if: env.CHANGES == 'true'
-        id: increment_version
         run: |
           version=$(grep 'version:' config.yaml | awk '{print $2}')
           IFS='.' read -r -a parts <<< "$version"
           parts[2]=$((parts[2] + 1))
           new_version="${parts[0]}.${parts[1]}.${parts[2]}"
           sed -i "s/version: .*/version: $new_version/" config.yaml
-          echo "::set-output name=new_version::$new_version"
           echo "## $new_version" >> new_changelog.md
-          echo " " >> new_changelog.md
+          echo "" >> new_changelog.md
           echo "### 🛠️ Fixes & Updates" >> new_changelog.md
           cat CHANGELOG.md >> new_changelog.md
           mv new_changelog.md CHANGELOG.md
