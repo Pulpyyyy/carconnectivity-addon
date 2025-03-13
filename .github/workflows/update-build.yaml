@@ -99,7 +99,7 @@ jobs:
         run: |
           echo "Updating build.yaml with new versions"
           for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
-            local new_version="LATEST_${key}_VERSION"
+            new_version="LATEST_${key}_VERSION"
             sed -i "s/${key}_VERSION: .*/${key}_VERSION: \"${!new_version}\"/" build.yaml
           done
 
