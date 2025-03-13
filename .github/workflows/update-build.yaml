@@ -11,6 +11,7 @@ permissions:
   pull-requests: write
 
 env:
+  ACTIONS_RUNNER_DEBUG: 'true'
   SUBMODULE_REPOS: |
     SEAT=https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git
     SKODA=https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git
@@ -91,10 +92,11 @@ jobs:
           }
 
           for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
-            compare_versions "LATEST_${key}_VERSION"
+            compare_versions "${key}"
           done
 
       - name: Update build.yaml
+        if: env.ACTIONS_RUNNER_DEBUG != 'true'
         run: |
           echo "Updating build.yaml with new versions"
           for key in SEAT SKODA VW TRONITY MQTT MQTTHA CC WEBUI; do
@@ -116,6 +118,7 @@ jobs:
           fi
 
       - name: Commit and push changes on the Current Branch
+        if: env.ACTIONS_RUNNER_DEBUG != 'true'
         if: env.CHANGES == 'true'
         run: |
           git config --global user.email "github-actions@github.com"
@@ -130,6 +133,7 @@ jobs:
           git push origin "$CURRENT_BRANCH"
 
       - name: Create Pull Request
+        if: env.ACTIONS_RUNNER_DEBUG != 'true'
         if: env.CHANGES == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
