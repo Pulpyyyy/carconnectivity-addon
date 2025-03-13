@@ -1,3 +1,11 @@
+- **CarConnectivity-connector-seatcupra** → \[v0.2a2\](https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)
+- **CarConnectivity-connector-tronity** → \[v0.3a2\](https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git)
+- **CarConnectivity-plugin-mqtt_homeassistant** → \[v0.2a4\](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)
+- **CarConnectivity** → \[v0.5a1\](https://github.com/tillsteinbach/CarConnectivity.git)
+- **CarConnectivity-plugin-webui** → \[v0.2a4\](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
+
+ --- 
+
 
  --- 
 
