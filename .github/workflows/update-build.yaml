@@ -81,13 +81,14 @@ jobs:
           compare_versions() {
             local component=$1
             local old_version=$(grep "${component}_VERSION" build.yaml | awk '{print $2}' | tr -d '"')
-
+            local new_version=VAR="LATEST_${KEY}_VERSION"
+            
             local repo_url=$(echo "$SUBMODULE_REPOS" | grep "^${key}=" | cut -d '=' -f2)
             local repo_name=$(basename "$repo_url" .git)
 
-            if [ -n "$old_version" ] && [ "$old_version" != "${!component}" ]; then
-              echo "🔄 ${key}: $old_version → ${!component}"
-              echo "- **${repo_name}** → v${!component}" >> new_changelog.md
+            if [ -n "$old_version" ] && [ "$old_version" != "${!new_version}" ]; then
+              echo "🔄 ${key}_VERSION: $old_version → ${!new_version}"
+              echo "- **${repo_name}** → \[v${!new_version}\](${repo_url})" >> new_changelog.md
             fi
           }
 
