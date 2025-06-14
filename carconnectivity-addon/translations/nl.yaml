@@ -1,0 +1,93 @@
+configuration:
+  connector_type_brand1:
+    name: "🚗 Keuze voor de 1e auto"
+    description: "Maakt gebruik van merkspecifieke opties mogelijk."
+  connector_username_brand1:
+    name: "Gebruikersnaam voor de 1e auto"
+    description: "Voer het e-mailadres in dat wordt gebruikt om verbinding te maken met de dienst voor de 1e auto."
+  connector_password_brand1:
+    name: "Wachtwoord voor de 1e auto"
+    description: "Voer het wachtwoord in voor je account van de 1e auto."
+  connector_spin_brand1:
+    name: "Pincode voor de 1e auto"
+    description: "Voer de 4-cijferige pincode in die wordt gebruikt voor externe toegang tot de 1e auto."
+  connector_interval_brand1:
+    name: "Verversingsinterval voor de 1e auto"
+    description: "Voer het interval in (in seconden) tussen elke gegevensopvraging voor de 1e auto. Houd er rekening mee dat API-aanroepen quota-beperkt zijn. Zodra het quota is overschreden, werkt de API tijdelijk niet meer."
+
+  connector_type_brand2:
+    name: "🚙 Keuze voor de 2e auto"
+    description: "Maakt gebruik van merkspecifieke opties mogelijk."
+  connector_username_brand2:
+    name: "Gebruikersnaam voor de 2e auto"
+    description: "Voer het e-mailadres in dat wordt gebruikt om verbinding te maken met de dienst voor de 2e auto. Laat leeg als je deze connector niet wilt gebruiken."
+  connector_password_brand2:
+    name: "Wachtwoord voor de 2e auto"
+    description: "Voer het wachtwoord in voor je account van de 2e auto."
+  connector_spin_brand2:
+    name: "Pincode voor de 2e auto"
+    description: "Voer de 4-cijferige pincode in die wordt gebruikt voor externe toegang tot de 2e auto."
+  connector_interval_brand2:
+    name: "Verversingsinterval voor de 2e auto"
+    description: "Voer het interval in (in seconden) tussen elke gegevensopvraging voor de 2e auto. Houd er rekening mee dat API-aanroepen quota-beperkt zijn. Zodra het quota is overschreden, werkt de API tijdelijk niet meer."
+
+  separator_volvo:
+    name: "🚕 Specifieke keuze"
+    description: ""
+  connector_volvo_key_primary:
+    name: "Primaire sleutel voor Volvo-API's"
+    description: "De sleutel ziet er zo uit: 'd64b33a7067a4c428def9474964'"
+  connector_volvo_key_secondary:
+    name: "Secundaire sleutel voor Volvo-API's"
+    description: "De sleutel ziet er zo uit: 'de0c63a885ffdac4ccc92d8744905611caf'"
+  connected_volvo_vehicle_token:
+    name: "Token specifiek voor de Volvo-auto"
+    description: "De token ziet er zo uit: 'eyJhbGciOiJSUzI1NiIsImtpZCI6InhqTzF5SDVmM29WendVeWRVNDJwSzZ0c2d4OF9SUzI1NiIsInBpLmF0bSI6Ijl0MWYifQ.eyJzY29wZSI6ImNvbnZlOmJyY........X4EgbMiw'"
+  connector_volvo_location_token:
+    name: "Token specifiek voor geolocatie"
+    description: "De token ziet er zo uit: 'eyJhbGciOiJSUzI1NiIsImtpZCI6InhqTzF5SDVmM29WendVeWRVNDJwSzZ0c2d4OF9SUzI1NiIsInBpLmF0bSI6Ijl0MWYifQ.eyJzY29wZSI6ImNvbnZlOmJyY........X4EgbMiw'"
+  connector_volvo_interval:
+    name: "Verversingsinterval voor de Volvo-auto"
+    description: "Voer het interval in (in seconden) tussen gegevensopvragingen voor de 1e auto. Houd er rekening mee dat API-aanroepen aan een quota zijn onderworpen. Zodra het quota is overschreden, werkt de API tijdelijk niet meer."
+
+  separator_mqtt:
+    name: "💬 Configuratie"
+  mqtt_username:
+    name: "MQTT-gebruikersnaam"
+    description: "Voer de gebruikersnaam in voor verbinding met de MQTT-broker."
+  mqtt_password:
+    name: "MQTT-wachtwoord"
+    description: "Voer het wachtwoord in voor verbinding met de MQTT-broker."
+  mqtt_broker:
+    name: "MQTT-brokeradres"
+    description: "Voer het IP-adres of de domeinnaam in van de MQTT-server."
+  mqtt_port:
+    name: "MQTT-brokerpoort"
+    description: "Voer het poortnummer in van de MQTT-server."
+
+  log_level:
+    name: "🔖 Selecteer het algemene logniveau (info, warning, error, debug)."
+    description: ""
+
+  connector_enabler_webui:
+    name: "🌏 Schakel Carconnectivity WEB-interface in"
+  connector_username_webui:
+    name: "WebUI-beheerdersnaam"
+    description: "Beheerdersnaam voor toegang tot Carconnectivity WebUI. Gebruik 'autologin' als webui-login om authenticatieverzoek uit te schakelen."
+  connector_password_webui:
+    name: "WebUI-wachtwoord"
+    description: "Wachtwoord voor toegang tot Carconnectivity WebUI"
+
+  connector_enabler_abrp:
+    name: "🔋 Schakel de integratie met “A Better Routeplanner (ABRP)” in"
+  connector_abrp_tokens:
+    name: "Lijst van ABRP-tokens"
+    description: "Om je token op te halen, ga je naar je voertuig op A Better Routeplanner, selecteer je 'Live Data', en koppel je het voertuig via het gedeelte 'Generic'. Het token dat je in de configuratie moet plakken, verschijnt dan. Je moet een mapping instellen tussen het VIN en het token voor elk voertuig dat je wilt verbinden met ABRP. Zie de documentatie van de add-on voor details over de syntaxis."
+
+  api_log_level:
+    name: "🔖 Selecteer het gewenste logniveau (info, warning, error, debug) voor API's."
+    description: ""
+
+  expert:
+    name: "🧠 Schakel Expertmodus in"
+    description: "Expertmodus maakt gebruik van een aangepast configuratiebestand mogelijk. Wanneer ingeschakeld, kan de gebruiker een bestand aanleveren genaamd /addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json met de gewenste parameters. Dit overschrijft volledig de configuratie vanuit de GUI, die wordt opgeslagen als /addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json. Raadpleeg de Carconnectivity-documentatie. De map /addon_configs/1b1291d4_carconnectivity-addon/ is mogelijk niet zichtbaar in het Home Assistant-bestandssysteem. Start in dat geval de supervisor opnieuw op."
