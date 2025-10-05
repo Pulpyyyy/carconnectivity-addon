@@ -8,6 +8,22 @@
 
  --- 
 
+## 0.4.1 (EDGE only)
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-audi** → [v0.1.4](https://github.com/acfischer42/CarConnectivity-connector-audi.git)
+
+ --- 
+
+## 0.4.0 (EDGE only)
+
+### 🚀 New Features
+
+- Add audi support, thanks @acfischer42
+
+ ---
+
 ## 0.3.10
 
 
