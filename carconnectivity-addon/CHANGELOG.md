@@ -6,6 +6,8 @@
 - **CarConnectivity-connector-volkswagen** → [v0.9](https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)
 - **CarConnectivity** → [v0.8](https://github.com/tillsteinbach/CarConnectivity.git)
 
+No audi connector yet, only in edge
+
  --- 
 
 ## 0.4.1 (EDGE only)
