@@ -26,6 +26,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install --no-cache \
         carconnectivity==${CC_VERSION} \
+        carconnectivity-connector-audi==${AUDI_VERSION} \
         carconnectivity-connector-seatcupra==${SEAT_VERSION} \
         carconnectivity-connector-skoda==${SKODA_VERSION} \
         carconnectivity-connector-volkswagen==${VW_VERSION} \
