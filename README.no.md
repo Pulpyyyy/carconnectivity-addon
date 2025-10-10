@@ -51,6 +51,7 @@ Velg produsenten som tilsvarer kjøretøyet ditt fra de støttede merkene:
 -   `Volkswagen`
 -   `Tronity`
 -   `Volvo`
+-   `Audi`
 
 Hvis du eier flere kjøretøyer fra forskjellige merker, kan du konfigurere flere seksjoner.
 

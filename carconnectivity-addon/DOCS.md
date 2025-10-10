@@ -53,6 +53,7 @@ Choose the manufacturer corresponding to your vehicle from the supported brands:
 - `Volkswagen`
 - `Tronity`
 - `Volvo`
+- `Audi`
 
 If you own multiple vehicles from different brands, you can configure multiple sections.
 

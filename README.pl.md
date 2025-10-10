@@ -51,6 +51,7 @@ Wybierz producenta odpowiadającego Twojemu pojazdowi od obsługiwanych marek:
 -   `Volkswagen`
 -   `Tronity`
 -   `Volvo`
+-   `Audi`
 
 Jeśli posiadasz wiele pojazdów od różnych marek, możesz skonfigurować wiele sekcji.
 

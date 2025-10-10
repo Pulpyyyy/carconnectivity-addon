@@ -51,6 +51,7 @@ Escolha o fabricante correspondente ao seu veículo das marcas suportadas:
 -   `Volkswagen`
 -   `Tronity`
 -   `Volvo`
+-   `Audi`
 
 Se você possui vários veículos de diferentes marcas, poderá configurar várias seções.
 

@@ -55,6 +55,7 @@ Choisissez le fabricant correspondant à votre véhicule dans les marques prises
 -   `Volkswagen`
 -   `Tronity`
 -   `Volvo`
+-   `Audi`
 
 Si vous possédez plusieurs véhicules à partir de différentes marques, vous pouvez configurer plusieurs sections.
 
