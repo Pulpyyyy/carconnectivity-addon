@@ -1,3 +1,12 @@
+## 0.4.4
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-audi** → [v0.1.5](https://github.com/acfischer42/CarConnectivity-connector-audi.git)
+
+ --- 
+
 ## 0.4.3
 
 
