@@ -54,6 +54,7 @@ Choose the manufacturer corresponding to your vehicle from the supported brands:
 - `Tronity`
 - `Volvo`
 - `Audi`
+- `Volkswagen North America`
 
 If you own multiple vehicles from different brands, you can configure multiple sections.
 
@@ -61,7 +62,7 @@ If you own multiple vehicles from different brands, you can configure multiple s
 Each car manufacturer provides an online service that allows you to access your vehicle's data remotely. To connect, you need to provide your login credentials.
 
 #### Required Information:
-For `Seat`, `Cupra`, `Skoda`, `Volkswagen` and `Tronity`:
+For `Seat`, `Cupra`, `Skoda`, `Volkswagen`, `Volkswagen_na` and `Tronity`:
 - `Brand`: The manufacturer’s brand.
 - `Username`: The email address used to log into the manufacturer’s service.
 - `Password`: The password for your manufacturer account.

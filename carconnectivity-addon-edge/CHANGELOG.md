@@ -1,4 +1,13 @@
-## 0.4.4
+## 0.5.0
+
+
+### 🚀 New Features
+
+- Add Volkswagen for North America support, thanks @zackcornelius
+
+ --- 
+ 
+ ## 0.4.4
 
 
 ### 🛠️ Fixes & Updates
