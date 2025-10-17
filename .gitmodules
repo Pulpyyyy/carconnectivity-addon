@@ -28,3 +28,9 @@
 [submodule "CarConnectivity"]
 	path = CarConnectivity
 	url = https://github.com/tillsteinbach/CarConnectivity
+[submodule "CarConnectivity-connector-audi"]
+	path = CarConnectivity-connector-audi
+	url = https://github.com/acfischer42/CarConnectivity-connector-audi
+[submodule "CarConnectivity-connector-volkswagen-na"]
+	path = CarConnectivity-connector-volkswagen-na
+	url = https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na
