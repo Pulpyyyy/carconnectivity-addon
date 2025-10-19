@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on"
-version: 0.4.4
+version: 0.5.0
 slug: "carconnectivity-addon"
 description: "CarConnectivity Add-on based on Till's project (https://github.com/tillsteinbach/CarConnectivity). May be unstable. MQTT required."
 image: "docker.io/pulpyyyy/carconnectivity-addon-{arch}"
@@ -45,12 +45,12 @@ options:
   api_log_level: "info"
   expert: false
 schema:
-  connector_type_brand1: list(seat|cupra|skoda|volkswagen|trionity|audi)
+  connector_type_brand1: list(seat|cupra|skoda|volkswagen|trionity|audi|volkswagen_na)
   connector_username_brand1: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
   connector_password_brand1: password?
   connector_interval_brand1: int(60,3600)?
   connector_spin_brand1: match(^\d{4}$)?
-  connector_type_brand2: list(seat|cupra|skoda|volkswagen|trionity|audi)
+  connector_type_brand2: list(seat|cupra|skoda|volkswagen|trionity|audi|volkswagen_na)
   connector_username_brand2: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
   connector_password_brand2: password?
   connector_interval_brand2: int(60,3600)?
