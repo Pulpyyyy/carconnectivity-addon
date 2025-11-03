@@ -31,7 +31,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-connector-seatcupra==${SEAT_VERSION} \
         carconnectivity-connector-skoda==${SKODA_VERSION} \
         carconnectivity-connector-volkswagen==${VW_VERSION} \
-
+        carconnectivity-connector-volkswagen_na==${VWNA_VERSION} \
         carconnectivity-connector-tronity==${TRONITY_VERSION} \
         carconnectivity-plugin-abrp==${ABRP_VERSION} \
         carconnectivity-plugin-webui==${WEBUI_VERSION} \
