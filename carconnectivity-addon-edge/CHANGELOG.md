@@ -1,3 +1,12 @@
+## 0.5.5
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-plugin-webui** → [v0.5.3a1](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
+
+ --- 
+
 ## 0.5.4
 
 
