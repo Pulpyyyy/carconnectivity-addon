@@ -31,8 +31,18 @@ configuration:
     name: "Refresh interval for the 2nd car"
     description: "Enter the interval in seconds between each data fetch for the 2nd car. Be aware that API calls are quota-limited. Once the quota is exceeded, the API becomes non-functional for a given time."
 
+  separator_tronity:
+    name: "🚘 Specific choice Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "Client ID for tronity APIs"
+    description: "The ID looks like this '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Client secret for tronity APIs"
+    description: "The secret looks like this 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Specific choice"
+    name: "🚕 Specific choice Volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Primary key for Volvo APIs"

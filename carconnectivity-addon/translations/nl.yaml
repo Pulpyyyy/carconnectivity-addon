@@ -31,8 +31,18 @@ configuration:
     name: "Verversingsinterval voor de 2e auto"
     description: "Voer het interval in (in seconden) tussen elke gegevensopvraging voor de 2e auto. Houd er rekening mee dat API-aanroepen quota-beperkt zijn. Zodra het quota is overschreden, werkt de API tijdelijk niet meer."
 
+  separator_tronity:
+    name: "🚘 Specifieke keuze Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "Client-ID voor Tronity-API's"
+    description: "De ID ziet er zo uit: '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Clientgeheim voor Tronity-API's"
+    description: "Het geheim ziet er zo uit: 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Specifieke keuze"
+    name: "🚕 Specifieke keuze Volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Primaire sleutel voor Volvo-API's"

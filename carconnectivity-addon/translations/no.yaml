@@ -31,8 +31,18 @@ configuration:
     name: "Oppdateringsintervall for den andre bilen"
     description: "Skriv inn intervall i sekunder mellom hver innhenting av informasjon for den andre bilen. Merk: API-kall har en kvote. Når kvoten er nådd, vil API-et ikke fungere i en gitt periode."
 
+  separator_tronity:
+    name: "🚘 Spesifikt valg Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "Klient-ID for Tronity-API-er"
+    description: "ID-en ser slik ut: '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Klienthemmelighet for Tronity-API-er"
+    description: "Hemmeligheten ser slik ut: 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Spesifikke valg"
+    name: "🚕 Spesifikke valg volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Primærnøkkel for Volvo API"

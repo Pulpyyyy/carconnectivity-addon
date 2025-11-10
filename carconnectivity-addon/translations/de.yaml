@@ -31,8 +31,18 @@ configuration:
     name: "Aktualisierungsintervall für das zweite Auto"
     description: "Geben Sie das Intervall in Sekunden zwischen zwei Informationsabrufen für das zweite Auto ein. Beachten Sie, dass API-Aufrufe einem Kontingent unterliegen. Sobald das Kontingent überschritten ist, ist die API für einen bestimmten Zeitraum nicht mehr funktionsfähig."
 
+  separator_tronity:
+    name: "🚘 Spezifische Auswahl Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "Client-ID für Tronity-APIs"
+    description: "Die ID sieht so aus: '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Client-Secret für Tronity-APIs"
+    description: "Das Secret sieht so aus: 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Spezifische Auswahl"
+    name: "🚕 Spezifische Auswahl Volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Primärschlüssel für Volvo APIs"

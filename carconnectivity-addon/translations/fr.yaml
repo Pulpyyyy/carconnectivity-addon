@@ -31,8 +31,18 @@ configuration:
     name: "Intervalle de rafraîchissement pour la 2ème voiture"
     description: "Entrez l'intervalle en secondes entre deux récupérations des informations pour la 2ème voiture. Attention, les appels API sont soumis à un quota. Une fois le quota dépassé, l'API n'est plus fonctionnelle pendant une période donnée."
 
+  separator_tronity:
+    name: "🚘 Choix spécifique Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "ID client pour les API Tronity"
+    description: "L’ID ressemble à ceci : '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Secret client pour les API Tronity"
+    description: "Le secret ressemble à ceci : 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Choix spécifique"
+    name: "🚕 Choix spécifique Volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Clé primaire pour les API Volvo"

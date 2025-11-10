@@ -31,8 +31,18 @@ configuration:
     name: "Interwał odświeżania dla drugiego samochodu"
     description: "Wprowadź odstęp czasowy w sekundach między pobraniami danych dla drugiego samochodu. Uwaga: wywołania API są objęte limitem. Po jego przekroczeniu API przestaje działać przez określony czas."
 
+  separator_tronity:
+    name: "🚘 Specyficzny wybór Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "Identyfikator klienta dla API Tronity"
+    description: "Identyfikator wygląda tak: '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Tajny klucz klienta dla API Tronity"
+    description: "Tajny klucz wygląda tak: 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Wybór specyficzny"
+    name: "🚕 Wybór specyficzny Volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Klucz główny dla API Volvo"
