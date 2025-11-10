@@ -1,3 +1,13 @@
+## 0.5.10
+
+
+### 🛠️ Fixes & Updates
+
+- Rework/fix Tronity config
+⚠️ You may need to reconfigure the addon
+
+ --- 
+
 ## 0.5.9
 
 

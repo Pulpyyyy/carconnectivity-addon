@@ -34,6 +34,18 @@
                 }
             }
             {{- end }}
+            {{- if and (or .connector_username_brand1 .connector_username_brand2) .connector_tronity_client_id }},{{- end }}
+            {{- if .connector_tronity_client_id }}
+            {
+                "type": "tronity",
+                "config": {
+                    "client_id": "{{ .connector_tronity_client_id }}",
+                    "client_secret": "{{ .connector_tronity_client_secret }}",
+                    "interval": {{ .connector_tronity_interval }},
+                    "api_log_level": "{{ .api_log_level }}"
+                }
+            }
+            {{- end }}
             {{- if and (or .connector_username_brand1 .connector_username_brand2) .connector_volvo_key_primary }},{{- end }}
             {{- if .connector_volvo_key_primary }}
             {

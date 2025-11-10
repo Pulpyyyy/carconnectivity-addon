@@ -31,8 +31,18 @@ configuration:
     name: "Intervalo de atualização para o 2º carro"
     description: "Insira o intervalo em segundos entre duas recuperações de dados para o 2º carro. Atenção: as chamadas à API estão sujeitas a um limite. Após o limite ser ultrapassado, a API ficará inativa por um determinado período."
 
+  separator_tronity:
+    name: "🚘 Escolha específica Tronity"
+    description: ""
+  connector_tronity_client_id:
+    name: "ID do cliente para as APIs Tronity"
+    description: "O ID é assim: '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
+  connector_tronity_client_secret:
+    name: "Segredo do cliente para as APIs Tronity"
+    description: "O segredo é assim: 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+
   separator_volvo:
-    name: "🚕 Escolha específica"
+    name: "🚕 Escolha específica volvo"
     description: ""
   connector_volvo_key_primary:
     name: "Chave primária para as APIs da Volvo"
