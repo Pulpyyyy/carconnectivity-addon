@@ -1,3 +1,13 @@
+## 0.5.13
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-volkswagen** → [v0.9.2](https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)
+- **CarConnectivity-plugin-mqtt** → [v0.8.1](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git)
+
+ --- 
+
 ## 0.5.12
 
 
