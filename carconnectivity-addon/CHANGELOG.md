@@ -5,7 +5,15 @@
 
 - **CarConnectivity-plugin-webui** → [v0.5.3](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
 
- --- 
+ ---
+
+## 0.5.15 (EDGE only) 
+
+
+### 🛠️ Fixes & Updates
+- **CarConnectivity-plugin-webui** → [v0.5.3a3](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
+
+---
 
 ## 0.5.14
 
