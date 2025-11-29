@@ -45,7 +45,7 @@ jobs:
         with:
           args: |
             --addon \
-            --all \
+            --amd64 --aarch64 \
             --docker-hub "${{ env.REGISTRY }}" \
             --target /data/${{ matrix.addon }} \
             --docker-hub ${{ env.REPOSITORY }} \
