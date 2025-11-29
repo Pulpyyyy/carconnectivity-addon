@@ -1,3 +1,21 @@
+## 0.5.15
+
+
+### 🛠️ Fixes & Updates
+- **CarConnectivity-plugin-webui** → [v0.5.3a3](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
+
+ --- 
+ 
+ ## 0.5.14
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → [v0.4.8](https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)
+- **CarConnectivity-connector-volkswagen** → [v0.9.3](https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)
+
+ --- 
+
 ## 0.5.13
 
 
