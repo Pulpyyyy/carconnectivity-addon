@@ -184,7 +184,7 @@ jobs:
 
       - name: Create Pull Request
         if: env.CHANGES == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: update-versions-${{ github.run_id }} # Use a unique ID to avoid conflicts
