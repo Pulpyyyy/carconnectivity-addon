@@ -1,0 +1,44 @@
+name: Sync Tag with Add-on Version
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  create-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push the new tag to the repository
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all tags to ensure accurate existence check
+
+      - name: Extract Version from YAML
+        id: get_version
+        run: |
+          # Extracts the value after "version:", removes quotes and spaces
+          RAW_VERSION=$(grep '^version:' carconnectivity-addon-edge/config.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
+          
+          # Prefixes the version with 'v' (e.g., v0.5.17)
+          VERSION="v$RAW_VERSION"
+          
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Detected version: $VERSION"
+
+      - name: Create and Push Tag
+        run: |
+          # Check if the tag already exists in the repository
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists. Skipping."
+          else
+            echo "Creating tag $VERSION"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag $VERSION
+            git push origin $VERSION
+          fi
