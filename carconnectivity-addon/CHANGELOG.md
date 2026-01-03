@@ -1,3 +1,13 @@
+## 0.5.19
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → [v0.10](https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)
+- **CarConnectivity-connector-volkswagen-na** → [v0.1.4](https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na.git)
+
+ --- 
+
 ## 0.5.18
 
 
