@@ -1,3 +1,13 @@
+## 0.5.24
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → [v0.11.2](https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)
+- **CarConnectivity-plugin-mqtt_homeassistant** → [v0.6](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)
+
+ --- 
+
 ## 0.5.23
 
 
