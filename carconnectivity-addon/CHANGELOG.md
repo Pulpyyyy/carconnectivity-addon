@@ -1,3 +1,13 @@
+## 0.5.26
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → [v0.11.5](https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)
+- **CarConnectivity** → [v0.11.2](https://github.com/tillsteinbach/CarConnectivity.git)
+
+ --- 
+
 ## 0.5.25
 
 
