@@ -1,3 +1,12 @@
+## 0.5.32
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-plugin-mqtt_homeassistant** → [v0.6.2](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)
+
+ --- 
+
 ## 0.5.31
 
 
