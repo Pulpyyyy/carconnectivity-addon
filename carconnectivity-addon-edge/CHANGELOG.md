@@ -1,3 +1,18 @@
+## 0.5.33
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → [v0.5.2](https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)
+- **CarConnectivity-connector-skoda** → [v0.11.8](https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)
+- **CarConnectivity-connector-volkswagen** → [v0.10.2](https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)
+- **CarConnectivity-plugin-mqtt** → [v0.9.2](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git)
+- **CarConnectivity-plugin-mqtt_homeassistant** → [v0.6.3](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)
+- **CarConnectivity** → [v0.11.6](https://github.com/tillsteinbach/CarConnectivity.git)
+- **CarConnectivity-plugin-webui** → [v0.7.1](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
+
+ --- 
+
 ## 0.5.32
 
 
