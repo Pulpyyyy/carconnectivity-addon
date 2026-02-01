@@ -1,3 +1,14 @@
+## 0.5.37
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → [v0.6](https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)
+- **CarConnectivity-connector-skoda** → [v0.12](https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)
+- **CarConnectivity-connector-volkswagen** → [v0.10.3](https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)
+
+ --- 
+
 ## 0.5.36
 
 
