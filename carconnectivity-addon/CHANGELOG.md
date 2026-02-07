@@ -1,3 +1,12 @@
+## 0.5.38
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-plugin-mqtt** → [v0.10](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git)
+
+ --- 
+
 ## 0.5.37
 
 
