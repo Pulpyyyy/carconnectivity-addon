@@ -10,11 +10,11 @@ labels:
   org.opencontainers.image.licenses: "Apache License 2.0"
 
 args:
-  AUDI_VERSION: "v0.2.2"
+  AUDI_VERSION: "v0.3.0"
   SEAT_VERSION: "v0.6"
   SKODA_VERSION: "v0.12"
   VW_VERSION: "v0.10.3"
-  VWNA_VERSION: "v0.1.9"
+  VWNA_VERSION: "v0.1.10"
   TRONITY_VERSION: "v0.7.1"
   VOLVO_VERSION: "v0.1a2"
   ABRP_VERSION: "v0.8.1"
