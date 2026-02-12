@@ -1,4 +1,4 @@
-name: Sync Tag with Add-on Version
+name: Sync Tag with YAML Version
 
 on:
   push:
@@ -7,38 +7,44 @@ on:
       - master
 
 jobs:
-  create-tag:
+  tag-only:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required to push the new tag to the repository
+      contents: write
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches all tags to ensure accurate existence check
+          fetch-depth: 0
 
       - name: Extract Version from YAML
         id: get_version
         run: |
-          # Extracts the value after "version:", removes quotes and spaces
-          RAW_VERSION=$(grep '^version:' carconnectivity-addon-edge/config.yaml | awk '{print $2}' | tr -d '"' | tr -d "'")
+          # Extract version from local config.yaml file
+          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' carconnectivity-addon-edge/config.yaml | head -n 1)
           
-          # Prefixes the version with 'v' (e.g., v0.5.17)
-          VERSION="v$RAW_VERSION"
+          if [ -z "$VERSION" ]; then
+            echo "❌ Error: Version not found in YAML file"
+            exit 1
+          fi
           
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Detected version: $VERSION"
+          # Add 'v' prefix for git tag
+          TAG="v$VERSION"
+          
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "✅ Version found: $TAG"
 
-      - name: Create and Push Tag
+      - name: Push Tag
         run: |
-          # Check if the tag already exists in the repository
-          if git rev-parse "$VERSION" >/dev/null 2>&1; then
-            echo "Tag $VERSION already exists. Skipping."
+          # Check if tag already exists
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "⚠️  Tag $TAG already exists. Skipping."
           else
-            echo "Creating tag $VERSION"
+            echo "📌 Creating and pushing tag $TAG"
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git tag $VERSION
-            git push origin $VERSION
+            git tag $TAG
+            git push origin $TAG
+            echo "✅ Tag $TAG pushed successfully"
           fi
