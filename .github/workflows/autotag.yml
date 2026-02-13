@@ -1,11 +1,20 @@
 name: Sync Tag with YAML Version
-
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  
 on:
   push:
     branches:
       - main
       - master
-
+  workflow_run:
+    workflows: ["Update build.yaml on new submodule release"]
+    types:
+      - completed
+  workflow_dispatch:
+  
 jobs:
   tag-only:
     runs-on: ubuntu-latest
@@ -48,3 +57,4 @@ jobs:
             git push origin $TAG
             echo "✅ Tag $TAG pushed successfully"
           fi
+
