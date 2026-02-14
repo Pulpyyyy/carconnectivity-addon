@@ -1,103 +1,117 @@
 configuration:
-  connector_type_brand1:
+  # --- GRUPO BRAND 1 ---
+  brand1:
     name: "🚗 Escolha para o 1º carro"
     description: "Permite utilizar opções específicas da marca."
-  connector_username_brand1:
-    name: "Nome de utilizador para o 1º carro"
-    description: "Insira o endereço de e-mail usado para se conectar ao serviço para o 1º carro."
-  connector_password_brand1:
-    name: "Palavra-passe para o 1º carro"
-    description: "Insira a palavra-passe da sua conta para o 1º carro."
-  connector_spin_brand1:
-    name: "Código PIN para o 1º carro"
-    description: "Insira o código PIN de 4 dígitos usado para acesso remoto ao 1º carro."
-  connector_interval_brand1:
-    name: "Intervalo de atualização para o 1º carro"
-    description: "Insira o intervalo em segundos entre duas recuperações de dados para o 1º carro. Atenção: as chamadas à API estão sujeitas a um limite. Após o limite ser ultrapassado, a API ficará inativa por um determinado período."
+    fields:
+      type:
+        name: "Modelo"
+      username:
+        name: "Nome de utilizador"
+        description: "Insira o endereço de e-mail usado para se conectar ao serviço para o 1º carro."
+      password:
+        name: "Palavra-passe"
+        description: "Insira a palavra-passe da sua conta para o 1º carro."
+      spin:
+        name: "Código PIN"
+        description: "Insira o código PIN de 4 dígitos usado para acesso remoto ao 1º carro."
+      interval:
+        name: "Intervalo de atualização"
+        description: "Intervalo em segundos. Atenção às quotas da API: uma vez ultrapassadas, a API é temporariamente bloqueada."
 
-  connector_type_brand2:
+  # --- GRUPO BRAND 2 ---
+  brand2:
     name: "🚙 Escolha para o 2º carro"
     description: "Permite utilizar opções específicas da marca."
-  connector_username_brand2:
-    name: "Nome de utilizador para o 2º carro"
-    description: "Insira o endereço de e-mail usado para se conectar ao serviço para o 2º carro. Deixe em branco se não quiser usar este conector."
-  connector_password_brand2:
-    name: "Palavra-passe para o 2º carro"
-    description: "Insira a palavra-passe da sua conta para o 2º carro."
-  connector_spin_brand2:
-    name: "Código PIN para o 2º carro"
-    description: "Insira o código PIN de 4 dígitos usado para acesso remoto ao 2º carro."
-  connector_interval_brand2:
-    name: "Intervalo de atualização para o 2º carro"
-    description: "Insira o intervalo em segundos entre duas recuperações de dados para o 2º carro. Atenção: as chamadas à API estão sujeitas a um limite. Após o limite ser ultrapassado, a API ficará inativa por um determinado período."
+    fields:
+      type:
+        name: "Modelo"
+      username:
+        name: "Nome de utilizador"
+        description: "Endereço de e-mail para o 2º carro. Deixe em branco se não quiser usar este conector."
+      password:
+        name: "Palavra-passe"
+        description: "Insira a palavra-passe da sua conta para o 2º carro."
+      spin:
+        name: "Código PIN"
+        description: "Insira o código PIN de 4 dígitos para o 2º carro."
+      interval:
+        name: "Intervalo de atualização"
+        description: "Intervalo em segundos. Atenção às quotas da API."
 
-  separator_tronity:
-    name: "🚘 Escolha específica Tronity"
-    description: ""
-  connector_tronity_client_id:
-    name: "ID do cliente para as APIs Tronity"
-    description: "O ID é assim: '68c623bf-dbbe-4569-1e9a-2eae9c45e4721c5'"
-  connector_tronity_client_secret:
-    name: "Segredo do cliente para as APIs Tronity"
-    description: "O segredo é assim: 'faeb52e8-954d-5feb-ee8f-e5280f78d915'"
+  # --- GRUPO VOLVO ---
+  volvo:
+    name: "🚕 Escolha específica Volvo"
+    description: "Configuração dedicada às APIs da Volvo."
+    fields:
+      key_primary:
+        name: "Chave primária"
+        description: "A chave tem este formato: 'd64b33a7067a4c428def9474964'"
+      key_secondary:
+        name: "Chave secundária"
+        description: "A chave tem este formato: 'de0c63a885ffdac4ccc92d8744905611caf'"
+      vehicle_token:
+        name: "Token do veículo"
+        description: "Token específico para o carro Volvo (cadeia longa começando com eyJh...)"
+      location_token:
+        name: "Token de localização"
+        description: "Token específico de geolocalização (cadeia longa começando com eyJh...)"
+      interval:
+        name: "Intervalo Volvo"
+        description: "Intervalo em segundos entre recuperações de dados para o carro Volvo."
 
-  separator_volvo:
-    name: "🚕 Escolha específica volvo"
-    description: ""
-  connector_volvo_key_primary:
-    name: "Chave primária para as APIs da Volvo"
-    description: "A chave tem este formato: 'd64b33a7067a4c428def9474964'"
-  connector_volvo_key_secondary:
-    name: "Chave secundária para as APIs da Volvo"
-    description: "A chave tem este formato: 'de0c63a885ffdac4ccc92d8744905611caf'"
-  connected_volvo_vehicle_token:
-    name: "Token específico para o carro Volvo"
-    description: "O token tem este formato: 'eyJhbGciOiJSUzI1NiIsImtpZCI6InhqTzF5SDVmM29W...'"
-  connector_volvo_location_token:
-    name: "Token específico de geolocalização"
-    description: "O token tem este formato: 'eyJhbGciOiJSUzI1NiIsImtpZCI6InhqTzF5SDVmM29W...'"
-  connector_volvo_interval:
-    name: "Intervalo de atualização para o carro Volvo"
-    description: "Insira o intervalo em segundos entre duas recuperações de dados para o carro Volvo. Atenção: as chamadas à API estão sujeitas a um limite. Após o limite ser ultrapassado, a API ficará inativa por um determinado período."
+  # --- GRUPO MQTT ---
+  mqtt:
+    name: "💬 Configuração MQTT"
+    fields:
+      username:
+        name: "Nome de utilizador MQTT"
+        description: "Insira o nome de utilizador para se conectar ao broker MQTT."
+      password:
+        name: "Palavra-passe MQTT"
+        description: "Insira a palavra-passe para se conectar ao broker MQTT."
+      broker:
+        name: "Endereço do broker MQTT"
+        description: "Insira o endereço IP ou nome de domínio do servidor MQTT."
+      port:
+        name: "Porta do broker MQTT"
+        description: "Insira o número da porta do servidor MQTT."
 
-  separator_mqtt:
-    name: "💬 Configuração"
-  mqtt_username:
-    name: "Nome de utilizador MQTT"
-    description: "Insira o nome de utilizador para se conectar ao broker MQTT."
-  mqtt_password:
-    name: "Palavra-passe MQTT"
-    description: "Insira a palavra-passe para se conectar ao broker MQTT."
-  mqtt_broker:
-    name: "Endereço do broker MQTT"
-    description: "Insira o endereço IP ou nome de domínio do servidor MQTT."
-  mqtt_port:
-    name: "Porta do broker MQTT"
-    description: "Insira o número da porta do servidor MQTT."
+  # --- GRUPO WEBUI ---
+  webui:
+    name: "🌏 Interface WEB do Carconnectivity"
+    fields:
+      enabled:
+        name: "Ativar a interface"
+      username:
+        name: "Nome de administrador WebUI"
+        description: "Use 'autologin' para desativar a solicitação de autenticação."
+      password:
+        name: "Palavra-passe WebUI"
+        description: "Palavra-passe para acesso à WebUI do Carconnectivity."
 
-  log_level:
-    name: "🔖 Selecione o nível geral de registo desejado (info, warning, error, debug)."
-    description: ""
+  # --- GRUPO ABRP ---
+  abrp:
+    name: "🔋 A Better Routeplanner (ABRP)"
+    fields:
+      enabled:
+        name: "Ativar integração ABRP"
+      tokens:
+        name: "Lista de tokens ABRP"
+        description: "Conecte o seu veículo através de 'Live Data' > 'Generic' no ABRP para obter o token. Configure a correspondência VIN/Token."
 
-  connector_enabler_webui:
-    name: "🌏 Ativar a interface WEB do Carconnectivity"
-  connector_username_webui:
-    name: "Nome de administrador WebUI"
-    description: "Nome de administrador para acesso à interface WebUI do Carconnectivity. Use 'autologin' como nome de usuário para desativar a solicitação de autenticação."
-  connector_password_webui:
-    name: "Palavra-passe WebUI"
-    description: "Palavra-passe para acesso à WebUI do Carconnectivity"
+  # --- GRUPO LOGS ---
+  logs:
+    name: "🔖 Registo (Logs)"
+    fields:
+      level:
+        name: "Nível geral"
+        description: "Selecione o nível desejado (info, warning, error, debug)."
+      api_level:
+        name: "Nível das APIs"
+        description: "Nível de registo específico para as APIs."
 
-  connector_enabler_abrp:
-    name: "🔋 Ativar a funcionalidade «A Better Routeplanner (ABRP)»"
-  connector_abrp_tokens:
-    name: "Lista de tokens ABRP"
-    description: "Para obter o seu token, aceda ao seu veículo no A Better Routeplanner, selecione «Live Data», depois conecte o veículo através da secção «Generic». O token aparecerá para ser copiado na configuração. Você deve configurar uma correspondência entre o VIN e o token para cada veículo que deseja conectar ao ABRP. Consulte a documentação do addon para a sintaxe."
-
-  api_log_level:
-    name: "🔖 Selecione o nível de registo desejado (info, warning, error, debug) para as APIs."
-    description: ""
-
+  # --- OPÇÃO EXPERT ---
   expert:
     name: "🔑 Ativar o modo avançado"
-    description: "O modo avançado permite utilizar um ficheiro de configuração personalizado. Quando este modo está ativo, o utilizador pode fornecer um ficheiro chamado /addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json com os parâmetros desejados. Este ficheiro substitui completamente a configuração da interface gráfica, que ficará disponível em /addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json. Consulte a documentação do Carconnectivity. O diretório /addon_configs/1b1291d4_carconnectivity-addon/ pode não aparecer no sistema de ficheiros do Home Assistant. Se isso acontecer, reinicie o supervisor."
+    description: "Permite utilizar um ficheiro de configuração personalizado (/addon_configs/.../carconnectivity.expert.json) que substitui a interface gráfica. Reinicie o supervisor se a pasta não aparecer."

@@ -1,62 +1,50 @@
 {
     "carConnectivity": {
-        "log_level": "{{ .log_level }}",
+        "log_level": "{{ .logs.level }}",
         "connectors": [
-            {{- if .connector_username_brand1 }}
+            {{- if .brand1.username }}
             {
-                "type": "{{ if or (eq .connector_type_brand1 "seat") (eq .connector_type_brand1 "cupra") }}seatcupra{{ else }}{{ .connector_type_brand1 }}{{ end }}",
+                "type": "{{ if or (eq .brand1.type "seat") (eq .brand1.type "cupra") }}seatcupra{{ else }}{{ .brand1.type }}{{ end }}",
                 "config": {
-                    {{- if or (eq .connector_type_brand1 "seat") (eq .connector_type_brand1 "cupra") }}
-                    "brand": "{{ .connector_type_brand1 }}",
+                    {{- if or (eq .brand1.type "seat") (eq .brand1.type "cupra") }}
+                    "brand": "{{ .brand1.type }}",
                     {{- end }}
-                    "username": "{{ .connector_username_brand1 }}",
-                    "password": "{{ .connector_password_brand1 }}",
-                    "interval": {{ .connector_interval_brand1 }},
-                    "spin": "{{ .connector_spin_brand1 }}",
-                    "api_log_level": "{{ .api_log_level }}"
+                    "username": "{{ .brand1.username }}",
+                    "password": "{{ .brand1.password }}",
+                    "interval": {{ .brand1.interval }},
+                    "spin": "{{ .brand1.spin }}",
+                    "api_log_level": "{{ .logs.api_level }}"
                 }
             }
             {{- end }}
-            {{- if and .connector_username_brand1 .connector_username_brand2 }},{{- end }}
-            {{- if .connector_username_brand2 }}
+            {{- if and .brand1.username .brand2.username }},{{- end }}
+            {{- if .brand2.username }}
             {
-                "type": "{{ if or (eq .connector_type_brand2 "seat") (eq .connector_type_brand2 "cupra") }}seatcupra{{ else }}{{ .connector_type_brand2 }}{{ end }}",
-                "connector_id": "{{ .connector_type_brand2 }}2",
+                "type": "{{ if or (eq .brand2.type "seat") (eq .brand2.type "cupra") }}seatcupra{{ else }}{{ .brand2.type }}{{ end }}",
+                "connector_id": "{{ .brand2.type }}2",
                 "config": {
-                    {{- if or (eq .connector_type_brand2 "seat") (eq .connector_type_brand2 "cupra") }}
-                    "brand": "{{ .connector_type_brand2 }}",
+                    {{- if or (eq .brand2.type "seat") (eq .brand2.type "cupra") }}
+                    "brand": "{{ .brand2.type }}",
                     {{- end }}
-                    "username": "{{ .connector_username_brand2 }}",
-                    "password": "{{ .connector_password_brand2 }}",
-                    "interval": {{ .connector_interval_brand2 }},
-                    "spin": "{{ .connector_spin_brand2 }}",
-                    "api_log_level": "{{ .api_log_level }}"
+                    "username": "{{ .brand2.username }}",
+                    "password": "{{ .brand2.password }}",
+                    "interval": {{ .brand2.interval }},
+                    "spin": "{{ .brand2.spin }}",
+                    "api_log_level": "{{ .logs.api_level }}"
                 }
             }
             {{- end }}
-            {{- if and (or .connector_username_brand1 .connector_username_brand2) .connector_tronity_client_id }},{{- end }}
-            {{- if .connector_tronity_client_id }}
-            {
-                "type": "tronity",
-                "config": {
-                    "client_id": "{{ .connector_tronity_client_id }}",
-                    "client_secret": "{{ .connector_tronity_client_secret }}",
-                    "interval": {{ .connector_tronity_interval }},
-                    "api_log_level": "{{ .api_log_level }}"
-                }
-            }
-            {{- end }}
-            {{- if and (or .connector_username_brand1 .connector_username_brand2) .connector_volvo_key_primary }},{{- end }}
-            {{- if .connector_volvo_key_primary }}
+            {{- if and (or .brand1.username .brand2.username) .volvo.key_primary }},{{- end }}
+            {{- if .volvo.key_primary }}
             {
                 "type": "volvo",
                 "config": {
-                    "key_primary": "{{ .connector_volvo_key_primary }}",
-                    "key_secondary": "{{ .connector_volvo_key_secondary }}",
-                    "connected_volvo_vehicle_token": "{{ .connected_volvo_vehicle_token }}",
-                    "location_token": "{{ .connector_volvo_location_token }}",
-                    "interval": {{ .connector_volvo_interval }},
-                    "api_log_level": "{{ .api_log_level }}"
+                    "key_primary": "{{ .volvo.key_primary }}",
+                    "key_secondary": "{{ .volvo.key_secondary }}",
+                    "connected_volvo_vehicle_token": "{{ .volvo.vehicle_token }}",
+                    "location_token": "{{ .volvo.location_token }}",
+                    "interval": {{ .volvo.interval }},
+                    "api_log_level": "{{ .logs.api_level }}"
                 }
             }
             {{- end }}
@@ -65,39 +53,39 @@
             {
                 "type": "mqtt",
                 "config": {
-                    "username": "{{ .mqtt_username }}",
-                    "password": "{{ .mqtt_password }}",
-                    "broker": "{{ .mqtt_broker }}",
-                    "port": {{ .mqtt_port }},
+                    "username": "{{ .mqtt.username }}",
+                    "password": "{{ .mqtt.password }}",
+                    "broker": "{{ .mqtt.broker }}",
+                    "port": {{ .mqtt.port }},
                     "locale": "en_US",
                     "time_format": "%Y-%m-%dT%H:%M:%S%z",
-                    "log_level": "{{ .log_level }}"
+                    "log_level": "{{ .logs.level }}"
                 }
             },
             {
                 "type": "webui",
-                {{- if .connector_enabler_webui }}
+                {{- if .webui.enabled }}
                     "disabled": false,
                 {{- else }}
                     "disabled": true,
                 {{- end }}
                 "config": {
-                    "username": "{{ .connector_username_webui }}",
-                    "password": "{{ .connector_password_webui }}",
+                    "username": "{{ .webui.username }}",
+                    "password": "{{ .webui.password }}",
                     "app_config": {
-                        {{- if eq .connector_username_webui "autologin" }}
+                        {{- if eq .webui.username "autologin" }}
                             "LOGIN_DISABLED": true
                         {{- else }}
                             "LOGIN_DISABLED": false
                         {{- end }}
                         },
                     "locale": "en_US",
-                    "log_level": "{{ .log_level }}"
+                    "log_level": "{{ .logs.level }}"
                 }
             },
             {
                 "type": "abrp",
-                {{- if .connector_enabler_abrp }}
+                {{- if .abrp.enabled }}
                     "disabled": false,
                 {{- else }}
                     "disabled": true,
@@ -105,13 +93,13 @@
                 "config": {
                     "tokens": {
                         {{- $first := true }}
-                        {{- range .connector_abrp_tokens }}
+                        {{- range .abrp.tokens }}
                             {{- if not $first }},{{ end }}
                             "{{ .vin }}": "{{ .token }}"
                             {{- $first = false }}
                         {{- end }}
                     },
-                    "log_level": "{{ .log_level }}"
+                    "log_level": "{{ .logs.level }}"
                 }
             },
             {
@@ -119,7 +107,7 @@
                 "config": {
                     "locale": "en_US",
                     "time_format": "%Y-%m-%dT%H:%M:%S%z",
-                    "log_level": "{{ .log_level }}"
+                    "log_level": "{{ .logs.level }}"
                 }
             }
         ]
