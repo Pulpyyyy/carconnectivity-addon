@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on"
-version: 0.5.43
+version: 0.6.0
 slug: "carconnectivity-addon"
 description: "CarConnectivity Add-on based on Till's project (https://github.com/tillsteinbach/CarConnectivity). May be unstable. MQTT required."
 image: "docker.io/pulpyyyy/carconnectivity-addon-{arch}"
@@ -15,64 +15,74 @@ hassio_api: true
 hassio_role: homeassistant
 homeassistant_api: true
 options:
-  connector_type_brand1: "seat"
-  connector_username_brand1: ""
-  connector_password_brand1: "password"
-  connector_spin_brand1: "1234"
-  connector_interval_brand1: 600
-  connector_type_brand2: "skoda"
-  connector_username_brand2: ""
-  connector_password_brand2: "password"
-  connector_spin_brand2: "1234"
-  connector_interval_brand2: 600
-  separator_volvo: "volvo"
-  connector_volvo_key_primary: ""
-  connector_volvo_key_secondary: ""
-  connected_volvo_vehicle_token: ""
-  connector_volvo_location_token: ""
-  connector_volvo_interval: 600
-  separator_mqtt: "MQTT"
-  mqtt_username: ""
-  mqtt_password: ""
-  mqtt_broker: "core-mosquitto.local.hass.io"
-  mqtt_port: 1883
-  connector_enabler_webui: true
-  connector_username_webui: "admin"
-  connector_password_webui: "secret"
-  connector_enabler_abrp: false
-  connector_abrp_tokens: []
-  log_level: "info"
-  api_log_level: "info"
+  brand1:
+    type: "seat"
+    username: ""
+    password: "password"
+    spin: "1234"
+    interval: 600
+  brand2:
+    type: "skoda"
+    username: ""
+    password: "password"
+    spin: "1234"
+    interval: 600
+  volvo:
+    key_primary: ""
+    key_secondary: ""
+    vehicle_token: ""
+    location_token: ""
+    interval: 600
+  mqtt:
+    username: ""
+    password: ""
+    broker: "core-mosquitto.local.hass.io"
+    port: 1883
+  webui:
+    enabled: true
+    username: "admin"
+    password: "secret_password"
+  abrp:
+    enabled: false
+    tokens: []
+  logs:
+    level: "info"
+    api_level: "info"
   expert: false
 schema:
-  connector_type_brand1: list(seat|cupra|skoda|volkswagen|trionity|audi|volkswagen_na)
-  connector_username_brand1: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
-  connector_password_brand1: password?
-  connector_interval_brand1: int(60,3600)?
-  connector_spin_brand1: match(^\d{4}$)?
-  connector_type_brand2: list(seat|cupra|skoda|volkswagen|trionity|audi|volkswagen_na)
-  connector_username_brand2: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
-  connector_password_brand2: password?
-  connector_interval_brand2: int(60,3600)?
-  connector_spin_brand2: match(^\d{4}$)?
-  separator_volvo: list(volvo)
-  connector_volvo_key_primary: str?
-  connector_volvo_key_secondary: str?
-  connected_volvo_vehicle_token: str?
-  connector_volvo_location_token: str?
-  connector_volvo_interval: int(60,3600)?
-  separator_mqtt: list(MQTT)
-  mqtt_username: str?
-  mqtt_password: password?
-  mqtt_broker: str
-  mqtt_port: int
-  connector_enabler_webui: bool
-  connector_username_webui: str?
-  connector_password_webui: password?
-  connector_enabler_abrp: bool
-  connector_abrp_tokens:
+  brand1:
+    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na)
+    username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
+    password: password?
+    spin: match(^\d{4}$)?
+    interval: int(60,3600)?
+  brand2:
+    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na)
+    username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
+    password: password?
+    spin: match(^\d{4}$)?
+    interval: int(60,3600)?
+  volvo:
+    key_primary: str?
+    key_secondary: str?
+    vehicle_token: str?
+    location_token: str?
+    interval: int(60,3600)?
+  mqtt:
+    username: str?
+    password: password?
+    broker: str
+    port: int
+  webui:
+    enabled: bool
+    username: str?
+    password: password?
+  abrp:
+    enabled: bool
+    tokens:
     - vin: str
       token: str
-  log_level: list(info|warning|error|debug)
-  api_log_level: list(info|warning|error|debug)
+  logs:
+    level: list(info|warning|error|debug)
+    api_level: list(info|warning|error|debug)
   expert: bool
