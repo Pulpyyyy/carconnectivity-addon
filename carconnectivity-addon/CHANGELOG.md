@@ -1,3 +1,38 @@
+## 0.6.1
+
+### 🚀 New Features
+## 0.6.0
+
+
+### 🚀 New Features
+
+- **Refactored configuration UI for better readability**
+  Configuration options are now organized by groups for easier navigation
+  ⚠️ **Breaking change: You will need to reconfigure the addon**
+
+### 🛠️ Fixes & Updates
+
+- Fix typo in config: "trionity" → "tronity"
+
+ ---
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → [v0.6](https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git)
+- **CarConnectivity-connector-skoda** → [v0.12](https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git)
+- **CarConnectivity-connector-audi** → [v0.3.0](https://github.com/acfischer42/CarConnectivity-connector-audi.git)
+- **CarConnectivity-connector-volkswagen** → [v0.10.3](https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git)
+- **CarConnectivity-connector-volkswagen-na** → [v0.1.12](https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na.git)
+- **CarConnectivity-connector-tronity** → [v0.7.1](https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git)
+- **CarConnectivity-connector-volvo** → [v0.1a2](https://github.com/tillsteinbach/CarConnectivity-connector-volvo.git)
+- **CarConnectivity-plugin-abrp** → [v0.8.1](https://github.com/tillsteinbach/CarConnectivity-plugin-abrp.git)
+- **CarConnectivity-plugin-mqtt** → [v0.10](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git)
+- **CarConnectivity-plugin-mqtt_homeassistant** → [v0.6.4](https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git)
+- **CarConnectivity-plugin-webui** → [v0.7.1](https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git)
+
+ --- 
+
 ## 0.6.0
 
 
