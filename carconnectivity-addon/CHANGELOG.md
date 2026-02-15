@@ -7,7 +7,6 @@
 
  ---
 
-### 🚀 New Features
 ## 0.6.0
 
 
@@ -905,4 +904,5 @@ No audi connector yet, only in edge
 ## 0.0.1
 
 🎉 **Initial release!** 🚀
+
 
