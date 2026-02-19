@@ -25,7 +25,7 @@ env:
   REGISTRY: docker.io
   
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.ref }}-${{ inputs.addon || 'all' }}
   cancel-in-progress: true
 
 jobs:
