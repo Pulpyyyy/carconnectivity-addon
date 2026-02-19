@@ -1,0 +1,66 @@
+name: Check for new upstream releases
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Every day at noon UTC
+  workflow_dispatch:
+
+env:
+  SUBMODULE_REPOS: |
+    SEAT=https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git
+    SKODA=https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git
+    AUDI=https://github.com/acfischer42/CarConnectivity-connector-audi.git
+    VW=https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
+    VWNA=https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na.git
+    TRONITY=https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git
+    VOLVO=https://github.com/tillsteinbach/CarConnectivity-connector-volvo.git
+    ABRP=https://github.com/tillsteinbach/CarConnectivity-plugin-abrp.git
+    MQTT=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git
+    MQTTHA=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git
+    CC=https://github.com/tillsteinbach/CarConnectivity.git
+    WEBUI=https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check for new versions
+        id: check
+        run: |
+          export LC_ALL=C
+          CHANGES_FOUND=false
+
+          for repo_entry in $SUBMODULE_REPOS; do
+            name=$(echo "$repo_entry" | cut -d= -f1)
+            repo=$(echo "$repo_entry" | cut -d= -f2)
+
+            # Get current version from edge build.yaml
+            current_version=$(grep "${name}_VERSION" carconnectivity-addon-edge/build.yaml | awk '{print $2}' | tr -d '"')
+
+            # Get latest tag via git ls-remote (lightweight, no clone)
+            latest_version=$(git ls-remote --tags --sort=-version:refname "$repo" | awk '{print $2}' | sed 's|refs/tags/||' | grep -v '\^{}' | head -n 1)
+
+            if [ -z "$latest_version" ]; then
+              echo "⚠️  $name: no tags found"
+              continue
+            fi
+
+            if [ "$current_version" != "$latest_version" ]; then
+              echo "🔄 $name: $current_version → $latest_version"
+              CHANGES_FOUND=true
+            else
+              echo "✅ $name: $current_version (up to date)"
+            fi
+          done
+
+          echo "changes=$CHANGES_FOUND" >> $GITHUB_OUTPUT
+
+      - name: Trigger Release Pipeline
+        if: steps.check.outputs.changes == 'true'
+        run: gh workflow run orchestrator.yml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
