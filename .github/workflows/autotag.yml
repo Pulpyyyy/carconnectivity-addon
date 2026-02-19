@@ -5,10 +5,6 @@ permissions:
   id-token: write
 
 on:
-  push:
-    branches:
-      - main
-      - master
   workflow_run:
     workflows: ["Update build.yaml on new submodule release"]
     types:

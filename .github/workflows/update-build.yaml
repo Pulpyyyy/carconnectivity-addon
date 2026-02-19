@@ -16,25 +16,11 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  SUBMODULE_REPOS: |
-    SEAT=https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git
-    SKODA=https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git
-    AUDI=https://github.com/acfischer42/CarConnectivity-connector-audi.git
-    VW=https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
-    VWNA=https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na.git
-    TRONITY=https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git
-    VOLVO=https://github.com/tillsteinbach/CarConnectivity-connector-volvo.git
-    ABRP=https://github.com/tillsteinbach/CarConnectivity-plugin-abrp.git
-    MQTT=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git
-    MQTTHA=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git
-    CC=https://github.com/tillsteinbach/CarConnectivity.git
-    WEBUI=https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git
-
 jobs:
   update-versions:
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         addon: ${{ inputs.addon && fromJSON(format('["{0}"]', inputs.addon)) || fromJSON('["carconnectivity-addon", "carconnectivity-addon-edge"]') }}
 
@@ -43,7 +29,13 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          submodules: true # Also clones submodules
+          submodules: false
+
+      - name: Load submodule repos list
+        run: |
+          echo "SUBMODULE_REPOS<<EOF" >> $GITHUB_ENV
+          cat .github/submodules.list >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Get latest versions of submodules ${{ matrix.addon }}...
         run: |
@@ -51,12 +43,10 @@ jobs:
 
           get_latest_version() {
               repo_url=$1
-              temp_dir=$(mktemp -d)
 
-              git clone --bare --quiet "$repo_url" "$temp_dir" >/dev/null 2>&1
-              
-              all_tags=$(git -C "$temp_dir" for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags)
-              
+              # Lightweight: no clone, just list remote tags
+              all_tags=$(git ls-remote --tags "$repo_url" | awk '{print $2}' | sed 's|refs/tags/||' | grep -v '\^{}' | sort -rV)
+
               if [ "${{ matrix.addon }}" == "carconnectivity-addon" ]; then
                   latest_version=$(echo "$all_tags" | grep -E '^v?[0-9]+(\.[0-9]+)*$' | head -n 1)
                   if [ -z "$latest_version" ]; then
@@ -65,8 +55,7 @@ jobs:
               else
                   latest_version=$(echo "$all_tags" | head -n 1)
               fi
-                            
-              rm -rf "$temp_dir"
+
               echo "$latest_version"
           }
 

@@ -5,20 +5,9 @@ on:
     - cron: '0 12 * * *' # Every day at noon UTC
   workflow_dispatch:
 
-env:
-  SUBMODULE_REPOS: |
-    SEAT=https://github.com/tillsteinbach/CarConnectivity-connector-seatcupra.git
-    SKODA=https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git
-    AUDI=https://github.com/acfischer42/CarConnectivity-connector-audi.git
-    VW=https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
-    VWNA=https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na.git
-    TRONITY=https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git
-    VOLVO=https://github.com/tillsteinbach/CarConnectivity-connector-volvo.git
-    ABRP=https://github.com/tillsteinbach/CarConnectivity-plugin-abrp.git
-    MQTT=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt.git
-    MQTTHA=https://github.com/tillsteinbach/CarConnectivity-plugin-mqtt_homeassistant.git
-    CC=https://github.com/tillsteinbach/CarConnectivity.git
-    WEBUI=https://github.com/tillsteinbach/CarConnectivity-plugin-webui.git
+permissions:
+  actions: write   # required to trigger orchestrator via gh workflow run
+  contents: read
 
 jobs:
   check-versions:
@@ -27,6 +16,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+
+      - name: Load submodule repos list
+        run: |
+          echo "SUBMODULE_REPOS<<EOF" >> $GITHUB_ENV
+          cat .github/submodules.list >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Check for new versions
         id: check

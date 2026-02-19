@@ -10,6 +10,11 @@ jobs:
       addon: carconnectivity-addon-edge
     secrets: inherit
 
+  autotag:
+    needs: update-edge
+    uses: ./.github/workflows/autotag.yml
+    secrets: inherit
+
   build-edge:
     needs: update-edge
     uses: ./.github/workflows/builder.yml
