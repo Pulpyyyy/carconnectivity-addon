@@ -5,6 +5,12 @@ on:
     branches:
       - dependabot/submodules/** # Triggered by Dependabot when a submodule is updated
   workflow_dispatch: # Allows manually triggering the action if needed
+  workflow_call:
+    inputs:
+      addon:
+        description: 'Addon to update (e.g. carconnectivity-addon-edge). If empty, updates both.'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -30,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        addon: [carconnectivity-addon, carconnectivity-addon-edge]
+        addon: ${{ inputs.addon && fromJSON(format('["{0}"]', inputs.addon)) || fromJSON('["carconnectivity-addon", "carconnectivity-addon-edge"]') }}
 
     steps:
       - name: Checkout repository

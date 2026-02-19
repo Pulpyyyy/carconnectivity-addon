@@ -3,7 +3,7 @@ permissions:
   contents: read
   packages: write
   id-token: write
-  
+
 on:
   push:
     branches:
@@ -14,9 +14,10 @@ on:
     types:
       - completed
   workflow_dispatch:
-  
+  workflow_call:
+
 jobs:
-  tag-only:
+  tag-normal:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -30,23 +31,21 @@ jobs:
       - name: Extract Version from YAML
         id: get_version
         run: |
-          # Extract version from local config.yaml file
-          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' carconnectivity-addon-edge/config.yaml | head -n 1)
-          
+          # Extract version from normal config.yaml
+          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' carconnectivity-addon/config.yaml | head -n 1)
+
           if [ -z "$VERSION" ]; then
-            echo "❌ Error: Version not found in YAML file"
+            echo "❌ Error: Version not found in normal config.yaml"
             exit 1
           fi
-          
-          # Add 'v' prefix for git tag
+
           TAG="v$VERSION"
-          
+
           echo "TAG=$TAG" >> $GITHUB_ENV
-          echo "✅ Version found: $TAG"
+          echo "✅ Normal version found: $TAG"
 
       - name: Push Tag
         run: |
-          # Check if tag already exists
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "⚠️  Tag $TAG already exists. Skipping."
           else
@@ -58,3 +57,42 @@ jobs:
             echo "✅ Tag $TAG pushed successfully"
           fi
 
+  tag-edge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Extract Version from YAML
+        id: get_version
+        run: |
+          # Extract version from edge config.yaml
+          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' carconnectivity-addon-edge/config.yaml | head -n 1)
+
+          if [ -z "$VERSION" ]; then
+            echo "❌ Error: Version not found in edge config.yaml"
+            exit 1
+          fi
+
+          TAG="v${VERSION}-edge"
+
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "✅ Edge version found: $TAG"
+
+      - name: Push Tag
+        run: |
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "⚠️  Tag $TAG already exists. Skipping."
+          else
+            echo "📌 Creating and pushing tag $TAG"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag $TAG
+            git push origin $TAG
+            echo "✅ Tag $TAG pushed successfully"
+          fi

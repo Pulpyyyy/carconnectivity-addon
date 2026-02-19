@@ -10,6 +10,7 @@ on:
     branches:
       - main  # Change this if your main branch has a different name
   workflow_dispatch: # Allows manually triggering the action if needed
+  workflow_call: # Called by orchestrator
 
 jobs:
   sync-directories:

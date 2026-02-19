@@ -13,6 +13,12 @@ on:
     tags:
       - '*'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      addon:
+        description: 'Addon to build (e.g. carconnectivity-addon-edge). If empty, builds both.'
+        required: false
+        type: string
   
 env:
   REPOSITORY: pulpyyyy
@@ -28,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        addon: [carconnectivity-addon, carconnectivity-addon-edge]
+        addon: ${{ inputs.addon && fromJSON(format('["{0}"]', inputs.addon)) || fromJSON('["carconnectivity-addon", "carconnectivity-addon-edge"]') }}
         
     steps:
       - name: Check out repository
