@@ -11,7 +11,8 @@ on:
       - completed
   push:
     tags:
-      - '*'
+      - 'v*'
+      - '!*-edge'
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -39,6 +40,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
 
       - name: Get information
         id: info
