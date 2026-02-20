@@ -19,6 +19,8 @@ jobs:
   autotag-edge:
     needs: update-edge
     uses: ./.github/workflows/autotag.yml
+    with:
+      target: edge
     secrets: inherit
 
   build-edge:
@@ -46,6 +48,8 @@ jobs:
     if: inputs.sync_edge_to_normal
     needs: update-normal
     uses: ./.github/workflows/autotag.yml
+    with:
+      target: normal
     secrets: inherit
 
   build-normal:

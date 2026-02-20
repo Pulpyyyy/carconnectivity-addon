@@ -10,10 +10,22 @@ on:
     types:
       - completed
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Which addon to tag'
+        type: choice
+        options: [edge, normal, both]
+        default: both
   workflow_call:
+    inputs:
+      target:
+        description: 'Which addon to tag'
+        type: string
+        default: both
 
 jobs:
   tag-normal:
+    if: inputs.target == 'normal' || inputs.target == 'both' || inputs.target == ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -54,6 +66,7 @@ jobs:
           fi
 
   tag-edge:
+    if: inputs.target == 'edge' || inputs.target == 'both' || inputs.target == ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
