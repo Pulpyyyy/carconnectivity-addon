@@ -67,3 +67,12 @@ jobs:
     with:
       addon: carconnectivity-addon
     secrets: inherit
+
+  release-normal:
+    needs: [autotag-normal, build-normal]
+    if: always() && needs.autotag-normal.result == 'success' && needs.build-normal.result == 'success'
+    uses: ./.github/workflows/pre-release.yml
+    with:
+      addon: carconnectivity-addon
+      prerelease: false
+    secrets: inherit
