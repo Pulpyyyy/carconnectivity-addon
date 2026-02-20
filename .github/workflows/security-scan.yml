@@ -15,6 +15,11 @@ on:
         description: 'Fail the job if vulnerabilities are found'
         type: boolean
         default: true
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
 
 env:
   REPOSITORY: pulpyyyy
@@ -43,6 +48,12 @@ jobs:
           echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
           echo "✅ Scanning: $IMAGE"
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -54,7 +65,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Upload Trivy results to GitHub Security tab
-        if: always()
+        if: always() && hashFiles('trivy-results.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
