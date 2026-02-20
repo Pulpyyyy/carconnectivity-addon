@@ -37,15 +37,14 @@ jobs:
     secrets: inherit
 
   update-normal:
-    if: inputs.sync_edge_to_normal
-    needs: sync-edge-to-normal
+    needs: [update-edge, sync-edge-to-normal]
+    if: always() && needs.update-edge.result == 'success' && (needs.sync-edge-to-normal.result == 'success' || needs.sync-edge-to-normal.result == 'skipped')
     uses: ./.github/workflows/update-build.yaml
     with:
       addon: carconnectivity-addon
     secrets: inherit
 
   autotag-normal:
-    if: inputs.sync_edge_to_normal
     needs: update-normal
     uses: ./.github/workflows/autotag.yml
     with:
@@ -53,7 +52,6 @@ jobs:
     secrets: inherit
 
   build-normal:
-    if: inputs.sync_edge_to_normal
     needs: update-normal
     uses: ./.github/workflows/builder.yml
     with:
