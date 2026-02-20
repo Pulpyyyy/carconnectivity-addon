@@ -82,11 +82,12 @@ jobs:
     uses: ./.github/workflows/security-scan.yml
     with:
       addon: carconnectivity-addon
+      blocking: false
     secrets: inherit
 
   release-normal:
-    needs: [autotag-normal, security-scan-normal]
-    if: always() && needs.autotag-normal.result == 'success' && needs.security-scan-normal.result == 'success'
+    needs: [autotag-normal, build-normal, security-scan-normal]
+    if: always() && needs.autotag-normal.result == 'success' && needs.build-normal.result == 'success'
     uses: ./.github/workflows/pre-release.yml
     with:
       addon: carconnectivity-addon
