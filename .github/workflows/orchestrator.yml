@@ -2,6 +2,12 @@ name: Release Pipeline
 
 on:
   workflow_dispatch:
+    inputs:
+      sync_edge_to_normal:
+        description: 'Sync edge to normal before building'
+        type: boolean
+        default: false
+        required: false
 
 jobs:
   update-edge:
@@ -23,12 +29,14 @@ jobs:
     secrets: inherit
 
   sync-edge-to-normal:
+    if: inputs.sync_edge_to_normal
     needs: update-edge
     uses: ./.github/workflows/sync.yml
     secrets: inherit
 
   build-normal:
-    needs: sync-edge-to-normal
+    needs: [update-edge, sync-edge-to-normal]
+    if: always() && needs.update-edge.result == 'success' && (needs.sync-edge-to-normal.result == 'success' || needs.sync-edge-to-normal.result == 'skipped')
     uses: ./.github/workflows/builder.yml
     with:
       addon: carconnectivity-addon
