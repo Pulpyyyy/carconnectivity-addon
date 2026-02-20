@@ -26,7 +26,7 @@ jobs:
       - name: Get latest base image version
         id: latest
         run: |
-          LATEST=$(curl -s https://api.github.com/repos/hassio-addons/addon-base/releases/latest \
+          LATEST=$(curl -sL https://api.github.com/repos/hassio-addons/addon-base/releases/latest \
             | grep '"tag_name"' \
             | sed 's/.*"tag_name": "v\?\(.*\)".*/\1/')
           if [ -z "$LATEST" ]; then
