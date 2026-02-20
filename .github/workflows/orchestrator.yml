@@ -46,6 +46,7 @@ jobs:
 
   autotag-normal:
     needs: update-normal
+    if: always() && needs.update-normal.result == 'success'
     uses: ./.github/workflows/autotag.yml
     with:
       target: normal
@@ -53,6 +54,7 @@ jobs:
 
   build-normal:
     needs: update-normal
+    if: always() && needs.update-normal.result == 'success'
     uses: ./.github/workflows/builder.yml
     with:
       addon: carconnectivity-addon
