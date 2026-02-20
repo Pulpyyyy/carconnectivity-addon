@@ -10,7 +10,12 @@ on:
         required: false
 
 jobs:
+  update-base:
+    uses: ./.github/workflows/update-base.yml
+    secrets: inherit
+
   update-edge:
+    needs: update-base
     uses: ./.github/workflows/update-build.yaml
     with:
       addon: carconnectivity-addon-edge

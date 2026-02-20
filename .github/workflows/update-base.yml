@@ -1,0 +1,107 @@
+name: Update base image version
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: write
+
+jobs:
+  update-base:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        addon: [carconnectivity-addon, carconnectivity-addon-edge]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get latest base image version
+        id: latest
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/hassio-addons/addon-base/releases/latest \
+            | grep '"tag_name"' \
+            | sed 's/.*"tag_name": "v\?\(.*\)".*/\1/')
+          if [ -z "$LATEST" ]; then
+            echo "❌ Could not fetch latest base version"
+            exit 1
+          fi
+          echo "VERSION=$LATEST" >> $GITHUB_OUTPUT
+          echo "🔍 Latest base version: $LATEST"
+
+      - name: Get current base image version
+        id: current
+        run: |
+          CURRENT=$(grep -oP 'ghcr\.io/hassio-addons/base:\K[0-9]+\.[0-9]+\.[0-9]+' ${{ matrix.addon }}/build.yaml | head -n 1)
+          echo "VERSION=$CURRENT" >> $GITHUB_OUTPUT
+          echo "📌 Current base version: $CURRENT"
+
+      - name: Update build.yaml
+        run: |
+          LATEST="${{ steps.latest.outputs.VERSION }}"
+          CURRENT="${{ steps.current.outputs.VERSION }}"
+          if [ "$LATEST" = "$CURRENT" ]; then
+            echo "✅ Base image already up to date ($CURRENT)"
+            echo "CHANGES=false" >> $GITHUB_ENV
+          else
+            sed -i "s|ghcr.io/hassio-addons/base:.*|ghcr.io/hassio-addons/base:$LATEST|g" ${{ matrix.addon }}/build.yaml
+            echo "🔄 Base version: $CURRENT → $LATEST"
+            echo "- **hassio-addons/base** → [$LATEST](https://github.com/hassio-addons/addon-base/releases/tag/v$LATEST)" >> ${{ matrix.addon }}/bot_changelog.md
+            echo "CHANGES=true" >> $GITHUB_ENV
+          fi
+
+      - name: Increment version ${{ matrix.addon }}
+        if: env.CHANGES == 'true'
+        run: |
+          version=$(grep -E '^version:' "carconnectivity-addon-edge/config.yaml" | awk '{print $2}' | sed 's/"//g')
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          new_version="${major}.${minor}.${patch}"
+          sed -i "s/^version: .*/version: $new_version/" "${{ matrix.addon }}/config.yaml"
+          echo "Version updated: $version -> $new_version"
+          echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
+
+          cp ${{ matrix.addon }}/CHANGELOG.md ${{ matrix.addon }}/old_CHANGELOG.md
+          echo -e "## $new_version\n" > ${{ matrix.addon }}/CHANGELOG.md
+
+          if [ -f ${{ matrix.addon }}/next_CHANGELOG.md ] && [ -s ${{ matrix.addon }}/next_CHANGELOG.md ]; then
+            echo "### 🚀 New Features" >> ${{ matrix.addon }}/CHANGELOG.md
+            cat ${{ matrix.addon }}/next_CHANGELOG.md >> ${{ matrix.addon }}/CHANGELOG.md
+            if [ "${{ matrix.addon }}" = "carconnectivity-addon-edge" ]; then
+              cat ${{ matrix.addon }}/next_CHANGELOG.md >> carconnectivity-addon/next_CHANGELOG.md
+            fi
+            > ${{ matrix.addon }}/next_CHANGELOG.md
+          fi
+
+          echo -e "\n### 🛠️ Fixes & Updates\n" >> ${{ matrix.addon }}/CHANGELOG.md
+          cat ${{ matrix.addon }}/bot_changelog.md >> ${{ matrix.addon }}/CHANGELOG.md
+          rm ${{ matrix.addon }}/bot_changelog.md
+
+          if [ -f ${{ matrix.addon }}/fix_CHANGELOG.md ] && [ -s ${{ matrix.addon }}/fix_CHANGELOG.md ]; then
+            cat ${{ matrix.addon }}/fix_CHANGELOG.md >> ${{ matrix.addon }}/CHANGELOG.md
+            if [ "${{ matrix.addon }}" = "carconnectivity-addon-edge" ]; then
+              cat ${{ matrix.addon }}/fix_CHANGELOG.md >> carconnectivity-addon/fix_CHANGELOG.md
+            fi
+            > ${{ matrix.addon }}/fix_CHANGELOG.md
+          fi
+
+          echo -e "\n --- \n" >> ${{ matrix.addon }}/CHANGELOG.md
+          cat ${{ matrix.addon }}/old_CHANGELOG.md >> ${{ matrix.addon }}/CHANGELOG.md
+          rm ${{ matrix.addon }}/old_CHANGELOG.md
+
+      - name: Commit and push changes ${{ matrix.addon }}
+        if: env.CHANGES == 'true'
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git pull
+          git add .
+          git diff --cached --quiet || git commit -m "Update base image to ${{ steps.latest.outputs.VERSION }}"
+          git push
