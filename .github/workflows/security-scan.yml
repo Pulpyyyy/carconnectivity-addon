@@ -45,7 +45,7 @@ jobs:
             echo "❌ Version not found in ${{ inputs.addon }}/config.yaml"
             exit 1
           fi
-          IMAGE_TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' ${{ inputs.addon }}/config.yaml | head -n 1)
+          IMAGE_TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' ${{ inputs.addon }}/config.yaml | head -n 1 | tr -d '"')
           if [ -z "$IMAGE_TEMPLATE" ]; then
             echo "❌ Image not found in ${{ inputs.addon }}/config.yaml"
             exit 1
