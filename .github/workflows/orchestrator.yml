@@ -30,6 +30,14 @@ jobs:
       addon: carconnectivity-addon-edge
     secrets: inherit
 
+  pre-release-edge:
+    needs: [autotag-edge, build-edge]
+    uses: ./.github/workflows/pre-release.yml
+    with:
+      addon: carconnectivity-addon-edge
+      prerelease: true
+    secrets: inherit
+
   sync-edge-to-normal:
     if: inputs.sync_edge_to_normal
     needs: update-edge

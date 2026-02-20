@@ -1,0 +1,92 @@
+name: Create Pre-Release
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: 'Addon directory (e.g. carconnectivity-addon-edge)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      addon:
+        description: 'Addon directory (e.g. carconnectivity-addon-edge)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        type: boolean
+        default: true
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get version and tag
+        id: info
+        run: |
+          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' ${{ inputs.addon }}/config.yaml | head -n 1)
+          if [ -z "$VERSION" ]; then
+            echo "❌ Version not found in ${{ inputs.addon }}/config.yaml"
+            exit 1
+          fi
+
+          if [[ "${{ inputs.addon }}" == *"edge"* ]]; then
+            TAG="v${VERSION}-edge"
+          else
+            TAG="v${VERSION}"
+          fi
+
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+          echo "✅ Version: $TAG"
+
+      - name: Extract latest changelog entry
+        id: changelog
+        run: |
+          CHANGELOG="${{ inputs.addon }}/CHANGELOG.md"
+          if [ ! -f "$CHANGELOG" ]; then
+            echo "⚠️ No CHANGELOG.md found, using empty notes."
+            echo "" > /tmp/release_notes.md
+          else
+            awk '/^## /{if(found) exit; found=1; next} found && /^ --- /{exit} found{print}' "$CHANGELOG" \
+              | sed '/^[[:space:]]*$/d' \
+              > /tmp/release_notes.md
+          fi
+          echo "📝 Release notes:"
+          cat /tmp/release_notes.md
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ steps.info.outputs.TAG }}"
+          PRERELEASE_FLAG=""
+          if [ "${{ inputs.prerelease }}" = "true" ]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
+
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "⚠️ Release $TAG already exists. Skipping."
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes-file /tmp/release_notes.md \
+              --verify-tag \
+              $PRERELEASE_FLAG
+            echo "✅ Release $TAG created."
+          fi
