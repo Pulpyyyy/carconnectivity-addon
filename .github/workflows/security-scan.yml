@@ -21,22 +21,23 @@ on:
       DOCKERHUB_TOKEN:
         required: true
 
-env:
-  REPOSITORY: pulpyyyy
-
 jobs:
   trivy-scan:
-    name: Trivy image scan
+    name: Trivy image scan (${{ matrix.arch }})
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [amd64, aarch64]
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Get image tag
+      - name: Get image ref
         id: info
         run: |
           VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' ${{ inputs.addon }}/config.yaml | head -n 1)
@@ -44,7 +45,12 @@ jobs:
             echo "❌ Version not found in ${{ inputs.addon }}/config.yaml"
             exit 1
           fi
-          IMAGE="${{ env.REPOSITORY }}/${{ inputs.addon }}:$VERSION"
+          IMAGE_TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' ${{ inputs.addon }}/config.yaml | head -n 1)
+          if [ -z "$IMAGE_TEMPLATE" ]; then
+            echo "❌ Image not found in ${{ inputs.addon }}/config.yaml"
+            exit 1
+          fi
+          IMAGE="${IMAGE_TEMPLATE/\{arch\}/${{ matrix.arch }}}:$VERSION"
           echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
           echo "✅ Scanning: $IMAGE"
 
@@ -69,4 +75,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
-          category: trivy-${{ inputs.addon }}
+          category: trivy-${{ inputs.addon }}-${{ matrix.arch }}
