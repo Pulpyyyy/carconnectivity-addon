@@ -38,6 +38,14 @@ jobs:
       prerelease: true
     secrets: inherit
 
+  security-scan-edge:
+    needs: build-edge
+    uses: ./.github/workflows/security-scan.yml
+    with:
+      addon: carconnectivity-addon-edge
+      blocking: false
+    secrets: inherit
+
   sync-edge-to-normal:
     if: inputs.sync_edge_to_normal
     needs: update-edge
@@ -68,9 +76,17 @@ jobs:
       addon: carconnectivity-addon
     secrets: inherit
 
+  security-scan-normal:
+    needs: build-normal
+    if: always() && needs.build-normal.result == 'success'
+    uses: ./.github/workflows/security-scan.yml
+    with:
+      addon: carconnectivity-addon
+    secrets: inherit
+
   release-normal:
-    needs: [autotag-normal, build-normal]
-    if: always() && needs.autotag-normal.result == 'success' && needs.build-normal.result == 'success'
+    needs: [autotag-normal, security-scan-normal]
+    if: always() && needs.autotag-normal.result == 'success' && needs.security-scan-normal.result == 'success'
     uses: ./.github/workflows/pre-release.yml
     with:
       addon: carconnectivity-addon
