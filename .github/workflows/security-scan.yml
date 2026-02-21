@@ -67,6 +67,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Purge existing Trivy analyses
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPO="${{ github.repository }}"
+          CATEGORY="trivy-${{ inputs.addon }}-${{ matrix.arch }}"
+          echo "🗑️ Purging analyses for category: $CATEGORY"
+          IDS=$(gh api "repos/$REPO/code-scanning/analyses" --paginate \
+            -q ".[] | select(.category == \"$CATEGORY\") | .id" 2>/dev/null || true)
+          if [ -z "$IDS" ]; then
+            echo "No existing analyses found"
+          else
+            echo "$IDS" | while read id; do
+              gh api --method DELETE "repos/$REPO/code-scanning/analyses/$id" \
+                -f confirm_delete=true \
+                && echo "✅ Deleted $id" || echo "⚠️ Failed $id"
+            done
+          fi
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         env:
