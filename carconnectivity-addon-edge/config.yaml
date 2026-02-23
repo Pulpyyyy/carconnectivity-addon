@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on Edge"
-version: 0.6.7
+version: 0.6.8
 slug: "carconnectivity-addon-edge"
 description: "⚠️EDGE VERSION⚠️ CarConnectivity Add-on. ⚡ For easy setup: Click OPEN WEB UI → add '/config-ui' to URL. MQTT required."
 image: "docker.io/pulpyyyy/carconnectivity-addon-edge-{arch}"
