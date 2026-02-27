@@ -18,6 +18,9 @@ configuration:
       interval:
         name: "Refresh interval"
         description: "Interval in seconds. Be aware of API quotas: once exceeded, the API is temporarily blocked."
+      country:
+        name: "Country"
+        description: "Select the country region (us or ca) for volkswagen_na."
 
   # --- BRAND 2 GROUP ---
   brand2:
@@ -38,6 +41,9 @@ configuration:
       interval:
         name: "Refresh interval"
         description: "Interval in seconds. Be aware of API quotas."
+      country:
+        name: "Country"
+        description: "Select the country region (us or ca) for volkswagen_na."
 
   # --- VOLVO GROUP ---
   volvo:
