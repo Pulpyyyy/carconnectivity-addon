@@ -13,7 +13,8 @@
                     "password": "{{ .brand1.password }}",
                     "interval": {{ .brand1.interval }},
                     "spin": "{{ .brand1.spin }}",
-                    "api_log_level": "{{ .logs.api_level }}"
+                    "api_log_level": "{{ .logs.api_level }}"{{ if .brand1.country }},
+                    "country": "{{ .brand1.country }}"{{ end }}
                 }
             }
             {{- end }}
@@ -30,7 +31,8 @@
                     "password": "{{ .brand2.password }}",
                     "interval": {{ .brand2.interval }},
                     "spin": "{{ .brand2.spin }}",
-                    "api_log_level": "{{ .logs.api_level }}"
+                    "api_log_level": "{{ .logs.api_level }}"{{ if .brand2.country }},
+                    "country": "{{ .brand2.country }}"{{ end }}
                 }
             }
             {{- end }}
