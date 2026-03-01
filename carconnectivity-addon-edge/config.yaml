@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on Edge"
-version: 0.6.8
+version: 0.6.10
 slug: "carconnectivity-addon-edge"
 description: "⚠️EDGE VERSION⚠️ CarConnectivity Add-on Edge, may be unstable !"
 image: "docker.io/pulpyyyy/carconnectivity-addon-edge-{arch}"

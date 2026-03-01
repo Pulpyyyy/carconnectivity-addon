@@ -44,14 +44,14 @@ Preencha apenas as configurações para as marcas de veículos que você possui.
 ### 1. Selecionando sua marca de veículo
 
 Escolha o fabricante correspondente ao seu veículo das marcas suportadas:
-
--   `Seat`
--   `Cupra`
--   `Skoda`
--   `Volkswagen`
--   `Tronity`
--   `Volvo`
--   `Audi`
+- `Seat`
+- `Cupra`
+- `Skoda`
+- `Volkswagen`
+- `Tronity`
+- `Volvo`
+- `Audi`
+- `Volkswagen North America` *(país definido automaticamente pelas configurações de país do seu Home Assistant — uspor padrão,ca se o seu HA estiver configurado para o Canadá)*
 
 Se você possui vários veículos de diferentes marcas, poderá configurar várias seções.
 

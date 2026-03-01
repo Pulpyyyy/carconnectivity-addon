@@ -147,9 +147,10 @@ trap 'term_handler' TERM INT
 
 mkdir -p ${NGINX_CACHE} && chown -R nginx:nginx ${NGINX_CACHE}
 
-# Get the locale
+# Get the locale (also sets global HA_COUNTRY)
 LOCALE=$(get_ha_locale) || LOCALE="en_US"
-color_echo "${CYAN}" "🌍 Detected locale: ${LOCALE}"
+HA_COUNTRY="${LOCALE#*_}"
+color_echo "${CYAN}" "🌍 Detected locale: ${LOCALE} / country: ${HA_COUNTRY}"
 
 if [ "${EXPERT_MODE}" = "true" ]; then
     color_echo "${YELLOW}" "⚠️ Expert mode is enabled. ⚠️"
@@ -183,7 +184,9 @@ else
     color_echo "${BLUE}" "🛠️ Generating configuration..."
     tempio -conf "${OPTIONS_JSON}" -template carconnectivity.json.gtpl -out "${UI_NAME}"
     sed -i "s/\"locale\": \"en_US\"/\"locale\": \"$LOCALE\"/" "$UI_NAME"
-    
+    if [ "${HA_COUNTRY}" = "CA" ]; then
+        sed -i "s/\"country\": \"us\"/\"country\": \"ca\"/" "$UI_NAME"
+    fi
     if validate_json "${UI_NAME}"; then
         jq . "${UI_NAME}" > "${CONFIG_FILE}"
     else
