@@ -2,7 +2,6 @@ name: "CarConnectivity Add-on Edge"
 version: 0.6.10
 slug: "carconnectivity-addon-edge"
 description: "⚠️EDGE VERSION⚠️ CarConnectivity Add-on Edge, may be unstable !"
-image: "docker.io/pulpyyyy/carconnectivity-addon-edge-{arch}"
 panel_icon: "mdi:car-wireless"
 map:
   - addon_config:rw
@@ -14,6 +13,7 @@ init: false
 hassio_api: true
 hassio_role: homeassistant
 homeassistant_api: true
+host_network: true
 options:
   brand1:
     type: "seat"
@@ -21,12 +21,14 @@ options:
     password: "password"
     spin: "1234"
     interval: 600
+    country: "us"
   brand2:
     type: "skoda"
     username: ""
     password: "password"
     spin: "1234"
     interval: 600
+    country: "us"
   volvo:
     key_primary: ""
     key_secondary: ""
@@ -56,12 +58,14 @@ schema:
     password: password?
     spin: match(^\d{4}$)?
     interval: int(60,3600)?
+    country: list(us|ca)?
   brand2:
     type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na)
     username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
     password: password?
     spin: match(^\d{4}$)?
     interval: int(60,3600)?
+    country: list(us|ca)?
   volvo:
     key_primary: str?
     key_secondary: str?
