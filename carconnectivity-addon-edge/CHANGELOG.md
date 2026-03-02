@@ -1,3 +1,23 @@
+## 0.6.11
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → repository.json:}
+- **CarConnectivity-connector-skoda** → repository.json:}
+- **CarConnectivity-connector-audi** → repository.json:}
+- **CarConnectivity-connector-volkswagen** → repository.json:}
+- **CarConnectivity-connector-volkswagen-na** → repository.json:}
+- **CarConnectivity-connector-tronity** → repository.json:}
+- **CarConnectivity-connector-volvo** → repository.json:}
+- **CarConnectivity-plugin-abrp** → repository.json:}
+- **CarConnectivity-plugin-mqtt** → repository.json:}
+- **CarConnectivity-plugin-mqtt_homeassistant** → repository.json:}
+- **CarConnectivity** → repository.json:}
+- **CarConnectivity-plugin-webui** → repository.json:}
+
+ --- 
+
 ## 0.6.10
 
 ### 🚀 New Features
