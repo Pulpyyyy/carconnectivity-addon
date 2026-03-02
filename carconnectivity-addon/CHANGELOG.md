@@ -1,3 +1,51 @@
+## 0.6.12
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → v0.5.2
+- **CarConnectivity-connector-skoda** → v0.11.8
+- **CarConnectivity-connector-audi** → v0.3.0
+- **CarConnectivity-connector-volkswagen** → v0.10.4
+- **CarConnectivity-connector-volkswagen-na** → v0.1.15
+- **CarConnectivity-connector-tronity** → v0.7.1
+- **CarConnectivity-connector-volvo** → v0.1a2
+- **CarConnectivity-plugin-abrp** → v0.8.1
+- **CarConnectivity-plugin-mqtt** → v0.9.2
+- **CarConnectivity-plugin-mqtt_homeassistant** → v0.6.4
+- **CarConnectivity** → v0.11.8
+- **CarConnectivity-plugin-webui** → v0.7.1
+
+ --- 
+
+## 0.6.11
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → repository.json:}
+- **CarConnectivity-connector-skoda** → repository.json:}
+- **CarConnectivity-connector-audi** → repository.json:}
+- **CarConnectivity-connector-volkswagen** → repository.json:}
+- **CarConnectivity-connector-volkswagen-na** → repository.json:}
+- **CarConnectivity-connector-tronity** → repository.json:}
+- **CarConnectivity-connector-volvo** → repository.json:}
+- **CarConnectivity-plugin-abrp** → repository.json:}
+- **CarConnectivity-plugin-mqtt** → repository.json:}
+- **CarConnectivity-plugin-mqtt_homeassistant** → repository.json:}
+- **CarConnectivity** → repository.json:}
+- **CarConnectivity-plugin-webui** → repository.json:}
+
+ --- 
+
+## 0.6.10
+
+### 🚀 New Features
+
+- Automatically detects US/CA settings for CarConnectivity-connector-volkswagen-na
+
+ --- 
+
 ## 0.6.9
 
 
@@ -949,5 +997,7 @@ No audi connector yet, only in edge
 ## 0.0.1
 
 🎉 **Initial release!** 🚀
+
+
 
 

@@ -48,14 +48,14 @@ Remplissez uniquement les champs relatifs aux marques de véhicules que vous pos
 ### 1. Sélection de votre marque de véhicule
 
 Choisissez le fabricant correspondant à votre véhicule dans les marques prises en charge:
-
--   `Seat`
--   `Cupra`
--   `Skoda`
--   `Volkswagen`
--   `Tronity`
--   `Volvo`
--   `Audi`
+- `Seat`
+- `Cupra`
+- `Skoda`
+- `Volkswagen`
+- `Tronity`
+- `Volvo`
+- `Audi`
+- `Volkswagen North America` *(pays défini automatiquement par votre paramètre de pays Home Assistant — « us » par défaut, « ca » si votre HA est configuré pour le Canada)*
 
 Si vous possédez plusieurs véhicules à partir de différentes marques, vous pouvez configurer plusieurs sections.
 

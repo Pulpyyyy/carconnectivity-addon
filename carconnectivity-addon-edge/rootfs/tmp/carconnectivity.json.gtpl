@@ -9,6 +9,9 @@
                     {{- if or (eq .brand1.type "seat") (eq .brand1.type "cupra") }}
                     "brand": "{{ .brand1.type }}",
                     {{- end }}
+                    {{- if eq .brand1.type "volkswagen_na" }}
+                    "country": "us",
+                    {{- end }}
                     "username": "{{ .brand1.username }}",
                     "password": "{{ .brand1.password }}",
                     "interval": {{ .brand1.interval }},
@@ -26,6 +29,9 @@
                 "config": {
                     {{- if or (eq .brand2.type "seat") (eq .brand2.type "cupra") }}
                     "brand": "{{ .brand2.type }}",
+                    {{- end }}
+                    {{- if eq .brand2.type "volkswagen_na" }}
+                    "country": "us",
                     {{- end }}
                     "username": "{{ .brand2.username }}",
                     "password": "{{ .brand2.password }}",
