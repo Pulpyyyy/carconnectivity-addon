@@ -43,18 +43,21 @@ jobs:
 
           get_latest_version() {
               repo_url=$1
-
-              all_tags=$(git ls-remote --tags "$repo_url" | awk '{print $2}' | sed 's|refs/tags/||' | grep -v '\^{}' | sort -rV)
-
-              if [ "${{ matrix.addon }}" == "carconnectivity-addon" ]; then
-                  latest_version=$(echo "$all_tags" | grep -E '^v?[0-9]+(\.[0-9]+)*$' | head -n 1)
-                  [ -z "$latest_version" ] && latest_version=$(echo "$all_tags" | head -n 1)
+          
+              all_tags=$(git ls-remote --tags "$repo_url" \
+                  | awk '{print $2}' \
+                  | sed 's|refs/tags/||' \
+                  | grep -rv '\^{}')
+          
+              stable_tags=$(echo "$all_tags" | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$')
+              if [ -n "$stable_tags" ]; then
+                  latest_version=$(echo "$stable_tags" | sort -rV | head -n 1)
               else
-                  latest_version=$(echo "$all_tags" | head -n 1)
+                  latest_version=$(echo "$all_tags" | sort -rV | head -n 1)
               fi
-
               echo "$latest_version"
           }
+
 
           echo "Fetching latest versions for submodules"
 
