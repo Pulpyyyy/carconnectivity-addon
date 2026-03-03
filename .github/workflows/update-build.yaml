@@ -3,12 +3,12 @@ name: Update build.yaml on new submodule release
 on:
   push:
     branches:
-      - dependabot/submodules/** # Triggered by Dependabot when a submodule is updated
-  workflow_dispatch: # Allows manually triggering the action if needed
+      - dependabot/submodules/**
+  workflow_dispatch:
   workflow_call:
     inputs:
       addon:
-        description: 'Addon to update (e.g. carconnectivity-addon-edge). If empty, updates both.'
+        description: "Addon to update (e.g. carconnectivity-addon-edge). If empty, updates both."
         required: false
         type: string
 
@@ -43,23 +43,25 @@ jobs:
 
           get_latest_version() {
               repo_url=$1
-
-              # Lightweight: no clone, just list remote tags
-              all_tags=$(git ls-remote --tags "$repo_url" | awk '{print $2}' | sed 's|refs/tags/||' | grep -v '\^{}' | sort -rV)
-
-              if [ "${{ matrix.addon }}" == "carconnectivity-addon" ]; then
-                  latest_version=$(echo "$all_tags" | grep -E '^v?[0-9]+(\.[0-9]+)*$' | head -n 1)
-                  if [ -z "$latest_version" ]; then
-                      latest_version=$(echo "$all_tags" | head -n 1)
-                  fi
+          
+              all_tags=$(git ls-remote --tags "$repo_url" \
+                | awk '{print $2}' \
+                | sed 's|refs/tags/||' \
+                | grep -v '\^{}' \
+                | sort -rV)
+          
+              stable_tags=$(echo "$all_tags" | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$')
+              if [ -n "$stable_tags" ]; then
+                  latest_version=$(echo "$stable_tags" | sort -rV | head -n 1)
               else
-                  latest_version=$(echo "$all_tags" | head -n 1)
+                  latest_version=$(echo "$all_tags" | sort -rV | head -n 1)
               fi
-
               echo "$latest_version"
           }
 
+
           echo "Fetching latest versions for submodules"
+
           for repo_entry in $SUBMODULE_REPOS; do
             name=$(echo "$repo_entry" | cut -d= -f1)
             repo=$(echo "$repo_entry" | cut -d= -f2)
@@ -85,85 +87,72 @@ jobs:
 
             if [ -n "$old_version" ] && [ "$old_version" != "$new_version" ]; then
               echo "🔄 ${component}_VERSION: $old_version → $new_version"
-              echo "- **${repo_name}** → [$new_version](${repo_url})" >> ${addon}/bot_changelog.md
+              echo "- **${repo_name}** → $new_version" >> ${addon}/bot_changelog.md
             fi
           }
-            
+
           # Iterate through a list of components and compare their versions
-          for component in SEAT SKODA AUDI VW VWNA TRONITY VOLVO ABRP MQTT MQTTHA CC WEBUI; do
-            compare_versions "${component}" "${{ matrix.addon }}"
+          for component in $(echo "$SUBMODULE_REPOS" | cut -d= -f1); do
+            compare_versions "$component" "${{ matrix.addon }}"
           done
 
       - name: Update build.yaml
         run: |
           echo "Updating build.yaml with new versions"
 
-          # Iterate through a list of components and update their versions in build.yaml
-          for component in SEAT SKODA AUDI VW VWNA TRONITY VOLVO ABRP MQTT MQTTHA CC WEBUI; do
+          for component in $(echo "$SUBMODULE_REPOS" | cut -d= -f1); do
             new_version_var="LATEST_${component}_VERSION_${{ matrix.addon }}"
             new_version=$(printenv $new_version_var)
 
             sed -i "s/${component}_VERSION: .*/${component}_VERSION: \"$new_version\"/" ${{ matrix.addon }}/build.yaml
           done
 
-          # Check if build.yaml has changed after updates
           if git diff --quiet ${{ matrix.addon }}/build.yaml; then
             echo "No update needed."
             echo "CHANGES=false" >> $GITHUB_ENV
           else
             echo "Changes detected."
             echo "CHANGES=true" >> $GITHUB_ENV
-          fi || true # Prevent exit failure
+          fi
 
       - name: Increment version ${{ matrix.addon }}
         if: env.CHANGES == 'true'
         run: |
-          # Extract current version from config.yaml from edge, so it's sync when main is updated
           version=$(grep -E '^version:' "carconnectivity-addon-edge/config.yaml" | awk '{print $2}' | sed 's/"//g')
-          # Split the version into parts (x.y.z)
           IFS='.' read -r major minor patch <<< "$version"
-          # Increment the patch version (last number)
           patch=$((patch + 1))
-          # Construct the new version string
           new_version="${major}.${minor}.${patch}"
-          # Update the version in config.yaml
+
           sed -i "s/^version: .*/version: $new_version/" "${{ matrix.addon }}/config.yaml"
           echo "Version updated: $version -> $new_version"
           echo "NEW_VERSION=$new_version" >> $GITHUB_ENV
 
-          # Backup for later usage
           cp ${{ matrix.addon }}/CHANGELOG.md ${{ matrix.addon }}/old_CHANGELOG.md
 
-          # Append the new version header section to the changelog
           echo -e "## $new_version\n" > ${{ matrix.addon }}/CHANGELOG.md
 
           if [ -f ${{ matrix.addon }}/next_CHANGELOG.md ] && [ -s ${{ matrix.addon }}/next_CHANGELOG.md ]; then
             echo "### 🚀 New Features" >> ${{ matrix.addon }}/CHANGELOG.md
             cat ${{ matrix.addon }}/next_CHANGELOG.md >> ${{ matrix.addon }}/CHANGELOG.md
-            # append to main
             if [ "${{ matrix.addon }}" = "carconnectivity-addon-edge" ]; then
               cat ${{ matrix.addon }}/next_CHANGELOG.md >> carconnectivity-addon/next_CHANGELOG.md
             fi
             > ${{ matrix.addon }}/next_CHANGELOG.md
           fi
 
-          # Append build/fixes section to the changelog
           echo -e "\n### 🛠️ Fixes & Updates\n" >> ${{ matrix.addon }}/CHANGELOG.md  
           cat ${{ matrix.addon }}/bot_changelog.md >> ${{ matrix.addon }}/CHANGELOG.md
           rm ${{ matrix.addon }}/bot_changelog.md
 
           if [ -f ${{ matrix.addon }}/fix_CHANGELOG.md ] && [ -s ${{ matrix.addon }}/fix_CHANGELOG.md ]; then
             cat ${{ matrix.addon }}/fix_CHANGELOG.md >> ${{ matrix.addon }}/CHANGELOG.md
-            # append to main
             if [ "${{ matrix.addon }}" = "carconnectivity-addon-edge" ]; then
               cat ${{ matrix.addon }}/fix_CHANGELOG.md >> carconnectivity-addon/fix_CHANGELOG.md
             fi
             > ${{ matrix.addon }}/fix_CHANGELOG.md
           fi
+
           echo -e "\n --- \n" >> ${{ matrix.addon }}/CHANGELOG.md
-
-
-          # Append previous changelog
           cat ${{ matrix.addon }}/old_CHANGELOG.md >> ${{ matrix.addon }}/CHANGELOG.md
           rm ${{ matrix.addon }}/old_CHANGELOG.md
 
@@ -176,4 +165,3 @@ jobs:
           git add .
           git diff --cached --quiet || git commit -m "Update build.yaml with latest submodule versions"
           git push
-

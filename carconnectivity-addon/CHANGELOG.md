@@ -1,3 +1,20 @@
+## 0.6.11
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-volkswagen-na** → v0.1.16
+
+ --- 
+
+## 0.6.10
+
+### 🚀 New Features
+
+- Automatically detects US/CA settings for CarConnectivity-connector-volkswagen-na
+
+ --- 
+
 ## 0.6.9
 
 
@@ -949,5 +966,8 @@ No audi connector yet, only in edge
 ## 0.0.1
 
 🎉 **Initial release!** 🚀
+
+
+
 
 

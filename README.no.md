@@ -44,14 +44,14 @@ Bare fyll ut innstillingene for merkevarene du eier.**La alle andre felt tomme.*
 ### 1. Valg av kjøretøymerke
 
 Velg produsenten som tilsvarer kjøretøyet ditt fra de støttede merkene:
-
--   `Seat`
--   `Cupra`
--   `Skoda`
--   `Volkswagen`
--   `Tronity`
--   `Volvo`
--   `Audi`
+- `Seat`
+- `Cupra`
+- `Skoda`
+- `Volkswagen`
+- `Tronity`
+- `Volvo`
+- `Audi`
+- `Volkswagen North America` *(land settes automatisk fra din Home Assistant-landsinnstilling — ussom standard,ca hvis din HA er konfigurert for Canada)*
 
 Hvis du eier flere kjøretøyer fra forskjellige merker, kan du konfigurere flere seksjoner.
 

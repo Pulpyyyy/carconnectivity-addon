@@ -54,7 +54,7 @@ Choose the manufacturer corresponding to your vehicle from the supported brands:
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America`
+- `Volkswagen North America` *(country automatically set from your Home Assistant country setting — `us` by default, `ca` if your HA is configured for Canada)*
 
 If you own multiple vehicles from different brands, you can configure multiple sections.
 
