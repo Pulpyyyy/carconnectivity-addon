@@ -1,3 +1,13 @@
+## 0.6.13
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → v0.6
+- **CarConnectivity-connector-skoda** → v0.12
+
+ --- 
+
 ## 0.6.12
 
 
