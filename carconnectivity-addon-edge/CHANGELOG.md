@@ -1,3 +1,12 @@
+## 0.6.15
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → v0.12.3
+
+ --- 
+
 ## 0.6.14
 
 
