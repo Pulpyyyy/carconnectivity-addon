@@ -1,3 +1,12 @@
+## 0.6.19
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → v0.6.1a3
+
+ --- 
+
 ## 0.6.18
 
 
