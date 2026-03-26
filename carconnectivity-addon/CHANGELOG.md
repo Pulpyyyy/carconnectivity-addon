@@ -1,12 +1,3 @@
-## 0.6.21
-
-
-### 🛠️ Fixes & Updates
-
-- **CarConnectivity-connector-volvo** → 
-
- --- 
-
 ## 0.6.20
 
 
