@@ -45,27 +45,46 @@ jobs:
               repo_url=$1
               is_edge=$2
           
-              # Liste triée du plus récent au plus ancien
-              all_tags=$(git ls-remote --tags "$repo_url" \
+              # Récupération des tags
+              tags=$(git ls-remote --tags "$repo_url" \
                   | awk '{print $2}' \
                   | sed 's|refs/tags/||' \
-                  | grep -v '\^{}' \
-                  | sort -rV)
+                  | grep -v '\^{}')
+          
+              # Normalisation pour tri SemVer correct (stable > prerelease)
+              normalize() {
+                  local t="$1"
+                  local clean="${t#v}"
+          
+                  if [[ "$clean" =~ ^([0-9]+\.[0-9]+\.[0-9]+)(.*)$ ]]; then
+                      local base="${BASH_REMATCH[1]}"
+                      local suffix="${BASH_REMATCH[2]}"
+          
+                      if [[ -z "$suffix" ]]; then
+                          # stable = suffix high pour trier après les prereleases
+                          echo "${base}-zzz $t"
+                      else
+                          # prerelease = normal
+                          echo "${base}-${suffix} $t"
+                      fi
+                  else
+                      echo "$clean $t"
+                  fi
+              }
+          
+              # Normalisation + tri du plus récent au plus ancien
+              sorted=$(echo "$tags" | while read -r t; do normalize "$t"; done | sort -rV)
           
               if [ "$is_edge" = "true" ]; then
-                  latest_version=$(echo "$all_tags" | head -n 1)
+                  # EDGE = premier tag trié
+                  latest_version=$(echo "$sorted" | head -n 1 | awk '{print $2}')
               else
-                  stable_tags=$(echo "$all_tags" | grep -E '^v?[0-9]+(\.[0-9]+){0,2}$')
-                  if [ -n "$stable_tags" ]; then
-                      latest_version=$(echo "$stable_tags" | head -n 1)
-                  else
-                      latest_version=$(echo "$all_tags" | head -n 1)
-                  fi
+                  # STABLE = premières lignes contenant 'zzz' = versions finales
+                  latest_version=$(echo "$sorted" | grep "zzz" | head -n 1 | awk '{print $2}')
               fi
           
               echo "$latest_version"
           }
-
 
           echo "Fetching latest versions for submodules"
 
