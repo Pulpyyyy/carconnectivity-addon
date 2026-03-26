@@ -44,23 +44,25 @@ jobs:
           get_latest_version() {
               repo_url=$1
               is_edge=$2
-
+          
+              # Liste triée du plus récent au plus ancien
               all_tags=$(git ls-remote --tags "$repo_url" \
-                | awk '{print $2}' \
-                | sed 's|refs/tags/||' \
-                | grep -v '\^{}' \
-                | sort -rV)
-
+                  | awk '{print $2}' \
+                  | sed 's|refs/tags/||' \
+                  | grep -v '\^{}' \
+                  | sort -rV)
+          
               if [ "$is_edge" = "true" ]; then
-                  latest_version=$(echo "$all_tags" | sort -rV | head -n 1)
+                  latest_version=$(echo "$all_tags" | head -n 1)
               else
                   stable_tags=$(echo "$all_tags" | grep -E '^v?[0-9]+(\.[0-9]+){0,2}$')
                   if [ -n "$stable_tags" ]; then
-                      latest_version=$(echo "$stable_tags" | sort -rV | head -n 1)
+                      latest_version=$(echo "$stable_tags" | head -n 1)
                   else
-                      latest_version=$(echo "$all_tags" | sort -rV | head -n 1)
+                      latest_version=$(echo "$all_tags" | head -n 1)
                   fi
               fi
+          
               echo "$latest_version"
           }
 
