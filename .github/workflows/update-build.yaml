@@ -45,13 +45,13 @@ jobs:
               repo_url=$1
               is_edge=$2
           
-              # Récupération des tags
+              # Récupération des tags bruts
               tags=$(git ls-remote --tags "$repo_url" \
                   | awk '{print $2}' \
                   | sed 's|refs/tags/||' \
                   | grep -v '\^{}')
           
-              # Normalisation pour tri SemVer correct (stable > prerelease)
+              # Fonction de normalisation pour trier correctement (stable > prerelease)
               normalize() {
                   local t="$1"
                   local clean="${t#v}"
@@ -61,26 +61,34 @@ jobs:
                       local suffix="${BASH_REMATCH[2]}"
           
                       if [[ -z "$suffix" ]]; then
-                          # stable = suffix high pour trier après les prereleases
+                          # Stable = suffix "zzz" pour qu'il soit toujours trié AVANT les prereleases
                           echo "${base}-zzz $t"
                       else
-                          # prerelease = normal
+                          # Prerelease
                           echo "${base}-${suffix} $t"
                       fi
                   else
+                      # fallback si format non standard
                       echo "$clean $t"
                   fi
               }
           
-              # Normalisation + tri du plus récent au plus ancien
+              # Normalisation + tri SemVer du plus récent au plus ancien
               sorted=$(echo "$tags" | while read -r t; do normalize "$t"; done | sort -rV)
           
               if [ "$is_edge" = "true" ]; then
-                  # EDGE = premier tag trié
+                  # EDGE = toujours le premier tag (stable si existe, sinon prerelease)
                   latest_version=$(echo "$sorted" | head -n 1 | awk '{print $2}')
               else
-                  # STABLE = premières lignes contenant 'zzz' = versions finales
-                  latest_version=$(echo "$sorted" | grep "zzz" | head -n 1 | awk '{print $2}')
+                  # STABLE = première version stable = celles contenant "zzz"
+                  stable=$(echo "$sorted" | grep "zzz" | head -n 1 | awk '{print $2}')
+          
+                  if [ -n "$stable" ]; then
+                      latest_version="$stable"
+                  else
+                      # Fallback stable → edge si aucun tag stable n'existe
+                      latest_version=$(echo "$sorted" | head -n 1 | awk '{print $2}')
+                  fi
               fi
           
               echo "$latest_version"
