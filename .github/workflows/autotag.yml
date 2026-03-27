@@ -1,9 +1,4 @@
 name: Sync Tag with YAML Version
-permissions:
-  contents: read
-  packages: write
-  id-token: write
-
 on:
   workflow_dispatch:
     inputs:
