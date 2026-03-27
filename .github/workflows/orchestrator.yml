@@ -91,7 +91,7 @@ jobs:
     secrets: inherit
 
   release-normal:
-    needs: [autotag-normal, build-normal, security-scan-normal]
+    needs: [autotag-normal, build-normal]
     if: always() && needs.autotag-normal.result == 'success' && needs.build-normal.result == 'success'
     uses: ./.github/workflows/pre-release.yml
     with:
