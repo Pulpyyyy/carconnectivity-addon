@@ -16,7 +16,7 @@ jobs:
 
   update-edge:
     needs: update-base
-    uses: ./.github/workflows/update-build.yaml
+    uses: ./.github/workflows/update-build.yml
     with:
       addon: carconnectivity-addon-edge
     secrets: inherit
