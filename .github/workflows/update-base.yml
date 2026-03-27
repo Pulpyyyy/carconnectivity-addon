@@ -25,10 +25,10 @@ jobs:
 
       - name: Get latest base image version
         id: latest
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          LATEST=$(curl -sL https://api.github.com/repos/hassio-addons/app-base/releases/latest \
-            | grep '"tag_name"' \
-            | sed 's/.*"tag_name": "v\?\(.*\)".*/\1/')
+          LATEST=$(gh api repos/hassio-addons/app-base/releases/latest --jq '.tag_name' | sed 's/^v//')
           if [ -z "$LATEST" ]; then
             echo "❌ Could not fetch latest base version"
             exit 1
