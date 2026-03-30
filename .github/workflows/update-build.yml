@@ -135,20 +135,25 @@ jobs:
       - name: Update build.yaml
         run: |
           echo "Updating build.yaml with new versions"
+
           changed=false
 
           for component in $(echo "$SUBMODULE_REPOS" | cut -d= -f1); do
             new_version_var="LATEST_${component}_VERSION_${{ matrix.addon }}"
             new_version=$(printenv $new_version_var)
 
-            current=$(grep "${component}_VERSION" "${{ matrix.addon }}/build.yaml" | awk '{print $2}' | tr -d '"')
+            # Version actuelle dans le build.yaml
+            old_version=$(grep "${component}_VERSION" "${{ matrix.addon }}/build.yaml" | awk '{print $2}' | tr -d '"')
 
-            if [ "$current" != "$new_version" ]; then
+            # Si la version est différente → on modifie
+            if [ "$old_version" != "$new_version" ]; then
+              echo "🔄 ${component}_VERSION: $old_version → $new_version"
               sed -i "s|${component}_VERSION:.*|${component}_VERSION: \"$new_version\"|" "${{ matrix.addon }}/build.yaml"
               changed=true
             fi
           done
 
+          # Export de l'état final
           if [ "$changed" = true ]; then
             echo "CHANGES=true" >> $GITHUB_ENV
             echo "Changes detected."
