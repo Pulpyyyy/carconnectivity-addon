@@ -60,7 +60,7 @@ jobs:
   update-normal:
     needs: [update-edge, sync-edge-to-normal]
     if: always() && needs.update-edge.result == 'success' && (needs.sync-edge-to-normal.result == 'success' || needs.sync-edge-to-normal.result == 'skipped')
-    uses: ./.github/workflows/update-build.yaml
+    uses: ./.github/workflows/update-build.yml
     with:
       addon: carconnectivity-addon
     secrets: inherit
