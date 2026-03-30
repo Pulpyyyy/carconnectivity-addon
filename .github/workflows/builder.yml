@@ -49,22 +49,31 @@ jobs:
         id: check_image
         run: |
           TAG="${{ steps.info.outputs.version }}"
-          IMAGE="${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ matrix.addon }}:$TAG"
+          ADDON="${{ matrix.addon }}"
 
-          echo "Checking Docker Hub for $IMAGE"
+          ARCHS=("amd64" "aarch64")
+          exists=true
 
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-              https://hub.docker.com/v2/repositories/${{ env.REPOSITORY }}/${{ matrix.addon }}/tags/$TAG/)
+          for ARCH in "${ARCHS[@]}"; do
 
-          if [ "$HTTP_STATUS" -eq 200 ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "Image already exists on Docker Hub: $IMAGE"
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Image does NOT exist yet: $IMAGE"
-          fi
-          
+            IMAGE="https://hub.docker.com/v2/repositories/${{ env.REPOSITORY }}/${ADDON}-${ARCH}/tags/${TAG}/"
+
+            echo "Checking: $IMAGE"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$IMAGE")
+
+            if [ "$STATUS" -ne 200 ]; then
+              echo "❌ $ADDON-$ARCH:$TAG does NOT exist yet."
+              exists=false
+            else
+              echo "✔ $ADDON-$ARCH:$TAG already exists."
+            fi
+
+          done
+
+          echo "exists=$exists" >> $GITHUB_OUTPUT
+
       - name: Publish builder
+        if: steps.check_image.outputs.exists == 'false'
         uses: home-assistant/builder@2026.03.2
         with:
           args: |
