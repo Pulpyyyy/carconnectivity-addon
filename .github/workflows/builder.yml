@@ -44,6 +44,25 @@ jobs:
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ matrix.addon }}"
+
+      - name: Check if image already exists on Docker Hub
+        id: check_image
+        run: |
+          TAG="${{ steps.info.outputs.version }}"
+          IMAGE="${{ env.REGISTRY }}/${{ env.REPOSITORY }}/${{ matrix.addon }}:$TAG"
+
+          echo "Checking Docker Hub for $IMAGE"
+
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              https://hub.docker.com/v2/repositories/${{ env.REPOSITORY }}/${{ matrix.addon }}/tags/$TAG/)
+
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Image already exists on Docker Hub: $IMAGE"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Image does NOT exist yet: $IMAGE"
+          fi
           
       - name: Publish builder
         uses: home-assistant/builder@2026.03.2
