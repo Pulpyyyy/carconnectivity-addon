@@ -1,4 +1,4 @@
-name: Builder (2026)
+name: Builder (2026 compatible)
 
 on:
   workflow_call:
@@ -7,10 +7,11 @@ on:
         required: true
         type: string
 
+  # Permet de lancer le build manuellement
   workflow_dispatch:
     inputs:
       addon:
-        description: "Addon folder (optionnel si appelé par orchestrateur)"
+        description: "Nom du dossier addon (ex: carconnectivity-addon-edge)"
         required: false
         type: string
 
@@ -20,29 +21,31 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        arch: [ "amd64", "aarch64" ]
+        arch: ["amd64", "aarch64"]
 
     steps:
 
       - name: Checkout
         uses: actions/checkout@v6
 
+      # Détermine le nom du dossier addon
       - name: Resolve addon name
         id: resolve
         run: |
-          # workflow_call → inputs.addon
-          # manual run     → github.event.inputs.addon
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
+      # Récupère version et info via helper officiel Home Assistant
       - name: Get addon info
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ steps.resolve.outputs.addon }}"
 
+      # Vérifie si l'image existe déjà (skip build)
       - name: Check if image exists
         id: exist
         run: |
@@ -52,7 +55,6 @@ jobs:
           NAMESPACE="pulpyyyy"
 
           URL="https://hub.docker.com/v2/repositories/${NAMESPACE}/${ADDON}-${ARCH}/tags/${TAG}/"
-
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
           if [ "$STATUS" -eq 200 ]; then
@@ -61,19 +63,22 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
+      # Construction via Docker Builder officiel Home Assistant
       - name: Build with HA Docker Builder
         if: steps.exist.outputs.exists == 'false'
         run: |
           ADDON="${{ steps.resolve.outputs.addon }}"
           ARCH="${{ matrix.arch }}"
 
+          echo "Building addon: $ADDON for arch: $ARCH"
+
           docker run --rm --privileged \
-            -v "${{ github.workspace }}/${{ steps.resolve.outputs.addon }}:/data" \
+            -v "${{ github.workspace }}/${ADDON}:/data" \
             ghcr.io/home-assistant/amd64-builder:2026.03.2 \
               --addon \
-              --${{ matrix.arch }} \
+              --$ARCH \
               --docker-hub docker.io \
               --target /data \
-              --image "pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}" \
+              --image "pulpyyyy/$ADDON-$ARCH" \
               --docker-user "${{ secrets.DOCKERHUB_USERNAME }}" \
               --docker-password "${{ secrets.DOCKERHUB_TOKEN }}"
