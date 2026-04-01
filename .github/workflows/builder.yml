@@ -27,24 +27,24 @@ jobs:
         arch: [ amd64, arm64 ]
 
     steps:
-      # -----------------------------
+      # ---------------------------------------------------------
       # CHECKOUT
-      # -----------------------------
+      # ---------------------------------------------------------
       - name: Checkout code
         uses: actions/checkout@v6
 
-      # -----------------------------
+      # ---------------------------------------------------------
       # RESOLVE ADDON NAME
-      # -----------------------------
+      # ---------------------------------------------------------
       - name: Resolve addon name
         id: resolve
         run: |
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
-      # -----------------------------
-      # GET VERSION FROM CONFIG.YAML VIA HA HELPER
-      # -----------------------------
+      # ---------------------------------------------------------
+      # VERSION VIA HA HELPER
+      # ---------------------------------------------------------
       - name: Get addon info (Home Assistant)
         id: info
         uses: home-assistant/actions/helpers/info@master
@@ -58,10 +58,10 @@ jobs:
           VERSION=$(echo "$RAW" | tr -d '"')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # -----------------------------
-      # NORMALIZE ARCH arm64 → aarch64
-      # -----------------------------
-      - name: Normalize arch for Home Assistant build.yaml
+      # ---------------------------------------------------------
+      # NORMALIZE ARCH (arm64 → aarch64 pour HA)
+      # ---------------------------------------------------------
+      - name: Normalize arch
         id: norm
         env:
           ARCH: ${{ matrix.arch }}
@@ -72,47 +72,46 @@ jobs:
             echo "ha_arch=$ARCH" >> $GITHUB_OUTPUT
           fi
 
-      # -----------------------------
-      # INSTALL YQ (YAML parser v4)
-      # -----------------------------
+      # ---------------------------------------------------------
+      # INSTALL YQ v4
+      # ---------------------------------------------------------
       - name: Install yq v4
         run: |
           sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
           sudo chmod +x /usr/bin/yq
 
-      # -----------------------------
-      # READ *ALL* BUILD ARGS FROM build.yaml
-      # -----------------------------
-      - name: Read BUILD_FROM + ARGs from build.yaml
+      # ---------------------------------------------------------
+      # READ BUILD_FROM + ARGUMENTS YAML
+      # ---------------------------------------------------------
+      - name: Read build.yaml (BUILD_FROM + args)
         id: meta
         env:
           ADDON: ${{ steps.resolve.outputs.addon }}
           HA_ARCH: ${{ steps.norm.outputs.ha_arch }}
         run: |
-          echo "🔍 Lecture build.yaml pour ${ADDON} (${HA_ARCH})"
+          echo "🔍 Lecture build.yaml pour $ADDON ($HA_ARCH)"
 
           # BUILD_FROM
           BUILD_FROM=$(yq '.build_from[strenv(HA_ARCH)]' "./${ADDON}/build.yaml")
-          if [ -z "$BUILD_FROM" ] || [ "$BUILD_FROM" = "null" ]; then
-            echo "❌ BUILD_FROM introuvable pour $HA_ARCH"
+          if [ "$BUILD_FROM" = "null" ] || [ -z "$BUILD_FROM" ]; then
+            echo "❌ BUILD_FROM manquant pour $HA_ARCH"
             cat "./${ADDON}/build.yaml"
             exit 1
           fi
           echo "build_from=$BUILD_FROM" >> $GITHUB_OUTPUT
 
-          # ARGUMENTS DE build.yaml
-          echo "🔍 Extraction des ARGs…"
-          yq '.args | to_entries | .[] | "\(.key)=\(.value)"' "./${ADDON}/build.yaml" > buildargs.txt
-
-          echo "args=$(cat buildargs.txt | tr '\n' ',' )" >> $GITHUB_OUTPUT
+          # Générer JSON {key: value}
+          echo "🔍 Extraction des ARGs YAML"
+          yq -o=json '.args' "./${ADDON}/build.yaml" > args.json
+          echo "args_json=$(cat args.json)" >> $GITHUB_OUTPUT
 
           echo "ARGs détectés :"
-          cat buildargs.txt
+          cat args.json
 
-      # -----------------------------
-      # SKIP BUILD IF ALREADY EXISTS
-      # -----------------------------
-      - name: Check if image exists on Docker Hub
+      # ---------------------------------------------------------
+      # SKIP BUILD SI DEJA EXISTE
+      # ---------------------------------------------------------
+      - name: Check if image exists
         id: exist
         env:
           ADDON: ${{ steps.resolve.outputs.addon }}
@@ -128,23 +127,23 @@ jobs:
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
-      # -----------------------------
-      # BUILDX + DOCKER LOGIN
-      # -----------------------------
+      # ---------------------------------------------------------
+      # BUILDX + LOGIN
+      # ---------------------------------------------------------
       - name: Setup Buildx
         if: steps.exist.outputs.exists == 'false'
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
+      - name: Log in to Docker Hub
         if: steps.exist.outputs.exists == 'false'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # -----------------------------
-      # BUILD PER ARCH (with all args injected)
-      # -----------------------------
+      # ---------------------------------------------------------
+      # BUILD PAR ARCH (AVEC ARG YAML FIXÉS)
+      # ---------------------------------------------------------
       - name: Build & Push image (per arch)
         if: steps.exist.outputs.exists == 'false'
         uses: docker/build-push-action@v5
@@ -153,34 +152,32 @@ jobs:
           platforms: linux/${{ matrix.arch }}
           push: true
 
-          # Dépôts par arch
           tags: |
             pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:${{ steps.clean.outputs.version }}
             pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
 
-          # Tous les arguments build.yaml + ceux HA
+          # Injection correcte : chaque clé devient un --build-arg
           build-args: |
             BUILD_FROM=${{ steps.meta.outputs.build_from }}
             BUILD_VERSION=${{ steps.clean.outputs.version }}
             BUILD_ARCH=${{ matrix.arch }}
-            ${{ steps.meta.outputs.args }}
+            ${{ fromJson(steps.meta.outputs.args_json) }}
 
-          # Pas d'attestations (plus rapide/fiable)
           provenance: false
           sbom: false
 
           cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
           cache-to: type=inline
 
-  # -----------------------------
+  # ---------------------------------------------------------
   # MANIFEST MULTI‑ARCH FINAL
-  # -----------------------------
+  # ---------------------------------------------------------
   manifest:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Login to Docker Hub
+      - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -191,7 +188,7 @@ jobs:
           ADDON="${{ needs.build.steps.resolve.outputs.addon }}"
           VERSION="${{ needs.build.steps.clean.outputs.version }}"
 
-          echo "🧩 Création manifest : $ADDON:$VERSION"
+          echo "🧩 Création manifest: $ADDON:$VERSION"
 
           docker manifest create pulpyyyy/$ADDON:$VERSION \
             pulpyyyy/$ADDON-amd64:$VERSION \
