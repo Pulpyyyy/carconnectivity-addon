@@ -73,6 +73,7 @@ jobs:
               --addon \
               --$ARCH \
               --docker-hub docker.io \
+              --target "/data/${{ steps.resolve.outputs.addon }}" \
               --image "pulpyyyy/$ADDON-$ARCH" \
               --docker-user "${{ secrets.DOCKERHUB_USERNAME }}" \
               --docker-password "${{ secrets.DOCKERHUB_TOKEN }}"
