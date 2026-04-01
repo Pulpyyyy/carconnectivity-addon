@@ -6,6 +6,10 @@ on:
       addon:
         required: true
         type: string
+    outputs:
+      built:
+        description: "true if new images were built and pushed"
+        value: ${{ jobs.manifest.outputs.built }}
 
   workflow_dispatch:
     inputs:
@@ -20,18 +24,18 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  # #############################################################
+  #  PREPARE — résolution addon + version (hors matrix)
+  # #############################################################
+  prepare:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
 
     outputs:
       addon: ${{ steps.resolve.outputs.addon }}
       version: ${{ steps.clean.outputs.version }}
+      archs: ${{ steps.archs.outputs.archs }}
 
     steps:
-      # ---------------------------------------------------------
       - name: Checkout
         uses: actions/checkout@v6
 
@@ -40,6 +44,10 @@ jobs:
         run: |
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
+
+      - name: Define architectures
+        id: archs
+        run: echo 'archs=["amd64","arm64"]' >> $GITHUB_OUTPUT
 
       # ---------------------------------------------------------
       # VERSION via Home Assistant helper (config.yaml)
@@ -55,6 +63,20 @@ jobs:
         run: |
           VERSION=$(echo "${{ steps.info.outputs.version }}" | tr -d '"')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  # #############################################################
+  #                       BUILD JOB
+  # #############################################################
+  build:
+    runs-on: ubuntu-latest
+    needs: prepare
+    strategy:
+      matrix:
+        arch: ${{ fromJSON(needs.prepare.outputs.archs) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
 
       # ---------------------------------------------------------
       # NORMALIZE ARCH for build.yaml (arm64 ↔ aarch64)
@@ -84,7 +106,7 @@ jobs:
       - name: Read build.yaml data
         id: meta
         env:
-          ADDON: ${{ steps.resolve.outputs.addon }}
+          ADDON: ${{ needs.prepare.outputs.addon }}
           HA_ARCH: ${{ steps.norm.outputs.ha_arch }}
         run: |
           echo "Reading build.yaml for $ADDON ($HA_ARCH)"
@@ -111,8 +133,8 @@ jobs:
       - name: Check if image exists
         id: exist
         env:
-          ADDON: ${{ steps.resolve.outputs.addon }}
-          VERSION: ${{ steps.clean.outputs.version }}
+          ADDON: ${{ needs.prepare.outputs.addon }}
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           ARCH="${{ matrix.arch }}"
           URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${VERSION}/"
@@ -145,24 +167,24 @@ jobs:
         if: steps.exist.outputs.exists == 'false'
         uses: docker/build-push-action@v5
         with:
-          context: ./${{ steps.resolve.outputs.addon }}
+          context: ./${{ needs.prepare.outputs.addon }}
           platforms: linux/${{ matrix.arch }}
           push: true
 
           tags: |
-            pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:${{ steps.clean.outputs.version }}
-            pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
+            pulpyyyy/${{ needs.prepare.outputs.addon }}-${{ matrix.arch }}:${{ needs.prepare.outputs.version }}
+            pulpyyyy/${{ needs.prepare.outputs.addon }}-${{ matrix.arch }}:latest
 
           build-args: |
             BUILD_FROM=${{ steps.meta.outputs.build_from }}
-            BUILD_VERSION=${{ steps.clean.outputs.version }}
+            BUILD_VERSION=${{ needs.prepare.outputs.version }}
             BUILD_ARCH=${{ matrix.arch }}
             ${{ steps.meta.outputs.args }}
 
           provenance: false
           sbom: false
 
-          cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
+          cache-from: type=registry,ref=pulpyyyy/${{ needs.prepare.outputs.addon }}-${{ matrix.arch }}:latest
           cache-to: type=inline
 
   # #############################################################
@@ -170,7 +192,10 @@ jobs:
   # #############################################################
   manifest:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [prepare, build]
+
+    outputs:
+      built: ${{ steps.result.outputs.built }}
 
     steps:
       - name: Login Docker Hub
@@ -179,48 +204,76 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
       # ---------------------------------------------------------
-      # SKIP-MANIFEST IF TAG ALREADY EXISTS
+      # VÉRIFICATION que les 2 images arch sont bien disponibles
       # ---------------------------------------------------------
-      - name: Check if manifest exists
+      - name: Check arch images exist
+        env:
+          ADDON: ${{ needs.prepare.outputs.addon }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          ARCHS: ${{ needs.prepare.outputs.archs }}
+        run: |
+          for ARCH in $(echo "$ARCHS" | jq -r '.[]'); do
+            URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${VERSION}/"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            if [ "$STATUS" -ne 200 ]; then
+              echo "❌ Image pulpyyyy/${ADDON}-${ARCH}:${VERSION} not found (HTTP $STATUS)"
+              exit 1
+            fi
+            echo "✔ pulpyyyy/${ADDON}-${ARCH}:${VERSION} exists"
+          done
+
+      # ---------------------------------------------------------
+      # SKIP VERSION MANIFEST IF ALREADY EXISTS
+      # ---------------------------------------------------------
+      - name: Check if VERSION manifest exists
         id: manifestcheck
         env:
-          ADDON: ${{ needs.build.outputs.addon }}
-          VERSION: ${{ needs.build.outputs.version }}
+          ADDON: ${{ needs.prepare.outputs.addon }}
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
           URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}/tags/${VERSION}/"
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-
           if [ "$STATUS" -eq 200 ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "✔ Manifest already exists, skipping."
+            echo "✔ Manifest ${VERSION} already exists, skipping."
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "❗ Manifest missing, will create it."
+            echo "❗ Manifest ${VERSION} missing, will create it."
+          fi
+
+      - name: Set built output
+        id: result
+        env:
+          EXISTS: ${{ steps.manifestcheck.outputs.exists }}
+        run: |
+          if [ "$EXISTS" = "false" ]; then
+            echo "built=true" >> $GITHUB_OUTPUT
+          else
+            echo "built=false" >> $GITHUB_OUTPUT
           fi
 
       # ---------------------------------------------------------
-      # MULTI‑ARCH MANIFEST (only if needed)
+      # MULTI‑ARCH MANIFEST
       # ---------------------------------------------------------
       - name: Create VERSION manifest
         if: steps.manifestcheck.outputs.exists == 'false'
         env:
-          ADDON: ${{ needs.build.outputs.addon }}
-          VERSION: ${{ needs.build.outputs.version }}
+          ADDON: ${{ needs.prepare.outputs.addon }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          ARCHS: ${{ needs.prepare.outputs.archs }}
         run: |
-          docker manifest create pulpyyyy/$ADDON:$VERSION \
-            pulpyyyy/$ADDON-amd64:$VERSION \
-            pulpyyyy/$ADDON-arm64:$VERSION
+          SOURCES=$(echo "$ARCHS" | jq -r '.[] | "pulpyyyy/'"$ADDON"'-\(.)'":\$VERSION"'"')
+          docker buildx imagetools create --tag pulpyyyy/$ADDON:$VERSION $SOURCES
 
-          docker manifest push pulpyyyy/$ADDON:$VERSION
-
+      # LATEST est toujours mis à jour, indépendamment du check VERSION
       - name: Create LATEST manifest
-        if: steps.manifestcheck.outputs.exists == 'false'
         env:
-          ADDON: ${{ needs.build.outputs.addon }}
+          ADDON: ${{ needs.prepare.outputs.addon }}
+          ARCHS: ${{ needs.prepare.outputs.archs }}
         run: |
-          docker manifest create pulpyyyy/$ADDON:latest \
-            pulpyyyy/$ADDON-amd64:latest \
-            pulpyyyy/$ADDON-arm64:latest
-
-          docker manifest push pulpyyyy/$ADDON:latest
+          SOURCES=$(echo "$ARCHS" | jq -r '.[] | "pulpyyyy/'"$ADDON"'-\(.):latest"')
+          docker buildx imagetools create --tag pulpyyyy/$ADDON:latest $SOURCES

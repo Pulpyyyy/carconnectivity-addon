@@ -46,7 +46,7 @@ jobs:
   # 🔥 Scan après manifest (inclus dans build-edge)
   security-scan-edge:
     needs: build-edge
-    if: needs.build-edge.result == 'success'
+    if: needs.build-edge.result == 'success' && needs.build-edge.outputs.built == 'true'
     uses: ./.github/workflows/security-scan.yml
     with:
       addon: carconnectivity-addon-edge
@@ -88,7 +88,7 @@ jobs:
   # 🔥 Scan après manifest (inclus dans build-normal)
   security-scan-normal:
     needs: build-normal
-    if: always() && needs.build-normal.result == 'success'
+    if: needs.build-normal.result == 'success' && needs.build-normal.outputs.built == 'true'
     uses: ./.github/workflows/security-scan.yml
     with:
       addon: carconnectivity-addon
