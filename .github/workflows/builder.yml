@@ -25,24 +25,33 @@ jobs:
 
     steps:
 
+      # ------------------------------
+      # CHECKOUT
+      # ------------------------------
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      # 🔍 Résolution du nom d’addon (orchestrateur ou manuel)
+      # ------------------------------
+      # RESOLVE ADDON NAME (manual OR orchestrator)
+      # ------------------------------
       - name: Resolve addon name
         id: resolve
         run: |
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
-      # 🔍 Récupération version via outil officiel Home Assistant
-      - name: Get addon info
+      # ------------------------------
+      # GET VERSION USING HA HELPERS
+      # ------------------------------
+      - name: Get addon info (Home Assistant)
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ steps.resolve.outputs.addon }}"
 
-      # 🧼 Nettoyage du TAG (supprime les "" renvoyés par info@helper)
+      # ------------------------------
+      # CLEAN VERSION (remove JSON quotes)
+      # ------------------------------
       - name: Clean version
         id: clean
         run: |
@@ -50,17 +59,32 @@ jobs:
           VERSION=$(echo "$RAW" | tr -d '"')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # 🔍 Skip build si l'image existe déjà par arch
-      - name: Check if images exist
+      # ------------------------------
+      # EXTRACT BUILD_FROM FROM build.yaml USING YQ
+      # ------------------------------
+      - name: Install yq
+        run: sudo apt-get install -y jq
+
+      - name: Parse build.yaml for BUILD_FROM
+        id: meta
+        run: |
+          ADDON="${{ steps.resolve.outputs.addon }}"
+          ARCH="${{ matrix.arch }}"
+          BUILD_FROM=$(yq -r ".build_from[\"${ARCH}\"]" "./${ADDON}/build.yaml")
+          echo "build_from=$BUILD_FROM" >> $GITHUB_OUTPUT
+
+      # ------------------------------
+      # SKIP IF IMAGE ALREADY EXISTS (BY ARCH)
+      # ------------------------------
+      - name: Check if image already exists
         id: exist
         run: |
           TAG="${{ steps.clean.outputs.version }}"
           ADDON="${{ steps.resolve.outputs.addon }}"
 
           for ARCH in amd64 aarch64; do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-              "https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${TAG}/")
-
+            URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${TAG}/"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             if [ "$STATUS" -eq 200 ]; then
               echo "found_${ARCH}=true" >> $GITHUB_OUTPUT
             else
@@ -68,35 +92,52 @@ jobs:
             fi
           done
 
-      # 🛠️ Buildx uniquement si nécessaire
       - name: Setup Buildx
-        if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
         uses: docker/setup-buildx-action@v3
+        if: >
+          steps.exist.outputs.found_amd64 == 'false' ||
+          steps.exist.outputs.found_aarch64 == 'false'
 
-      # 🔐 Login Docker Hub
-      - name: DockerHub login
-        if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
+      # ------------------------------
+      # DOCKER LOGIN
+      # ------------------------------
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
+        if: >
+          steps.exist.outputs.found_amd64 == 'false' ||
+          steps.exist.outputs.found_aarch64 == 'false'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 🏗️ Build & Push Multi‑Arch + Manifest Auto
+      # ------------------------------
+      # MULTI‑ARCH BUILD WITH BUILD_FROM INJECTION
+      # ------------------------------
       - name: Build & Push Multi‑Arch
-        if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
         uses: docker/build-push-action@v5
+        if: >
+          steps.exist.outputs.found_amd64 == 'false' ||
+          steps.exist.outputs.found_aarch64 == 'false'
         with:
           context: ./${{ steps.resolve.outputs.addon }}
+
+          # multi‑arch platforms
           platforms: |
             linux/amd64
             linux/arm64
+
           push: true
 
-          # Manifest auto pour VERSION + LATEST
+          # TAGS
           tags: |
             pulpyyyy/${{ steps.resolve.outputs.addon }}:${{ steps.clean.outputs.version }}
             pulpyyyy/${{ steps.resolve.outputs.addon }}:latest
 
-          # Cache Docker Hub
+          # SUBSTITUTION BUILD_FROM / BUILD_VERSION / BUILD_ARCH
+          build-args: |
+            BUILD_VERSION=${{ steps.clean.outputs.version }}
+            BUILD_FROM=${{ steps.meta.outputs.build_from }}
+
+          # DOCKER CACHE
           cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}:latest
           cache-to: type=inline
