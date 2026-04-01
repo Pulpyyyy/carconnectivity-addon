@@ -77,12 +77,10 @@ jobs:
         uses: home-assistant/builder@2026.03.2
         with:
           args: |
-            --addon \
-            --amd64 --aarch64 \
-            --docker-hub "${{ env.REGISTRY }}" \
-            --image "${{ env.REPOSITORY }}/${{ matrix.addon }}" \
-            --target /data/${{ matrix.addon }} \
-            --docker-hub-check \
-            --docker-user ${{ secrets.DOCKERHUB_USERNAME }} \
+            --addon
+            --docker-hub "${{ env.REGISTRY }}"
+            --target /data/${{ matrix.addon }}
+            --docker-hub-check
+            --docker-user ${{ secrets.DOCKERHUB_USERNAME }}
             --docker-password ${{ secrets.DOCKERHUB_TOKEN }}
 
