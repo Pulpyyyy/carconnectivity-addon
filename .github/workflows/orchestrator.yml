@@ -43,8 +43,10 @@ jobs:
       prerelease: true
     secrets: inherit
 
+  # 🔥 Scan après manifest (inclus dans build-edge)
   security-scan-edge:
     needs: build-edge
+    if: needs.build-edge.result == 'success'
     uses: ./.github/workflows/security-scan.yml
     with:
       addon: carconnectivity-addon-edge
@@ -59,7 +61,9 @@ jobs:
 
   update-normal:
     needs: [update-edge, sync-edge-to-normal]
-    if: always() && needs.update-edge.result == 'success' && (needs.sync-edge-to-normal.result == 'success' || needs.sync-edge-to-normal.result == 'skipped')
+    if: always() &&
+        needs.update-edge.result == 'success' &&
+        (needs.sync-edge-to-normal.result == 'success' || needs.sync-edge-to-normal.result == 'skipped')
     uses: ./.github/workflows/update-build.yml
     with:
       addon: carconnectivity-addon
@@ -81,6 +85,7 @@ jobs:
       addon: carconnectivity-addon
     secrets: inherit
 
+  # 🔥 Scan après manifest (inclus dans build-normal)
   security-scan-normal:
     needs: build-normal
     if: always() && needs.build-normal.result == 'success'
@@ -92,7 +97,9 @@ jobs:
 
   release-normal:
     needs: [autotag-normal, build-normal]
-    if: always() && needs.autotag-normal.result == 'success' && needs.build-normal.result == 'success'
+    if: always() &&
+        needs.autotag-normal.result == 'success' &&
+        needs.build-normal.result == 'success'
     uses: ./.github/workflows/pre-release.yml
     with:
       addon: carconnectivity-addon
