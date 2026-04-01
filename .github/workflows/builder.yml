@@ -72,7 +72,7 @@ jobs:
         with:
           args: |
             --addon
-            --${{ matrix.arch }}
+            --arch ${{ matrix.arch }}
             --docker-hub "${{ env.REGISTRY }}"
             --target /data/${{ matrix.addon }}
             --image "${{ env.REPOSITORY }}/${{ matrix.addon }}-${{ matrix.arch }}"
