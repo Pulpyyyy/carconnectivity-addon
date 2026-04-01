@@ -281,7 +281,6 @@ jobs:
       # MULTI‑ARCH MANIFEST
       # ---------------------------------------------------------
       - name: Create VERSION manifest
-        if: steps.manifestcheck.outputs.exists == 'false'
         env:
           ADDON: ${{ needs.prepare.outputs.addon }}
           VERSION: ${{ needs.prepare.outputs.version }}
