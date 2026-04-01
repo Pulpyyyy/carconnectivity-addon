@@ -1,4 +1,4 @@
-name: Builder (Docker mode)
+name: Builder (2026)
 
 on:
   workflow_call:
@@ -6,64 +6,63 @@ on:
       addon:
         required: true
         type: string
-      docker_registry:
+
+  workflow_dispatch:
+    inputs:
+      addon:
+        description: "Addon folder to build"
         required: true
         type: string
-      docker_namespace:
-        required: true
-        type: string
-      docker_username:
-        required: true
-        type: string
-      docker_password:
-        required: true
-        type: string
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        arch: ["amd64", "aarch64"]
+        arch: [ "amd64", "aarch64" ]
 
     steps:
 
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v6
 
       - name: Get addon info
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
-          path: "./${{ inputs.addon }}"
+          path: "./${{ github.event.inputs.addon || inputs.addon }}"
 
-      - name: Check if image exists
+      - name: Check if image already exists
         id: exist
         run: |
           TAG="${{ steps.info.outputs.version }}"
-          ADDON="${{ inputs.addon }}"
+          ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           ARCH="${{ matrix.arch }}"
+          NAMESPACE="pulpyyyy"
 
-          URL="https://hub.docker.com/v2/repositories/${{ inputs.docker_namespace }}/${ADDON}-${ARCH}/tags/${TAG}/"
+          URL="https://hub.docker.com/v2/repositories/${NAMESPACE}/${ADDON}-${ARCH}/tags/${TAG}/"
 
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
           if [ "$STATUS" -eq 200 ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "exists=true" >> "$GITHUB_OUTPUT"
           else
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build addon using Docker builder
+      - name: Build using Home Assistant Docker Builder
         if: steps.exist.outputs.exists == 'false'
         run: |
-          docker run --rm \
-            --privileged \
+          docker run --rm --privileged \
             -v "${{ github.workspace }}:/data" \
             ghcr.io/home-assistant/amd64-builder:2026.03.2 \
               --addon \
               --${{ matrix.arch }} \
-              --docker-hub "${{ inputs.docker_registry }}" \
-              --image "${{ inputs.docker_namespace }}/${{ inputs.addon }}-${{ matrix.arch }}" \
-              --docker-user "${{ inputs.docker_username }}" \
-              --docker-password "${{ inputs.docker_password }}"
+              --docker-hub docker.io \
+              --image "pulpyyyy/${{ github.event.inputs.addon || inputs.addon }}-${{ matrix.arch }}" \
+              --docker-user "${{ secrets.DOCKERHUB_USERNAME }}" \
+              --docker-password "${{ secrets.DOCKERHUB_TOKEN }}"
