@@ -1,9 +1,21 @@
-name: Builder (Home Assistant 2026 compatible)
+name: Builder (Home Assistant 2026)
 
 on:
   workflow_call:
     inputs:
       addon:
+        required: true
+        type: string
+      docker_registry:
+        required: true
+        type: string
+      docker_namespace:
+        required: true
+        type: string
+      docker_username:
+        required: true
+        type: string
+      docker_password:
         required: true
         type: string
 
@@ -12,21 +24,15 @@ permissions:
   packages: write
   id-token: write
 
-env:
-  DOCKER_NAMESPACE: pulpyyyy
-  DOCKER_REGISTRY: docker.io
-
 jobs:
-
-  # 1️⃣ JOB DE VERIFICATION : EXISTE DEJA ?
   check:
     runs-on: ubuntu-latest
-    outputs:
-      exists: ${{ steps.check_image.outputs.exists }}
-
     strategy:
       matrix:
         arch: ["amd64", "aarch64"]
+    outputs:
+      exists: ${{ steps.check_image.outputs.exists }}
+      arch: ${{ matrix.arch }}
 
     steps:
       - name: Checkout repository
@@ -38,17 +44,16 @@ jobs:
         with:
           path: "./${{ inputs.addon }}"
 
-      - name: Check if image exists on Docker Hub
+      - name: Check if image already exists on Docker Hub
         id: check_image
         run: |
           TAG="${{ steps.info.outputs.version }}"
           ADDON="${{ inputs.addon }}"
           ARCH="${{ matrix.arch }}"
 
-          URL="https://hub.docker.com/v2/repositories/${{ env.DOCKER_NAMESPACE }}/${ADDON}-${ARCH}/tags/${TAG}/"
+          URL="https://hub.docker.com/v2/repositories/${{ inputs.docker_namespace }}/${ADDON}-${ARCH}/tags/${TAG}/"
 
           echo "Checking $URL"
-
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
           if [ "$STATUS" -ne 200 ]; then
@@ -57,16 +62,14 @@ jobs:
             echo "exists=true" >> $GITHUB_OUTPUT
           fi
 
-  # 2️⃣ JOB BUILDER : APPEL DU REUSABLE, UNIQUEMENT SI BESOIN
   build:
     needs: check
     if: needs.check.outputs.exists == 'false'
     uses: home-assistant/builder/.github/workflows/build-addon.yml@2026.03.2
-
     with:
       addon: ${{ inputs.addon }}
-      architecture: ${{ matrix.arch }}
-      docker_registry: ${{ env.DOCKER_REGISTRY }}
-      docker_repository: ${{ env.DOCKER_NAMESPACE }}
-      docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
-      docker_password: ${{ secrets.DOCKERHUB_TOKEN }}
+      architecture: ${{ needs.check.outputs.arch }}
+      docker_registry: ${{ inputs.docker_registry }}
+      docker_repository: ${{ inputs.docker_namespace }}
+      docker_username: ${{ inputs.docker_username }}
+      docker_password: ${{ inputs.docker_password }}
