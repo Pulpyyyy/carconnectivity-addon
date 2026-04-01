@@ -80,7 +80,9 @@ jobs:
             --addon \
             --amd64 --aarch64 \
             --docker-hub "${{ env.REGISTRY }}" \
+            --image "${{ env.REPOSITORY }}/${{ matrix.addon }}" \
             --target /data/${{ matrix.addon }} \
             --docker-hub-check \
             --docker-user ${{ secrets.DOCKERHUB_USERNAME }} \
             --docker-password ${{ secrets.DOCKERHUB_TOKEN }}
+
