@@ -8,7 +8,7 @@ on:
   workflow_call:
     inputs:
       addon:
-        description: 'Addon directory (e.g. carconnectivity-addon)'
+        description: 'Addon directory (e.g. carconnectivity-addon-edge)'
         required: true
         type: string
       blocking:
@@ -28,6 +28,7 @@ jobs:
     permissions:
       contents: read
       security-events: write
+
     strategy:
       fail-fast: false
       matrix:
@@ -37,54 +38,52 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
+      # 🔧 Normalize arch: Docker Hub = amd64 / arm64
+      - name: Normalize arch
+        id: norm
+        run: |
+          if [ "${{ matrix.arch }}" = "aarch64" ]; then
+            echo "docker_arch=arm64" >> $GITHUB_OUTPUT
+          else
+            echo "docker_arch=amd64" >> $GITHUB_OUTPUT
+          fi
+
       - name: Get image ref
         id: info
+        env:
+          ADDON: ${{ inputs.addon }}
         run: |
-          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' ${{ inputs.addon }}/config.yaml | head -n 1)
+          VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' "$ADDON/config.yaml" | head -n 1)
           if [ -z "$VERSION" ]; then
-            echo "❌ Version not found in ${{ inputs.addon }}/config.yaml"
+            echo "❌ Version non trouvée dans $ADDON/config.yaml"
             exit 1
           fi
-          IMAGE_TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' ${{ inputs.addon }}/config.yaml | head -n 1 | tr -d '"')
-          if [ -z "$IMAGE_TEMPLATE" ]; then
-            echo "❌ Image not found in ${{ inputs.addon }}/config.yaml"
-            exit 1
-          fi
-          IMAGE="${IMAGE_TEMPLATE/\{arch\}/${{ matrix.arch }}}:$VERSION"
-          echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
 
+          # L'image dans config.yaml est du style : docker.io/***/carconnectivity-addon-edge-{arch}
+          TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' "$ADDON/config.yaml" | tr -d '"')
+          
+          # ⚠️ Remplacement correct {arch} → amd64 / arm64 (Docker Hub)
+          REAL_IMAGE="${TEMPLATE/\{arch\}/${{ steps.norm.outputs.docker_arch }}}:$VERSION"
+
+          echo "IMAGE=$REAL_IMAGE" >> $GITHUB_OUTPUT
+
+          # Plateforme Trivy
           if [ "${{ matrix.arch }}" = "aarch64" ]; then
-            PLATFORM="linux/arm64"
+            echo "PLATFORM=linux/arm64" >> $GITHUB_OUTPUT
           else
-            PLATFORM="linux/amd64"
+            echo "PLATFORM=linux/amd64" >> $GITHUB_OUTPUT
           fi
-          echo "PLATFORM=$PLATFORM" >> $GITHUB_OUTPUT
-          echo "✅ Scanning: $IMAGE ($PLATFORM)"
 
-      - name: Log in to Docker Hub
+          echo "🔍 Scan: $REAL_IMAGE"
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Purge existing Trivy analyses
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          REPO="${{ github.repository }}"
-          CATEGORY="trivy-${{ inputs.addon }}-${{ matrix.arch }}"
-          echo "🗑️ Purging analyses for category: $CATEGORY"
-          IDS=$(gh api "repos/$REPO/code-scanning/analyses" --paginate \
-            -q ".[] | select(.category == \"$CATEGORY\") | .id" 2>/dev/null || true)
-          if [ -z "$IDS" ]; then
-            echo "No existing analyses found"
-          else
-            echo "$IDS" | while read id; do
-              gh api --method DELETE "repos/$REPO/code-scanning/analyses/$id" \
-                -f confirm_delete=true \
-                && echo "✅ Deleted $id" || echo "⚠️ Failed $id"
-            done
-          fi
+      - name: Pull image for scanning
+        run: docker pull ${{ steps.info.outputs.IMAGE }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.35.0
@@ -98,7 +97,7 @@ jobs:
           exit-code: ${{ inputs.blocking && '1' || '0' }}
           ignore-unfixed: true
 
-      - name: Upload Trivy results to GitHub Security tab
+      - name: Upload Trivy results
         if: always() && hashFiles('trivy-results.sarif') != ''
         uses: github/codeql-action/upload-sarif@v4
         with:
