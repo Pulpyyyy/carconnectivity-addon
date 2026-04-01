@@ -26,6 +26,11 @@ jobs:
       matrix:
         arch: [ amd64, arm64 ]
 
+    # 🔥 JOB OUTPUTS pour la job manifest
+    outputs:
+      addon: ${{ steps.resolve.outputs.addon }}
+      version: ${{ steps.clean.outputs.version }}
+
     steps:
       # ---------------------------------------------------------
       # CHECKOUT
@@ -43,7 +48,7 @@ jobs:
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
       # ---------------------------------------------------------
-      # VERSION FROM CONFIG.YAML (HOME ASSISTANT)
+      # VERSION VIA CONFIG.YAML / HA HELPER
       # ---------------------------------------------------------
       - name: Get addon info
         id: info
@@ -58,7 +63,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       # ---------------------------------------------------------
-      # NORMALIZE ARCH (arm64 → aarch64 FOR HA build.yaml)
+      # NORMALIZE ARCH FOR HA build.yaml
       # ---------------------------------------------------------
       - name: Normalize arch
         id: norm
@@ -80,9 +85,9 @@ jobs:
           sudo chmod +x /usr/bin/yq
 
       # ---------------------------------------------------------
-      # READ BUILD_FROM + ALL ARGS FROM build.yaml
+      # READ build.yaml (BUILD_FROM + args key=value)
       # ---------------------------------------------------------
-      - name: Read build.yaml (BUILD_FROM + args)
+      - name: Read build.yaml data
         id: meta
         env:
           ADDON: ${{ steps.resolve.outputs.addon }}
@@ -91,15 +96,13 @@ jobs:
           echo "Lecture build.yaml pour $ADDON ($HA_ARCH)"
 
           BUILD_FROM=$(yq '.build_from[strenv(HA_ARCH)]' "./${ADDON}/build.yaml")
-
           if [ -z "$BUILD_FROM" ] || [ "$BUILD_FROM" = "null" ]; then
-            echo "❌ BUILD_FROM introuvable pour $HA_ARCH"
+            echo "❌ BUILD_FROM non trouvé"
             exit 1
           fi
-
           echo "build_from=$BUILD_FROM" >> $GITHUB_OUTPUT
 
-          # Convertit args: en liste key=value (résout définitivement les problèmes)
+          # Construit une liste key=value propre
           yq '.args | to_entries[] | "\(.key)=\(.value)"' "./${ADDON}/build.yaml" > buildargs.txt
 
           echo "args<<EOF" >> $GITHUB_OUTPUT
@@ -107,7 +110,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       # ---------------------------------------------------------
-      # SKIP BUILD SI DÉJÀ EXISTE
+      # SKIP BUILD IF IMAGE ALREADY EXISTS
       # ---------------------------------------------------------
       - name: Check if image exists
         id: exist
@@ -139,7 +142,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # ---------------------------------------------------------
-      # BUILD PAR ARCH (AVEC ARG FIX)
+      # BUILD PER ARCH (AVEC LES ARGS CORRIGÉS)
       # ---------------------------------------------------------
       - name: Build & Push image (per arch)
         if: steps.exist.outputs.exists == 'false'
@@ -153,14 +156,13 @@ jobs:
             pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:${{ steps.clean.outputs.version }}
             pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
 
-          # 🎯 BUILD_ARGS PROPRE ET CORRECT
+          # 🔥 injection des build-args sans "Object"
           build-args: |
             BUILD_FROM=${{ steps.meta.outputs.build_from }}
             BUILD_VERSION=${{ steps.clean.outputs.version }}
             BUILD_ARCH=${{ matrix.arch }}
             ${{ steps.meta.outputs.args }}
 
-          # optimisation
           provenance: false
           sbom: false
 
@@ -168,7 +170,7 @@ jobs:
           cache-to: type=inline
 
   # ---------------------------------------------------------
-  # MANIFEST MULTI‑ARCH
+  # MANIFEST MULTI‑ARCH FINAL
   # ---------------------------------------------------------
   manifest:
     runs-on: ubuntu-latest
@@ -182,9 +184,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Create & Push manifest
+        env:
+          ADDON: ${{ needs.build.outputs.addon }}
+          VERSION: ${{ needs.build.outputs.version }}
         run: |
-          ADDON="${{ needs.build.steps.resolve.outputs.addon }}"
-          VERSION="${{ needs.build.steps.clean.outputs.version }}"
+          echo "Manifest multi‑arch : $ADDON:$VERSION"
 
           docker manifest create pulpyyyy/$ADDON:$VERSION \
             pulpyyyy/$ADDON-amd64:$VERSION \
