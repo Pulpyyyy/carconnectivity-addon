@@ -1,61 +1,100 @@
-name: Builder (2026)
+name: Release Pipeline
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      addon:
-        required: true
-        type: string
-
-permissions:
-  contents: read
+      sync_edge_to_normal:
+        description: 'Sync edge to normal before building'
+        type: boolean
+        default: false
+        required: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  update-base:
+    uses: ./.github/workflows/update-base.yml
+    secrets: inherit
 
-    strategy:
-      matrix:
-        arch: [ "amd64", "aarch64" ]
+  update-edge:
+    needs: update-base
+    uses: ./.github/workflows/update-build.yml
+    with:
+      addon: carconnectivity-addon-edge
+    secrets: inherit
 
-    steps:
+  autotag-edge:
+    needs: update-edge
+    uses: ./.github/workflows/autotag.yml
+    with:
+      target: edge
+    secrets: inherit
 
-      - name: Checkout
-        uses: actions/checkout@v6
+  build-edge:
+    needs: update-edge
+    uses: ./.github/workflows/builder.yml
+    with:
+      addon: carconnectivity-addon-edge
+    secrets: inherit
 
-      - name: Get addon info
-        id: info
-        uses: home-assistant/actions/helpers/info@master
-        with:
-          path: "./${{ inputs.addon }}"
+  pre-release-edge:
+    needs: [autotag-edge, build-edge]
+    uses: ./.github/workflows/pre-release.yml
+    with:
+      addon: carconnectivity-addon-edge
+      prerelease: true
+    secrets: inherit
 
-      - name: Check if image exists
-        id: exist
-        run: |
-          TAG="${{ steps.info.outputs.version }}"
-          ADDON="${{ inputs.addon }}"
-          ARCH="${{ matrix.arch }}"
-          NAMESPACE="pulpyyyy"
+  security-scan-edge:
+    needs: build-edge
+    uses: ./.github/workflows/security-scan.yml
+    with:
+      addon: carconnectivity-addon-edge
+      blocking: false
+    secrets: inherit
 
-          URL="https://hub.docker.com/v2/repositories/${NAMESPACE}/${ADDON}-${ARCH}/tags/${TAG}/"
+  sync-edge-to-normal:
+    if: inputs.sync_edge_to_normal
+    needs: update-edge
+    uses: ./.github/workflows/sync.yml
+    secrets: inherit
 
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+  update-normal:
+    needs: [update-edge, sync-edge-to-normal]
+    if: always() && needs.update-edge.result == 'success' && (needs.sync-edge-to-normal.result == 'success' || needs.sync-edge-to-normal.result == 'skipped')
+    uses: ./.github/workflows/update-build.yml
+    with:
+      addon: carconnectivity-addon
+    secrets: inherit
 
-          if [ "$STATUS" -eq 200 ]; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
+  autotag-normal:
+    needs: update-normal
+    if: always() && needs.update-normal.result == 'success'
+    uses: ./.github/workflows/autotag.yml
+    with:
+      target: normal
+    secrets: inherit
 
-      - name: Build with HA Docker Builder
-        if: steps.exist.outputs.exists == 'false'
-        run: |
-          docker run --rm --privileged \
-            -v "${{ github.workspace }}:/data" \
-            ghcr.io/home-assistant/amd64-builder:2026.03.2 \
-              --addon \
-              --${{ matrix.arch }} \
-              --docker-hub docker.io \
-              --image "pulpyyyy/${{ inputs.addon }}-${{ matrix.arch }}" \
-              --docker-user "${{ secrets.DOCKERHUB_USERNAME }}" \
-              --docker-password "${{ secrets.DOCKERHUB_TOKEN }}"
+  build-normal:
+    needs: update-normal
+    if: always() && needs.update-normal.result == 'success'
+    uses: ./.github/workflows/builder.yml
+    with:
+      addon: carconnectivity-addon
+    secrets: inherit
+
+  security-scan-normal:
+    needs: build-normal
+    if: always() && needs.build-normal.result == 'success'
+    uses: ./.github/workflows/security-scan.yml
+    with:
+      addon: carconnectivity-addon
+      blocking: false
+    secrets: inherit
+
+  release-normal:
+    needs: [autotag-normal, build-normal]
+    if: always() && needs.autotag-normal.result == 'success' && needs.build-normal.result == 'success'
+    uses: ./.github/workflows/pre-release.yml
+    with:
+      addon: carconnectivity-addon
+      prerelease: false
+    secrets: inherit
