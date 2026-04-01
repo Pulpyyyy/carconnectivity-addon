@@ -1,4 +1,4 @@
-name: Builder (Buildx Multi‑Arch, 2026 PRO)
+name: Builder (Buildx Multi‑Arch PRO 2026)
 
 on:
   workflow_call:
@@ -27,108 +27,65 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      # 🔍 Détection addon
       - name: Resolve addon name
         id: resolve
         run: |
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
-      # 🔍 Récupère info version / arch via helper officiel HA
       - name: Get addon info
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ steps.resolve.outputs.addon }}"
 
-      # 🔍 Vérification Docker Hub (skip build)
-      - name: Check if image exists
+      # ----- SKIP BUILD PAR ARCH -----
+      - name: Check if images exist on Docker Hub
         id: exist
         run: |
           TAG="${{ steps.info.outputs.version }}"
           ADDON="${{ steps.resolve.outputs.addon }}"
 
           for ARCH in amd64 aarch64; do
-            IMG="pulpyyyy/${ADDON}-${ARCH}:${TAG}"
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-              "https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${TAG}/")
+            URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${TAG}/"
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
             if [ "$STATUS" -eq 200 ]; then
-              echo "found_$ARCH=true" >> $GITHUB_OUTPUT
+              echo "found_${ARCH}=true" >> $GITHUB_OUTPUT
             else
-              echo "found_$ARCH=false" >> $GITHUB_OUTPUT
+              echo "found_${ARCH}=false" >> $GITHUB_OUTPUT
             fi
           done
 
-      # 🔧 Préparation buildx
-      - name: Setup Docker Buildx
-        if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
+      - name: Setup Buildx
         uses: docker/setup-buildx-action@v3
-
-      # 🔐 Login Docker Hub
-      - name: Login to Docker Hub
         if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
+
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
+        if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 🏗️ Build AMD64
-      - name: Build amd64
-        if: steps.exist.outputs.found_amd64 == 'false'
+      # ----- BUILD & MANIFEST MULTI-ARCH AUTOMATIQUE -----
+      - name: Build & Push Multi‑Arch
+        if: steps.exist.outputs.found_amd64 == 'false' || steps.exist.outputs.found_aarch64 == 'false'
         uses: docker/build-push-action@v5
         with:
           context: ./${{ steps.resolve.outputs.addon }}
-          platforms: linux/amd64
+          platforms: |
+            linux/amd64
+            linux/arm64
           push: true
-          tags: pulpyyyy/${{ steps.resolve.outputs.addon }}-amd64:${{ steps.info.outputs.version }}
-          cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}-amd64:latest
-          cache-to: type=inline
 
-      # 🏗️ Build AARCH64
-      - name: Build aarch64
-        if: steps.exist.outputs.found_aarch64 == 'false'
-        uses: docker/build-push-action@v5
-        with:
-          context: ./${{ steps.resolve.outputs.addon }}
-          platforms: linux/arm64
-          push: true
-          tags: pulpyyyy/${{ steps.resolve.outputs.addon }}-aarch64:${{ steps.info.outputs.version }}
-          cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}-aarch64:latest
-          cache-to: type=inline
+          # Manifest multi-arch auto pour VERSION
+          tags: |
+            pulpyyyy/${{ steps.resolve.outputs.addon }}:${{ steps.info.outputs.version }}
+            pulpyyyy/${{ steps.resolve.outputs.addon }}:latest
 
-      # 🏷️ Publie les tags latest par arch
-      - name: Tag latest amd64
-        if: steps.exist.outputs.found_amd64 == 'false'
-        uses: docker/build-push-action@v5
-        with:
-          context: ./${{ steps.resolve.outputs.addon }}
-          platforms: linux/amd64
-          push: true
-          tags: pulpyyyy/${{ steps.resolve.outputs.addon }}-amd64:latest
-
-      - name: Tag latest aarch64
-        if: steps.exist.outputs.found_aarch64 == 'false'
-        uses: docker/build-push-action@v5
-        with:
-          context: ./${{ steps.resolve.outputs.addon }}
-          platforms: linux/arm64
-          push: true
-          tags: pulpyyyy/${{ steps.resolve.outputs.addon }}-aarch64:latest
-
-      # 🧩 Manifest multi‑arch : edge + stable
-      - name: Create multi‑arch manifest
-        uses: docker/manifest-create-action@v2
-        with:
-          images: |
-            pulpyyyy/${{ steps.resolve.outputs.addon }}-amd64:${{ steps.info.outputs.version }}
-            pulpyyyy/${{ steps.resolve.outputs.addon }}-aarch64:${{ steps.info.outputs.version }}
-          tag: pulpyyyy/${{ steps.resolve.outputs.addon }}:${{ steps.info.outputs.version }}
-
-      - name: Push manifest latest
-        uses: docker/manifest-create-action@v2
-        with:
-          images: |
-            pulpyyyy/${{ steps.resolve.outputs.addon }}-amd64:latest
-            pulpyyyy/${{ steps.resolve.outputs.addon }}-aarch64:latest
-          tag: pulpyyyy/${{ steps.resolve.outputs.addon }}:latest
+          # Tags séparés par arch (comme AVANT)
+          # Home Assistant aime ça pour ses registres
+          labels: |
+            io.hass.version=${{ steps.info.outputs.version }}
+            io.hass.arch=amd64|aarch64
