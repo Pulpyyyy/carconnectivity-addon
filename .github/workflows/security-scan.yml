@@ -24,11 +24,6 @@ on:
 jobs:
   trivy-scan:
     name: Trivy image scan (${{ matrix.arch }})
-
-    # 🔥 CONDITION : le scan ne s'exécute que si la job "manifest" du workflow appelant a réussi
-    needs: manifest
-    if: needs.manifest.result == 'success'
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,9 +38,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      # ----------------------------------------------
-      # 🔧 Normalisation arch → "arm64" sur Docker Hub
-      # ----------------------------------------------
       - name: Normalize arch
         id: norm
         run: |
@@ -55,58 +47,31 @@ jobs:
             echo "docker_arch=amd64" >> $GITHUB_OUTPUT
           fi
 
-      # ----------------------------------------------
-      # 🔍 Lecture de VERSION + IMAGE depuis config.yaml
-      # ----------------------------------------------
-      - name: Get image ref
+      - name: Read image reference
         id: info
         env:
           ADDON: ${{ inputs.addon }}
         run: |
           VERSION=$(grep -oP '(?:version|VERSION):\s*\K[0-9]+\.[0-9]+\.[0-9]+' "$ADDON/config.yaml" | head -n 1)
-          if [ -z "$VERSION" ]; then
-            echo "❌ Version not found in $ADDON/config.yaml"
-            exit 1
-          fi
-
           TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' "$ADDON/config.yaml" | tr -d '"')
-          if [ -z "$TEMPLATE" ]; then
-            echo "❌ Image template missing in config.yaml"
-            exit 1
-          fi
-
-          # Remplacement {arch} → amd64 / arm64
           IMAGE="${TEMPLATE/\{arch\}/${{ steps.norm.outputs.docker_arch }}}:$VERSION"
-
           echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
 
-          # Plateforme pour Trivy
           if [ "${{ matrix.arch }}" = "aarch64" ]; then
             echo "PLATFORM=linux/arm64" >> $GITHUB_OUTPUT
           else
             echo "PLATFORM=linux/amd64" >> $GITHUB_OUTPUT
           fi
 
-          echo "🔍 Scan target: $IMAGE ($PLATFORM)"
-
-      # ----------------------------------------------
-      # 🔐 Docker Hub login
-      # ----------------------------------------------
       - name: Login to Docker Hub
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # ----------------------------------------------
-      # ❗ TRIVY A BESOIN DE PULLER L’IMAGE AVANT LE SCAN
-      # ----------------------------------------------
-      - name: Pull image for scanning
+      - name: Pull image
         run: docker pull ${{ steps.info.outputs.IMAGE }}
 
-      # ----------------------------------------------
-      # 🚨 Trivy scan
-      # ----------------------------------------------
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.35.0
         env:
@@ -116,13 +81,10 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: CRITICAL,HIGH
-          ignore-unfixed: true
           exit-code: ${{ inputs.blocking && '1' || '0' }}
+          ignore-unfixed: true
 
-      # ----------------------------------------------
-      # 📤 Upload SARIF results
-      # ----------------------------------------------
-      - name: Upload Trivy results to GitHub Security tab
+      - name: Upload Trivy results
         if: always() && hashFiles('trivy-results.sarif') != ''
         uses: github/codeql-action/upload-sarif@v4
         with:
