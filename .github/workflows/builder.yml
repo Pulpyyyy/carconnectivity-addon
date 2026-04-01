@@ -1,80 +1,72 @@
-name: Build and Push Docker Images
+name: Builder (Home Assistant 2026 compatible)
+
+on:
+  workflow_call:
+    inputs:
+      addon:
+        description: "Addon folder to build"
+        required: true
+        type: string
+
 permissions:
   contents: read
   packages: write
   id-token: write
 
-on:
-  push:
-    tags:
-      - 'v*'
-      - '!*-edge'
-  workflow_dispatch:
-  workflow_call:
-    inputs:
-      addon:
-        description: 'Addon to build (e.g. carconnectivity-addon-edge). If empty, builds both.'
-        required: false
-        type: string
-  
 env:
-  REPOSITORY: pulpyyyy
-  REGISTRY: docker.io
-  
-concurrency:
-  group: ${{ github.ref }}-${{ inputs.addon || 'all' }}
-  cancel-in-progress: true
+  DOCKER_NAMESPACE: pulpyyyy
+  DOCKER_REGISTRY: docker.io
 
 jobs:
-  build_addon:
-    name: Build addon
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        addon: ${{ inputs.addon && fromJSON(format('["{0}"]', inputs.addon)) || fromJSON('["carconnectivity-addon", "carconnectivity-addon-edge"]') }}
         arch: ["amd64", "aarch64"]
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v6
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Get information
+      # Récupération des infos de version via HA
+      - name: Get addon info
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
-          path: "./${{ matrix.addon }}"
+          path: "./${{ inputs.addon }}"
 
+      # --- CHECK SI L’IMAGE EXISTE DÉJÀ ---
       - name: Check if image already exists on Docker Hub
         id: check_image
         run: |
           TAG="${{ steps.info.outputs.version }}"
-          ADDON="${{ matrix.addon }}"
+          ADDON="${{ inputs.addon }}"
           ARCH="${{ matrix.arch }}"
 
-          IMAGE="https://hub.docker.com/v2/repositories/${{ env.REPOSITORY }}/${ADDON}-${ARCH}/tags/${TAG}/"
+          IMAGE_URL="https://hub.docker.com/v2/repositories/${{ env.DOCKER_NAMESPACE }}/${ADDON}-${ARCH}/tags/${TAG}/"
 
-          echo "Checking: $IMAGE"
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$IMAGE")
+          echo "Checking: $IMAGE_URL"
+
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$IMAGE_URL")
 
           if [ "$STATUS" -ne 200 ]; then
-            echo "❌ $ADDON-$ARCH:$TAG does NOT exist yet."
+            echo "❌ $ADDON-$ARCH:$TAG does NOT exist yet. Build required."
             echo "exists=false" >> $GITHUB_OUTPUT
           else
-            echo "✔ $ADDON-$ARCH:$TAG already exists."
+            echo "✔ $ADDON-$ARCH:$TAG already exists. Skip build."
             echo "exists=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build & Publish
+      # --- BUILD SI NON EXISTANT ---
+      - name: Build addon image
         if: steps.check_image.outputs.exists == 'false'
-        uses: home-assistant/builder@2026.03.2
+        uses: home-assistant/builder/.github/workflows/build-addon.yml@2026.03.2
         with:
-          args: |
-            --addon
-            --arch ${{ matrix.arch }}
-            --docker-hub "${{ env.REGISTRY }}"
-            --target /data/${{ matrix.addon }}
-            --image "${{ env.REPOSITORY }}/${{ matrix.addon }}-${{ matrix.arch }}"
-            --docker-user ${{ secrets.DOCKERHUB_USERNAME }}
-            --docker-password ${{ secrets.DOCKERHUB_TOKEN }}
+          addon: ${{ inputs.addon }}
+          architecture: ${{ matrix.arch }}
+          docker_registry: ${{ env.DOCKER_REGISTRY }}
+          docker_repository: ${{ env.DOCKER_NAMESPACE }}
+          docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          docker_password: ${{ secrets.DOCKERHUB_TOKEN }}
