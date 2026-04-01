@@ -47,7 +47,11 @@ jobs:
 
       - name: Define architectures
         id: archs
-        run: echo 'archs=["amd64","aarch64"]' >> $GITHUB_OUTPUT
+        env:
+          ADDON: ${{ steps.resolve.outputs.addon }}
+        run: |
+          ARCHS=$(python3 -c "import yaml,json; d=yaml.safe_load(open('${ADDON}/config.yaml')); print(json.dumps(d['arch']))")
+          echo "archs=$ARCHS" >> $GITHUB_OUTPUT
 
       # ---------------------------------------------------------
       # VERSION via Home Assistant helper (config.yaml)
