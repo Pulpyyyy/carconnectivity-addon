@@ -33,6 +33,10 @@ jobs:
     uses: ./.github/workflows/builder.yml
     with:
       addon: carconnectivity-addon-edge
+      docker_registry: docker.io
+      docker_namespace: pulpyyyy
+      docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      docker_password: ${{ secrets.DOCKERHUB_TOKEN }}
     secrets: inherit
 
   pre-release-edge:
@@ -79,6 +83,10 @@ jobs:
     uses: ./.github/workflows/builder.yml
     with:
       addon: carconnectivity-addon
+      docker_registry: docker.io
+      docker_namespace: pulpyyyy
+      docker_username: ${{ secrets.DOCKERHUB_USERNAME }}
+      docker_password: ${{ secrets.DOCKERHUB_TOKEN }}
     secrets: inherit
 
   security-scan-normal:
