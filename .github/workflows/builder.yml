@@ -25,21 +25,25 @@ permissions:
 
 jobs:
   # #############################################################
-  #  PREPARE — résolution addon + version (hors matrix)
+  #  PREPARE — résolution addon + version + meta build (hors matrix)
   # #############################################################
   prepare:
     runs-on: ubuntu-latest
 
     outputs:
       addon: ${{ steps.resolve.outputs.addon }}
-      version: ${{ steps.clean.outputs.version }}
+      version: ${{ steps.info.outputs.version }}
       archs: ${{ steps.archs.outputs.archs }}
+      meta: ${{ steps.info.outputs.meta }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           ref: ${{ github.ref }}
+          sparse-checkout: |
+            ${{ github.event.inputs.addon || inputs.addon }}/config.yaml
+            ${{ github.event.inputs.addon || inputs.addon }}/build.yaml
 
       - name: Resolve addon name
         id: resolve
@@ -47,28 +51,48 @@ jobs:
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
-      - name: Define architectures
-        id: archs
+      - name: Read config.yaml (version + archs + build meta)
+        id: info
         env:
           ADDON: ${{ steps.resolve.outputs.addon }}
         run: |
-          ARCHS=$(python3 -c "import yaml,json; d=yaml.safe_load(open('${ADDON}/config.yaml')); print(json.dumps(d['arch']))")
-          echo "archs=$ARCHS" >> $GITHUB_OUTPUT
+          python3 - <<'EOF'
+          import yaml, json, os
 
-      # ---------------------------------------------------------
-      # VERSION via Home Assistant helper (config.yaml)
-      # ---------------------------------------------------------
-      - name: Get addon info (HA helper)
-        id: info
-        uses: home-assistant/actions/helpers/info@master
-        with:
-          path: "./${{ steps.resolve.outputs.addon }}"
+          addon = os.environ['ADDON']
 
-      - name: Clean version
-        id: clean
-        run: |
-          VERSION=$(echo "${{ steps.info.outputs.version }}" | tr -d '"')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          with open(f'{addon}/config.yaml') as f:
+              config = yaml.safe_load(f)
+
+          version = str(config['version']).strip('"')
+          archs   = config['arch']
+
+          with open(f'{addon}/build.yaml') as f:
+              build = yaml.safe_load(f)
+
+          meta = {}
+          for arch in archs:
+              bf = (build.get('build_from') or {}).get(arch)
+              if not bf:
+                  raise SystemExit(f"❌ BUILD_FROM missing for {arch}")
+              args_lines = '\n'.join(
+                  f"{k}={v}" for k, v in (build.get('args') or {}).items()
+              )
+              meta[arch] = {"build_from": bf, "args": args_lines}
+
+          gho = os.environ['GITHUB_OUTPUT']
+          with open(gho, 'a') as f:
+              f.write(f"version={version}\n")
+              f.write(f"archs={json.dumps(archs)}\n")
+              f.write(f"meta={json.dumps(meta)}\n")
+          EOF
+
+      # archs output is read by the matrix — expose it separately for clarity
+      - name: Re-export archs
+        id: archs
+        env:
+          ARCHS: ${{ steps.info.outputs.archs }}
+        run: echo "archs=$ARCHS" >> $GITHUB_OUTPUT
 
   # #############################################################
   #                       BUILD JOB
@@ -81,8 +105,11 @@ jobs:
         arch: ${{ fromJSON(needs.prepare.outputs.archs) }}
 
     steps:
-      - name: Checkout
+      - name: Checkout (addon dir only)
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref }}
+          sparse-checkout: ${{ needs.prepare.outputs.addon }}
 
       # ---------------------------------------------------------
       # NORMALIZE ARCH: HA name → Docker platform name
@@ -100,38 +127,25 @@ jobs:
           esac
 
       # ---------------------------------------------------------
-      # INSTALL yq v4
+      # EXTRACT build meta from prepare outputs (no yq download)
       # ---------------------------------------------------------
-      - name: Install yq v4
-        run: |
-          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-          sudo chmod +x /usr/bin/yq
-
-      # ---------------------------------------------------------
-      # ANALYSE build.yaml → BUILD_FROM + args
-      # ---------------------------------------------------------
-      - name: Read build.yaml data
+      - name: Extract build meta
         id: meta
         env:
-          ADDON: ${{ needs.prepare.outputs.addon }}
-          HA_ARCH: ${{ matrix.arch }}
+          META: ${{ needs.prepare.outputs.meta }}
+          ARCH: ${{ matrix.arch }}
         run: |
-          echo "Reading build.yaml for $ADDON ($HA_ARCH)"
-
-          BUILD_FROM=$(yq '.build_from[strenv(HA_ARCH)]' "./${ADDON}/build.yaml")
+          BUILD_FROM=$(echo "$META" | jq -r --arg a "$ARCH" '.[$a].build_from')
+          ARGS=$(echo "$META" | jq -r --arg a "$ARCH" '.[$a].args')
 
           if [ -z "$BUILD_FROM" ] || [ "$BUILD_FROM" = "null" ]; then
-            echo "❌ BUILD_FROM missing for $HA_ARCH"
+            echo "❌ BUILD_FROM missing for $ARCH"
             exit 1
           fi
 
           echo "build_from=$BUILD_FROM" >> $GITHUB_OUTPUT
-
-          # Convert args: en key=value lignes
-          yq '.args | to_entries[] | "\(.key)=\(.value)"' "./${ADDON}/build.yaml" > buildargs.txt
-
           echo "args<<EOF" >> $GITHUB_OUTPUT
-          cat buildargs.txt >> $GITHUB_OUTPUT
+          echo "$ARGS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       # ---------------------------------------------------------
@@ -273,7 +287,7 @@ jobs:
           VERSION: ${{ needs.prepare.outputs.version }}
           ARCHS: ${{ needs.prepare.outputs.archs }}
         run: |
-          SOURCES=$(echo "$ARCHS" | jq -r '.[] | "pulpyyyy/'"$ADDON"'-\(.)'":\$VERSION"'"')
+          SOURCES=$(echo "$ARCHS" | jq -r --arg addon "$ADDON" --arg ver "$VERSION" '.[] | "pulpyyyy/\($addon)-\(.):\($ver)"')
           docker buildx imagetools create --tag pulpyyyy/$ADDON:$VERSION $SOURCES
 
       # LATEST est toujours mis à jour, indépendamment du check VERSION
@@ -282,5 +296,5 @@ jobs:
           ADDON: ${{ needs.prepare.outputs.addon }}
           ARCHS: ${{ needs.prepare.outputs.archs }}
         run: |
-          SOURCES=$(echo "$ARCHS" | jq -r '.[] | "pulpyyyy/'"$ADDON"'-\(.):latest"')
+          SOURCES=$(echo "$ARCHS" | jq -r --arg addon "$ADDON" '.[] | "pulpyyyy/\($addon)-\(.):latest"')
           docker buildx imagetools create --tag pulpyyyy/$ADDON:latest $SOURCES
