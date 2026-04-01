@@ -32,7 +32,8 @@ jobs:
     strategy:
       matrix:
         addon: ${{ inputs.addon && fromJSON(format('["{0}"]', inputs.addon)) || fromJSON('["carconnectivity-addon", "carconnectivity-addon-edge"]') }}
-        
+        arch: ["amd64", "aarch64"]
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -50,38 +51,30 @@ jobs:
         run: |
           TAG="${{ steps.info.outputs.version }}"
           ADDON="${{ matrix.addon }}"
+          ARCH="${{ matrix.arch }}"
 
-          ARCHS=("amd64" "aarch64")
-          exists=true
+          IMAGE="https://hub.docker.com/v2/repositories/${{ env.REPOSITORY }}/${ADDON}-${ARCH}/tags/${TAG}/"
 
-          for ARCH in "${ARCHS[@]}"; do
+          echo "Checking: $IMAGE"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$IMAGE")
 
-            IMAGE="https://hub.docker.com/v2/repositories/${{ env.REPOSITORY }}/${ADDON}-${ARCH}/tags/${TAG}/"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "❌ $ADDON-$ARCH:$TAG does NOT exist yet."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "✔ $ADDON-$ARCH:$TAG already exists."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          fi
 
-            echo "Checking: $IMAGE"
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$IMAGE")
-
-            if [ "$STATUS" -ne 200 ]; then
-              echo "❌ $ADDON-$ARCH:$TAG does NOT exist yet."
-              exists=false
-            else
-              echo "✔ $ADDON-$ARCH:$TAG already exists."
-            fi
-
-          done
-
-          echo "exists=$exists" >> $GITHUB_OUTPUT
-
-      - name: Publish builder
+      - name: Build & Publish
         if: steps.check_image.outputs.exists == 'false'
         uses: home-assistant/builder@2026.03.2
         with:
           args: |
             --addon
-            --amd64 --aarch64
+            --${{ matrix.arch }}
             --docker-hub "${{ env.REGISTRY }}"
             --target /data/${{ matrix.addon }}
-            --docker-hub-check
+            --image "${{ env.REPOSITORY }}/${{ matrix.addon }}-${{ matrix.arch }}"
             --docker-user ${{ secrets.DOCKERHUB_USERNAME }}
             --docker-password ${{ secrets.DOCKERHUB_TOKEN }}
-
