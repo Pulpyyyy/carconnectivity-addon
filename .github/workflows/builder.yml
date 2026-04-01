@@ -78,6 +78,7 @@ jobs:
         with:
           args: |
             --addon
+            --amd64 --aarch64
             --docker-hub "${{ env.REGISTRY }}"
             --target /data/${{ matrix.addon }}
             --docker-hub-check
