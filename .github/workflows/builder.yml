@@ -22,36 +22,26 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [ amd64, aarch64 ]
 
     steps:
-
-      # ------------------------------
-      # CHECKOUT
-      # ------------------------------
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v6
 
-      # ------------------------------
-      # RESOLVE ADDON NAME (manual OR orchestrator)
-      # ------------------------------
       - name: Resolve addon name
         id: resolve
         run: |
           ADDON="${{ github.event.inputs.addon || inputs.addon }}"
           echo "addon=$ADDON" >> $GITHUB_OUTPUT
 
-      # ------------------------------
-      # GET VERSION USING HA HELPERS
-      # ------------------------------
-      - name: Get addon info (Home Assistant)
+      - name: Get addon info (HA helper)
         id: info
         uses: home-assistant/actions/helpers/info@master
         with:
           path: "./${{ steps.resolve.outputs.addon }}"
 
-      # ------------------------------
-      # CLEAN VERSION (remove JSON quotes)
-      # ------------------------------
       - name: Clean version
         id: clean
         run: |
@@ -59,85 +49,99 @@ jobs:
           VERSION=$(echo "$RAW" | tr -d '"')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # ------------------------------
-      # EXTRACT BUILD_FROM FROM build.yaml USING YQ
-      # ------------------------------
+      # ---------- INSTALL YQ ----------
       - name: Install yq
-        run: sudo apt-get install -y jq
-
-      - name: Parse build.yaml for BUILD_FROM
-        id: meta
         run: |
-          ADDON="${{ steps.resolve.outputs.addon }}"
-          ARCH="${{ matrix.arch }}"
-          BUILD_FROM=$(yq -r ".build_from[\"${ARCH}\"]" "./${ADDON}/build.yaml")
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+
+      # ---------- PARSE build.yaml ----------
+      - name: Read build_from from build.yaml
+        id: meta
+        env:
+          ADDON: ${{ steps.resolve.outputs.addon }}
+          ARCH: ${{ matrix.arch }}
+        run: |
+          BUILD_FROM=$(yq ".build_from[env.ARCH]" "./${ADDON}/build.yaml")
+
+          if [ "$BUILD_FROM" = "null" ] || [ -z "$BUILD_FROM" ]; then
+            echo "❌ BUILD_FROM introuvable pour $ARCH"
+            cat "./${ADDON}/build.yaml"
+            exit 1
+          fi
+
           echo "build_from=$BUILD_FROM" >> $GITHUB_OUTPUT
 
-      # ------------------------------
-      # SKIP IF IMAGE ALREADY EXISTS (BY ARCH)
-      # ------------------------------
-      - name: Check if image already exists
+      # ---------- SKIP BUILD ----------
+      - name: Check if image exists
         id: exist
         run: |
           TAG="${{ steps.clean.outputs.version }}"
           ADDON="${{ steps.resolve.outputs.addon }}"
+          ARCH="${{ matrix.arch }}"
 
-          for ARCH in amd64 aarch64; do
-            URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${TAG}/"
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            if [ "$STATUS" -eq 200 ]; then
-              echo "found_${ARCH}=true" >> $GITHUB_OUTPUT
-            else
-              echo "found_${ARCH}=false" >> $GITHUB_OUTPUT
-            fi
-          done
+          URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${TAG}/"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
 
+          if [ "$STATUS" -eq 200 ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      # ---------- BUILDX ----------
       - name: Setup Buildx
+        if: steps.exist.outputs.exists == 'false'
         uses: docker/setup-buildx-action@v3
-        if: >
-          steps.exist.outputs.found_amd64 == 'false' ||
-          steps.exist.outputs.found_aarch64 == 'false'
 
-      # ------------------------------
-      # DOCKER LOGIN
-      # ------------------------------
-      - name: Login to Docker Hub
+      - name: Login Docker Hub
+        if: steps.exist.outputs.exists == 'false'
         uses: docker/login-action@v3
-        if: >
-          steps.exist.outputs.found_amd64 == 'false' ||
-          steps.exist.outputs.found_aarch64 == 'false'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # ------------------------------
-      # MULTI‑ARCH BUILD WITH BUILD_FROM INJECTION
-      # ------------------------------
-      - name: Build & Push Multi‑Arch
+      # ---------- BUILD IMAGE PAR ARCH ----------
+      - name: Build & Push per‑arch image
+        if: steps.exist.outputs.exists == 'false'
         uses: docker/build-push-action@v5
-        if: >
-          steps.exist.outputs.found_amd64 == 'false' ||
-          steps.exist.outputs.found_aarch64 == 'false'
         with:
           context: ./${{ steps.resolve.outputs.addon }}
-
-          # multi‑arch platforms
-          platforms: |
-            linux/amd64
-            linux/arm64
+          platforms: linux/${{ matrix.arch }}
 
           push: true
 
-          # TAGS
+          # ⚠️ PUSH VERS TES DÉPÔTS CORRECTS
           tags: |
-            pulpyyyy/${{ steps.resolve.outputs.addon }}:${{ steps.clean.outputs.version }}
-            pulpyyyy/${{ steps.resolve.outputs.addon }}:latest
+            pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:${{ steps.clean.outputs.version }}
+            pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
 
-          # SUBSTITUTION BUILD_FROM / BUILD_VERSION / BUILD_ARCH
           build-args: |
+            BUILD_ARCH=${{ matrix.arch }}
             BUILD_VERSION=${{ steps.clean.outputs.version }}
             BUILD_FROM=${{ steps.meta.outputs.build_from }}
 
-          # DOCKER CACHE
-          cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}:latest
+          cache-from: type=registry,ref=pulpyyyy/${{ steps.resolve.outputs.addon }}-${{ matrix.arch }}:latest
           cache-to: type=inline
+
+  # ---------- MANIFEST MULTI‑ARCH ----------
+  manifest:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create & Push manifest
+        uses: docker/manifest-create-action@v2
+        with:
+          tags: |
+            pulpyyyy/${{ needs.build.outputs.addon }}:${{ needs.build.outputs.version }}
+            pulpyyyy/${{ needs.build.outputs.addon }}:latest
+          images: |
+            pulpyyyy/${{ needs.build.outputs.addon }}-amd64:${{ needs.build.outputs.version }}
+            pulpyyyy/${{ needs.build.outputs.addon }}-aarch64:${{ needs.build.outputs.version }}
