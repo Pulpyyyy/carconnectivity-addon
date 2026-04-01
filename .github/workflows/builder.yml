@@ -68,7 +68,7 @@ jobs:
           ARCH="${{ matrix.arch }}"
 
           docker run --rm --privileged \
-            -v "${{ github.workspace }}/:/data" \
+            -v "${{ github.workspace }}/${{ steps.resolve.outputs.addon }}:/data" \
             ghcr.io/home-assistant/amd64-builder:2026.03.2 \
               --addon \
               --${{ matrix.arch }} \
