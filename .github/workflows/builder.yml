@@ -186,7 +186,7 @@ jobs:
       # ---------------------------------------------------------
       - name: Build image (per arch)
         if: steps.exist.outputs.exists == 'false'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: ./${{ needs.prepare.outputs.addon }}
           platforms: linux/${{ steps.norm.outputs.docker_platform }}
