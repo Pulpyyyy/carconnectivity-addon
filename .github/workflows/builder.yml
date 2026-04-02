@@ -172,7 +172,7 @@ jobs:
       # ---------------------------------------------------------
       - name: Setup Buildx
         if: steps.exist.outputs.exists == 'false'
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Docker Hub
         if: steps.exist.outputs.exists == 'false'
@@ -226,7 +226,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Setup Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       # ---------------------------------------------------------
       # VÉRIFICATION que les 2 images arch sont bien disponibles
