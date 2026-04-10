@@ -26,16 +26,16 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
     python3 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install --no-cache \
-        carconnectivity==${CC_VERSION} \
-        carconnectivity-connector-audi==${AUDI_VERSION} \
-        carconnectivity-connector-seatcupra==${SEAT_VERSION} \
-        carconnectivity-connector-skoda==${SKODA_VERSION} \
-        carconnectivity-connector-volkswagen==${VW_VERSION} \
-        carconnectivity-connector-volkswagen_na==${VWNA_VERSION} \
-        carconnectivity-connector-tronity==${TRONITY_VERSION} \
-        carconnectivity-plugin-abrp==${ABRP_VERSION} \
-        carconnectivity-plugin-webui==${WEBUI_VERSION} \
-        carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION} && \
+        carconnectivity==${CC_VERSION#v} \
+        carconnectivity-connector-audi==${AUDI_VERSION#v} \
+        carconnectivity-connector-seatcupra==${SEAT_VERSION#v} \
+        carconnectivity-connector-skoda==${SKODA_VERSION#v} \
+        carconnectivity-connector-volkswagen==${VW_VERSION#v} \
+        carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} \
+        carconnectivity-connector-tronity==${TRONITY_VERSION#v} \
+        carconnectivity-plugin-abrp==${ABRP_VERSION#v} \
+        carconnectivity-plugin-webui==${WEBUI_VERSION#v} \
+        carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION#v} && \
     apk del build-base libffi-dev && \
     echo "CARCONNECTIVITY_VERSION=${CC_VERSION}" >> versions.txt && \
     echo "AUDI_VERSION=${AUDI_VERSION}" >> versions.txt && \
