@@ -22,9 +22,29 @@ on:
         required: true
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      archs: ${{ steps.info.outputs.archs }}
+
+    steps:
+      - name: Checkout config
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: ${{ inputs.addon }}/config.yaml
+
+      - name: Read archs from config.yaml
+        id: info
+        env:
+          ADDON: ${{ inputs.addon }}
+        run: |
+          ARCHS=$(python3 -c "import yaml, json; c = yaml.safe_load(open('${ADDON}/config.yaml')); print(json.dumps(c['arch']))")
+          echo "archs=$ARCHS" >> $GITHUB_OUTPUT
+
   trivy-scan:
     name: Trivy image scan (${{ matrix.arch }})
     runs-on: ubuntu-latest
+    needs: prepare
     permissions:
       contents: read
       security-events: write
@@ -32,7 +52,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [amd64, aarch64]
+        arch: ${{ fromJSON(needs.prepare.outputs.archs) }}
 
     steps:
       - name: Checkout Code
@@ -43,8 +63,13 @@ jobs:
         run: |
           if [ "${{ matrix.arch }}" = "aarch64" ]; then
             echo "docker_arch=arm64" >> $GITHUB_OUTPUT
+            echo "platform=linux/arm64" >> $GITHUB_OUTPUT
+          elif [ "${{ matrix.arch }}" = "armv7" ]; then
+            echo "docker_arch=armv7" >> $GITHUB_OUTPUT
+            echo "platform=linux/arm/v7" >> $GITHUB_OUTPUT
           else
-            echo "docker_arch=amd64" >> $GITHUB_OUTPUT
+            echo "docker_arch=${{ matrix.arch }}" >> $GITHUB_OUTPUT
+            echo "platform=linux/${{ matrix.arch }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Read image reference
@@ -56,12 +81,6 @@ jobs:
           TEMPLATE=$(grep -oP '(?:image):\s*\K\S+' "$ADDON/config.yaml" | tr -d '"')
           IMAGE="${TEMPLATE/\{arch\}/${{ steps.norm.outputs.docker_arch }}}:$VERSION"
           echo "IMAGE=$IMAGE" >> $GITHUB_OUTPUT
-
-          if [ "${{ matrix.arch }}" = "aarch64" ]; then
-            echo "PLATFORM=linux/arm64" >> $GITHUB_OUTPUT
-          else
-            echo "PLATFORM=linux/amd64" >> $GITHUB_OUTPUT
-          fi
 
       - name: Login to Docker Hub
         uses: docker/login-action@v4
@@ -75,7 +94,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@v0.35.0
         env:
-          TRIVY_PLATFORM: ${{ steps.info.outputs.PLATFORM }}
+          TRIVY_PLATFORM: ${{ steps.norm.outputs.platform }}
         with:
           image-ref: ${{ steps.info.outputs.IMAGE }}
           format: sarif
