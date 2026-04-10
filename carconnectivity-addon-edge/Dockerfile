@@ -22,7 +22,7 @@ COPY rootfs /
 WORKDIR /tmp/
 
 RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
-    apk add --no-cache curl nginx py3-pip build-base libffi-dev && \
+    apk add --no-cache --update curl nginx py3-pip build-base libffi-dev && \
     python3 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install --no-cache \
