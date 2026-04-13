@@ -195,6 +195,8 @@ jobs:
           tags: |
             pulpyyyy/${{ needs.prepare.outputs.addon }}-${{ matrix.arch }}:${{ needs.prepare.outputs.version }}
             pulpyyyy/${{ needs.prepare.outputs.addon }}-${{ matrix.arch }}:latest
+            ${{ matrix.arch == 'aarch64' && format('pulpyyyy/{0}-arm64:{1}', needs.prepare.outputs.addon, needs.prepare.outputs.version) || '' }}
+            ${{ matrix.arch == 'aarch64' && format('pulpyyyy/{0}-arm64:latest', needs.prepare.outputs.addon) || '' }}
 
           build-args: |
             BUILD_FROM=${{ steps.meta.outputs.build_from }}
