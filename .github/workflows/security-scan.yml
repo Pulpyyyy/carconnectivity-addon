@@ -92,7 +92,7 @@ jobs:
         run: docker pull ${{ steps.info.outputs.IMAGE }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@v0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         env:
           TRIVY_PLATFORM: ${{ steps.norm.outputs.platform }}
         with:
