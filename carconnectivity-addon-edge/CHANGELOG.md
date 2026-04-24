@@ -1,3 +1,20 @@
+## 0.6.26
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → v0.6.2
+- **CarConnectivity-connector-skoda** → v0.12.5
+- **CarConnectivity-connector-volkswagen** → v0.10.5
+- **CarConnectivity-connector-tronity** → v0.7.2
+- **CarConnectivity-plugin-abrp** → v0.8.2
+- **CarConnectivity-plugin-mqtt** → v0.10.3
+- **CarConnectivity-plugin-mqtt_homeassistant** → v0.6.5
+- **CarConnectivity** → v0.11.9
+- **CarConnectivity-plugin-webui** → v0.7.2
+
+ --- 
+
 ## 0.6.25
 
 
