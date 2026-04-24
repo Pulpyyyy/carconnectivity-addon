@@ -1,4 +1,4 @@
-name: Builder (Buildx Multi‑Arch FINAL)
+name: Builder (Buildx Multi-Arch FINAL)
 
 on:
   workflow_call:
@@ -68,17 +68,18 @@ jobs:
           archs   = config['arch']
 
           with open(f'{addon}/build.yaml') as f:
-              build = yaml.safe_load(f)
+              build = yaml.safe_load(f) or {}
 
           meta = {}
           for arch in archs:
               bf = (build.get('build_from') or {}).get(arch)
               if not bf:
-                  raise SystemExit(f"❌ BUILD_FROM missing for {arch}")
-              args_lines = '\n'.join(
+                  raise SystemExit(f"BUILD_FROM missing for {arch}")
+              # args -> liste de "K=V" (plus de jointure multi-lignes fragile)
+              args_list = [
                   f"{k}={v}" for k, v in (build.get('args') or {}).items()
-              )
-              meta[arch] = {"build_from": bf, "args": args_lines}
+              ]
+              meta[arch] = {"build_from": bf, "args": args_list}
 
           gho = os.environ['GITHUB_OUTPUT']
           with open(gho, 'a') as f:
@@ -128,25 +129,36 @@ jobs:
 
       # ---------------------------------------------------------
       # EXTRACT build meta from prepare outputs (no yq download)
+      # Construit directement le bloc build-args complet
       # ---------------------------------------------------------
       - name: Extract build meta
         id: meta
         env:
           META: ${{ needs.prepare.outputs.meta }}
           ARCH: ${{ matrix.arch }}
+          VERSION: ${{ needs.prepare.outputs.version }}
         run: |
+          set -euo pipefail
+
           BUILD_FROM=$(echo "$META" | jq -r --arg a "$ARCH" '.[$a].build_from')
-          ARGS=$(echo "$META" | jq -r --arg a "$ARCH" '.[$a].args')
 
           if [ -z "$BUILD_FROM" ] || [ "$BUILD_FROM" = "null" ]; then
-            echo "❌ BUILD_FROM missing for $ARCH"
+            echo "::error::BUILD_FROM missing for $ARCH"
             exit 1
           fi
 
-          echo "build_from=$BUILD_FROM" >> $GITHUB_OUTPUT
-          echo "args<<EOF" >> $GITHUB_OUTPUT
-          echo "$ARGS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "build_from=$BUILD_FROM" >> "$GITHUB_OUTPUT"
+
+          # Construit le bloc build-args COMPLET (les 3 obligatoires + les extras)
+          {
+            echo "build_args<<__EOF_ARGS__"
+            echo "BUILD_FROM=$BUILD_FROM"
+            echo "BUILD_VERSION=$VERSION"
+            echo "BUILD_ARCH=$ARCH"
+            # Extras : chaque entrée de .args[] est déjà "K=V"
+            echo "$META" | jq -r --arg a "$ARCH" '.[$a].args[]?'
+            echo "__EOF_ARGS__"
+          } >> "$GITHUB_OUTPUT"
 
       # ---------------------------------------------------------
       # SKIP BUILD if image already exists on Docker Hub
@@ -156,10 +168,9 @@ jobs:
         env:
           ADDON: ${{ needs.prepare.outputs.addon }}
           VERSION: ${{ needs.prepare.outputs.version }}
+          ARCH: ${{ matrix.arch }}
         run: |
-          ARCH="${{ matrix.arch }}"
           URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${VERSION}/"
-
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
           if [ "$STATUS" -eq 200 ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -170,6 +181,10 @@ jobs:
       # ---------------------------------------------------------
       # BUILDX & LOGIN
       # ---------------------------------------------------------
+      - name: Setup QEMU
+        if: steps.exist.outputs.exists == 'false'
+        uses: docker/setup-qemu-action@v3
+
       - name: Setup Buildx
         if: steps.exist.outputs.exists == 'false'
         uses: docker/setup-buildx-action@v4
@@ -198,11 +213,7 @@ jobs:
             ${{ matrix.arch == 'aarch64' && format('pulpyyyy/{0}-arm64:{1}', needs.prepare.outputs.addon, needs.prepare.outputs.version) || '' }}
             ${{ matrix.arch == 'aarch64' && format('pulpyyyy/{0}-arm64:latest', needs.prepare.outputs.addon) || '' }}
 
-          build-args: |
-            BUILD_FROM=${{ steps.meta.outputs.build_from }}
-            BUILD_VERSION=${{ needs.prepare.outputs.version }}
-            BUILD_ARCH=${{ matrix.arch }}
-            ${{ steps.meta.outputs.args }}
+          build-args: ${{ steps.meta.outputs.build_args }}
 
           provenance: false
           sbom: false
@@ -231,7 +242,7 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       # ---------------------------------------------------------
-      # VÉRIFICATION que les 2 images arch sont bien disponibles
+      # VÉRIFICATION que les images arch sont bien disponibles
       # ---------------------------------------------------------
       - name: Check arch images exist
         env:
@@ -243,10 +254,10 @@ jobs:
             URL="https://hub.docker.com/v2/repositories/pulpyyyy/${ADDON}-${ARCH}/tags/${VERSION}/"
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             if [ "$STATUS" -ne 200 ]; then
-              echo "❌ Image pulpyyyy/${ADDON}-${ARCH}:${VERSION} not found (HTTP $STATUS)"
+              echo "::error::Image pulpyyyy/${ADDON}-${ARCH}:${VERSION} not found (HTTP $STATUS)"
               exit 1
             fi
-            echo "✔ pulpyyyy/${ADDON}-${ARCH}:${VERSION} exists"
+            echo "OK pulpyyyy/${ADDON}-${ARCH}:${VERSION} exists"
           done
 
       # ---------------------------------------------------------
@@ -262,10 +273,10 @@ jobs:
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
           if [ "$STATUS" -eq 200 ]; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            echo "✔ Manifest ${VERSION} already exists, skipping."
+            echo "Manifest ${VERSION} already exists, skipping."
           else
             echo "exists=false" >> $GITHUB_OUTPUT
-            echo "❗ Manifest ${VERSION} missing, will create it."
+            echo "Manifest ${VERSION} missing, will create it."
           fi
 
       - name: Set built output
@@ -280,9 +291,10 @@ jobs:
           fi
 
       # ---------------------------------------------------------
-      # MULTI‑ARCH MANIFEST
+      # MULTI-ARCH MANIFEST (version)
       # ---------------------------------------------------------
       - name: Create VERSION manifest
+        if: steps.manifestcheck.outputs.exists == 'false'
         env:
           ADDON: ${{ needs.prepare.outputs.addon }}
           VERSION: ${{ needs.prepare.outputs.version }}
