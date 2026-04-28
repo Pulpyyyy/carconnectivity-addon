@@ -20,6 +20,9 @@ permissions:
 jobs:
   update-versions:
     runs-on: ubuntu-latest
+    env:
+      CHANGES: 'false'
+      CONFLICT_DETECTED: 'false'
     strategy:
       max-parallel: 1
       matrix:
@@ -164,13 +167,15 @@ jobs:
           fi
 
       - name: Validate pip dependency compatibility
-        if: env.CHANGES == 'true'
+        if: ${{ env.CHANGES == 'true' }}
         run: |
           set -euo pipefail
           ADDON="${{ matrix.addon }}"
 
-          # Packages without a standard PyPI distribution (e.g. unreleased pre-release)
-          PIP_SKIP="VOLVO"
+          # Packages not on PyPI or with a requests constraint bypassed via --no-deps in Dockerfile
+          # AUDI, VWNA: requests~=2.32.3 conflicts with CC>=0.11.9; installed with --no-deps
+          PIP_SKIP="VOLVO AUDI VWNA"
+          PIP_NO_DEPS="AUDI VWNA"
 
           pkg_args=""
           while IFS='=' read -r key repo_url; do
@@ -196,6 +201,20 @@ jobs:
           # shellcheck disable=SC2086
           if /tmp/pip-check-venv/bin/pip install --no-cache-dir $pkg_args > /tmp/pip-conflict.txt 2>&1; then
             echo "✅ All dependencies compatible — proceeding"
+
+            # Warn in changelog about packages installed with --no-deps
+            {
+              echo ""
+              echo "#### ⚠️ Known dependency bypasses"
+            } >> "$ADDON/bot_changelog.md"
+            while IFS='=' read -r key repo_url; do
+              [[ -z "$key" || "$key" == \#* ]] && continue
+              if echo "$PIP_NO_DEPS" | grep -qw "$key"; then
+                pkg_name=$(basename "$repo_url" .git | tr '[:upper:]' '[:lower:]')
+                ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"')
+                echo "- ⚠️ \`${pkg_name}\` ${ver} installed with \`--no-deps\` (upstream \`requests\` constraint conflict)" >> "$ADDON/bot_changelog.md"
+              fi
+            done < .github/submodules.list
           else
             echo "::warning::Dependency conflict detected — reverting $ADDON/build.yaml"
             cat /tmp/pip-conflict.txt
@@ -206,7 +225,7 @@ jobs:
           fi
 
       - name: Increment version ${{ matrix.addon }}
-        if: env.CHANGES == 'true'
+        if: ${{ env.CHANGES == 'true' }}
         run: |
           version=$(grep -E '^version:' "carconnectivity-addon-edge/config.yaml" | awk '{print $2}' | sed 's/"//g')
           IFS='.' read -r major minor patch <<< "$version"
@@ -247,7 +266,7 @@ jobs:
           rm ${{ matrix.addon }}/old_CHANGELOG.md
 
       - name: Commit and push changes on the Current Branch ${{ matrix.addon }}
-        if: env.CHANGES == 'true'
+        if: ${{ env.CHANGES == 'true' }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
@@ -257,7 +276,7 @@ jobs:
           git push
 
       - name: Report pip dependency conflict
-        if: env.CONFLICT_DETECTED == 'true'
+        if: ${{ env.CONFLICT_DETECTED == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
