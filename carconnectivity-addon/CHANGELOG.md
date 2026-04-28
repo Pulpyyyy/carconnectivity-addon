@@ -1,5 +1,4 @@
-## 0.6.26
-
+## 0.6.25
 
 ### 🛠️ Fixes & Updates
 
@@ -12,14 +11,6 @@
 - **CarConnectivity-plugin-mqtt_homeassistant** → v0.6.5
 - **CarConnectivity** → v0.11.9
 - **CarConnectivity-plugin-webui** → v0.7.2
-
- --- 
-
-## 0.6.25
-
-
-### 🛠️ Fixes & Updates
-
 - **hassio-addons/base** → [20.1.0](https://github.com/hassio-addons/addon-base/releases/tag/v20.1.0)
 
  --- 
