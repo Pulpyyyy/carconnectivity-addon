@@ -1,8 +1,10 @@
-## 0.6.26
+## 0.7.0
 
 ### 🚀 New Features
 
 - **CarConnectivity-connector-renaultdacia** → v0.1a1
+
+## 0.6.26
 
 ### 🛠️ Fixes & Updates
 
