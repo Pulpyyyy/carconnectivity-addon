@@ -150,16 +150,59 @@ jobs:
               echo "🔄 ${component}_VERSION: $old_version → $new_version"
               sed -i "s|${component}_VERSION:.*|${component}_VERSION: \"$new_version\"|" "${{ matrix.addon }}/build.yaml"
               changed=true
+              CHANGED_LIST="${CHANGED_LIST:-} $component"
             fi
           done
 
           # Export de l'état final
           if [ "$changed" = true ]; then
             echo "CHANGES=true" >> $GITHUB_ENV
+            echo "CHANGED_COMPONENTS=${CHANGED_LIST# }" >> $GITHUB_ENV
             echo "Changes detected."
           else
             echo "CHANGES=false" >> $GITHUB_ENV
             echo "No update needed."
+          fi
+
+      - name: Validate pip dependency compatibility
+        run: |
+          set -euo pipefail
+          ADDON="${{ matrix.addon }}"
+
+          # Package list must match the pip install in the Dockerfile exactly
+          # (VOLVO is tracked in build.yaml but not installed via pip — skipped)
+          pkg_args=""
+          for key in CC AUDI SEAT SKODA VW VWNA TRONITY ABRP MQTT MQTTHA WEBUI; do
+            declare -A PKG_NAMES=(
+              [CC]="carconnectivity"
+              [AUDI]="carconnectivity-connector-audi"
+              [SEAT]="carconnectivity-connector-seatcupra"
+              [SKODA]="carconnectivity-connector-skoda"
+              [VW]="carconnectivity-connector-volkswagen"
+              [VWNA]="carconnectivity-connector-volkswagen_na"
+              [TRONITY]="carconnectivity-connector-tronity"
+              [ABRP]="carconnectivity-plugin-abrp"
+              [MQTT]="carconnectivity-plugin-mqtt"
+              [MQTTHA]="carconnectivity-plugin-mqtt_homeassistant"
+              [WEBUI]="carconnectivity-plugin-webui"
+            )
+            ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"' | sed 's/^v//')
+            pkg_args="$pkg_args ${PKG_NAMES[$key]}==$ver"
+          done
+
+          python3 -m venv /tmp/pip-check-venv
+          /tmp/pip-check-venv/bin/pip install --quiet --upgrade pip
+
+          echo "Validating pip dependency compatibility..."
+          # shellcheck disable=SC2086
+          if /tmp/pip-check-venv/bin/pip install --no-cache-dir $pkg_args 2>/tmp/pip-conflict.txt; then
+            echo "All dependencies compatible — proceeding"
+          else
+            echo "::warning::Dependency conflict detected — reverting all build.yaml changes."
+            git checkout -- "$ADDON/build.yaml"
+            rm -f "$ADDON/bot_changelog.md"
+            echo "CHANGES=false" >> $GITHUB_ENV
+            echo "CONFLICT_DETECTED=true" >> $GITHUB_ENV
           fi
 
       - name: Increment version ${{ matrix.addon }}
