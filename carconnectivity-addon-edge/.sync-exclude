@@ -2,6 +2,7 @@
 build.yaml
 CHANGELOG.md
 config.yaml
+Dockerfile
 DOCS.md
 fix_CHANGELOG.md
 next_CHANGELOG.md

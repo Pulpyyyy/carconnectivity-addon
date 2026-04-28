@@ -51,13 +51,13 @@ options:
   expert: false
 schema:
   brand1:
-    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na)
+    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na|renaultdacia)
     username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
     password: password?
     spin: match(^\d{4}$)?
     interval: int(60,3600)?
   brand2:
-    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na)
+    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na|renaultdacia)
     username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
     password: password?
     spin: match(^\d{4}$)?
