@@ -15,6 +15,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   update-versions:
@@ -162,6 +163,48 @@ jobs:
             echo "No update needed."
           fi
 
+      - name: Validate pip dependency compatibility
+        if: env.CHANGES == 'true'
+        run: |
+          set -euo pipefail
+          ADDON="${{ matrix.addon }}"
+
+          # Packages without a standard PyPI distribution (e.g. unreleased pre-release)
+          PIP_SKIP="VOLVO"
+
+          pkg_args=""
+          while IFS='=' read -r key repo_url; do
+            [[ -z "$key" || "$key" == \#* ]] && continue
+
+            if echo "$PIP_SKIP" | grep -qw "$key"; then
+              echo "⏭ Skipping $key (not on PyPI)"
+              continue
+            fi
+
+            pkg_name=$(basename "$repo_url" .git | tr '[:upper:]' '[:lower:]')
+            ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"' | sed 's/^v//')
+
+            if [ -n "$ver" ]; then
+              pkg_args="$pkg_args ${pkg_name}==$ver"
+            fi
+          done < .github/submodules.list
+
+          python3 -m venv /tmp/pip-check-venv
+          /tmp/pip-check-venv/bin/pip install --quiet --upgrade pip
+
+          echo "Validating: $pkg_args"
+          # shellcheck disable=SC2086
+          if /tmp/pip-check-venv/bin/pip install --no-cache-dir $pkg_args > /tmp/pip-conflict.txt 2>&1; then
+            echo "✅ All dependencies compatible — proceeding"
+          else
+            echo "::warning::Dependency conflict detected — reverting $ADDON/build.yaml"
+            cat /tmp/pip-conflict.txt
+            git checkout -- "$ADDON/build.yaml"
+            rm -f "$ADDON/bot_changelog.md"
+            echo "CHANGES=false" >> $GITHUB_ENV
+            echo "CONFLICT_DETECTED=true" >> $GITHUB_ENV
+          fi
+
       - name: Increment version ${{ matrix.addon }}
         if: env.CHANGES == 'true'
         run: |
@@ -212,3 +255,33 @@ jobs:
           git add .
           git diff --cached --quiet || git commit -m "Update build.yaml with latest submodule versions"
           git push
+
+      - name: Report pip dependency conflict
+        if: env.CONFLICT_DETECTED == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ADDON="${{ matrix.addon }}"
+
+          # Job summary visible dans l'onglet Actions du run
+          {
+            echo "## ⚠️ Pip dependency conflict — \`$ADDON\`"
+            echo ""
+            echo "The \`build.yaml\` was automatically reverted. No version bump or release."
+            echo ""
+            echo "### Conflict details"
+            echo '```'
+            cat /tmp/pip-conflict.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Ouvre une issue GitHub si aucune n'est déjà ouverte pour cet addon
+          TITLE="⚠️ Pip dependency conflict — $ADDON"
+          existing=$(gh issue list --state open --search "in:title $TITLE" --json number --jq 'length')
+          if [ "$existing" -eq 0 ]; then
+            BODY=$(printf '## Pip dependency conflict\n\nAddon: `%s`\n\nThe automated update workflow detected incompatible pip dependencies and reverted `build.yaml` to its previous state. No version bump or release was made.\n\nFix the upstream dependency conflict — the next automated run will then succeed.\n\n### Conflict details\n```\n%s\n```' \
+              "$ADDON" "$(cat /tmp/pip-conflict.txt)")
+            gh issue create --title "$TITLE" --body "$BODY"
+          else
+            echo "ℹ️ Issue already open for $ADDON — skipping creation"
+          fi
