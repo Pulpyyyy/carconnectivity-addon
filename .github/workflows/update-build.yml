@@ -174,8 +174,8 @@ jobs:
 
           # Packages not on PyPI or with a requests constraint bypassed via --no-deps in Dockerfile
           # AUDI, VWNA: requests~=2.32.3 conflicts with CC>=0.11.9; installed with --no-deps
-          PIP_SKIP="VOLVO AUDI VWNA"
-          PIP_NO_DEPS="AUDI VWNA"
+          PIP_SKIP="VOLVO VWNA"
+          PIP_NO_DEPS="VWNA"
 
           pkg_args=""
           while IFS='=' read -r key repo_url; do
