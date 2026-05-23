@@ -173,8 +173,9 @@ jobs:
           ADDON="${{ matrix.addon }}"
 
           # Packages not on PyPI or with a requests constraint bypassed via --no-deps in Dockerfile
-          PIP_SKIP="VOLVO"
-          PIP_NO_DEPS=""
+          # AUDI: requests~=2.32.3 conflicts with SEATCUPRA/SKODA>=requests~=2.33.1; installed with --no-deps in Dockerfile
+          PIP_SKIP="VOLVO AUDI"
+          PIP_NO_DEPS="AUDI"
 
           pkg_args=""
           while IFS='=' read -r key repo_url; do
