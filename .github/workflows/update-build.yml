@@ -190,6 +190,11 @@ jobs:
             ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"' | sed 's/^v//')
 
             if [ -n "$ver" ]; then
+              pypi_status=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/${pkg_name}/${ver}/json")
+              if [ "$pypi_status" != "200" ]; then
+                echo "⏭ Skipping $key==$ver (not yet published on PyPI)"
+                continue
+              fi
               pkg_args="$pkg_args ${pkg_name}==$ver"
             fi
           done < .github/submodules.list
