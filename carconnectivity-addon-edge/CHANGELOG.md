@@ -1,3 +1,15 @@
+## 0.7.4
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → v0.6.3a1
+
+#### ⚠️ Known dependency bypasses
+- ⚠️ `carconnectivity-connector-audi` v0.3.0 installed with `--no-deps` (upstream `requests` constraint conflict)
+
+ --- 
+
 ## 0.7.3
 
 
