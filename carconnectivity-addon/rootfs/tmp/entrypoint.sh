@@ -86,10 +86,26 @@ validate_json() {
     else
         color_echo "${RED}" "❌ File ${name} is invalid."
         echo "Error details: $result"
-        echo "Content of ${name}:"
-        cat "$file"
         return 1
     fi
+}
+
+# Print config with sensitive fields redacted
+print_redacted() {
+    local file="$1"
+    jq '
+      walk(
+        if type == "object" then
+          with_entries(
+            if (.key | test("password|spin|token|key_primary|key_secondary|vehicle_token|location_token"; "i"))
+            then .value = "***REDACTED***"
+            else .
+            end
+          )
+        else .
+        end
+      )
+    ' "$file"
 }
 
 
@@ -201,7 +217,9 @@ echo -e "TYPE=$(hostname)"
 print_file versions.txt
 
 if [ "${DEBUG_LEVEL}" = "debug" ]; then
-    print_file ${CONFIG_FILE}
+    color_echo "${BLUE}" "📃 Config (credentials redacted) 📃"
+    print_redacted "${CONFIG_FILE}"
+    color_echo "${BLUE}" "-----------"
 fi
 if [ -n "${ADMINUI:-}" ]; then
     exec nginx -c ${NGINX_FILE} &
