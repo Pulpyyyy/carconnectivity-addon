@@ -97,7 +97,7 @@ print_redacted() {
       walk(
         if type == "object" then
           with_entries(
-            if (.key | test("password|spin|token|key_primary|key_secondary|vehicle_token|location_token"; "i"))
+            if (.key | test("password|spin|token|key_primary|key_secondary|vehicle_token|location_token|username"; "i"))
             then .value = "***REDACTED***"
             else .
             end
