@@ -1,3 +1,15 @@
+## 0.7.7
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-plugin-mqtt** → v0.10.4
+
+#### ⚠️ Known dependency bypasses
+- ⚠️ `carconnectivity-connector-audi` v0.3.0 installed with `--no-deps` (upstream `requests` constraint conflict)
+
+ --- 
+
 ## 0.7.6
 
 
