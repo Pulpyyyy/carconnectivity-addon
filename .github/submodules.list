@@ -3,6 +3,7 @@ SKODA=https://github.com/tillsteinbach/CarConnectivity-connector-skoda.git
 AUDI=https://github.com/acfischer42/CarConnectivity-connector-audi.git
 VW=https://github.com/tillsteinbach/CarConnectivity-connector-volkswagen.git
 VWNA=https://github.com/zackcornelius/CarConnectivity-connector-volkswagen-na.git
+VWEUDATA=https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act.git
 TRONITY=https://github.com/tillsteinbach/CarConnectivity-connector-tronity.git
 VOLVO=https://github.com/tillsteinbach/CarConnectivity-connector-volvo.git
 ABRP=https://github.com/tillsteinbach/CarConnectivity-plugin-abrp.git

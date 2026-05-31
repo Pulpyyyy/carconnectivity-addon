@@ -165,8 +165,14 @@ mkdir -p ${NGINX_CACHE} && chown -R nginx:nginx ${NGINX_CACHE}
 
 # Get the locale (also sets global HA_COUNTRY)
 LOCALE=$(get_ha_locale) || LOCALE="en_US"
-HA_COUNTRY="${LOCALE#*_}"
-color_echo "${CYAN}" "🌍 Detected locale: ${LOCALE} / country: ${HA_COUNTRY}"
+HA_COUNTRY=$(echo "${LOCALE#*_}" | tr '[:upper:]' '[:lower:]')
+HA_LANG=$(echo "${LOCALE%%_*}" | tr '[:upper:]' '[:lower:]')
+# volkswagen_na only supports us/ca
+NA_COUNTRY="us"
+if [ "${HA_COUNTRY}" = "ca" ]; then
+    NA_COUNTRY="ca"
+fi
+color_echo "${CYAN}" "🌍 Detected locale: ${LOCALE} / country: ${HA_COUNTRY} / language: ${HA_LANG}"
 
 if [ "${EXPERT_MODE}" = "true" ]; then
     color_echo "${YELLOW}" "⚠️ Expert mode is enabled. ⚠️"
@@ -199,10 +205,11 @@ else
 
     color_echo "${BLUE}" "🛠️ Generating configuration..."
     tempio -conf "${OPTIONS_JSON}" -template carconnectivity.json.gtpl -out "${UI_NAME}"
-    sed -i "s/\"locale\": \"en_US\"/\"locale\": \"$LOCALE\"/" "$UI_NAME"
-    if [ "${HA_COUNTRY}" = "CA" ]; then
-        sed -i "s/\"country\": \"us\"/\"country\": \"ca\"/" "$UI_NAME"
-    fi
+    # Inject the HA locale into the rendered config:
+    #  - locale: plugins (mqtt / webui / mqtt_homeassistant)
+    #  - vw_eu_data_act: OIDC state (country uppercase / language lowercase)
+    #  - volkswagen_na: North-America country (us by default, ca for Canada)
+    sed -i "s/\"locale\": \"en_US\"/\"locale\": \"$LOCALE\"/; s/__HA_COUNTRY__/${HA_COUNTRY}/g; s/__HA_LANG__/${HA_LANG}/g; s/__NA_COUNTRY__/${NA_COUNTRY}/g" "$UI_NAME"
     if validate_json "${UI_NAME}"; then
         jq . "${UI_NAME}" > "${CONFIG_FILE}"
     else

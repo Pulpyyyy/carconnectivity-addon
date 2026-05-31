@@ -55,6 +55,7 @@ Choose the manufacturer corresponding to your vehicle from the supported brands:
 - `Volvo`
 - `Audi`
 - `Volkswagen North America` *(country automatically set from your Home Assistant country setting — `us` by default, `ca` if your HA is configured for Canada)*
+- `Volkswagen EU Data Act` *(read-only alternative when the regular Volkswagen/WeConnect connector is blocked — see the dedicated section below)*
 
 If you own multiple vehicles from different brands, you can configure multiple sections.
 
@@ -79,7 +80,21 @@ For `Volvo`:
 - `Vehicule Location Token`: Access token for the location endpoint.
 - `Refresh Interval`: Defines how often (in seconds) the vehicle's data is updated.
 - `Warning:` Setting a refresh rate too frequently may exceed the API request limits imposed by the manufacturer, resulting in temporary access restrictions.
-  
+
+For `Volkswagen EU Data Act` (read-only):
+- `Username`: The email address of your Volkswagen ID.
+- `Password`: The password of your Volkswagen ID account.
+
+This connector is a **read-only** alternative for when the regular Volkswagen (WeConnect) connector is blocked. It refreshes data about every 15 minutes and **cannot send remote commands**. The brand, refresh interval and OIDC locale (country/language) are set automatically — you only provide your credentials.
+
+⚠️ **Prerequisite — enable continuous data on the portal first.** The add-on only *downloads* the datasets the portal generates; it cannot create the data request for you. Before enabling this connector:
+1. Open [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/) and log in with your Volkswagen ID (the same credentials as above).
+2. Go to **Data clusters → Vehicle overview** and connect your car if it isn't already listed.
+3. Click **Get customised data** and configure a **continuous** data request with a **15-minute** frequency.
+4. Wait until datasets (ZIP files) start appearing for the vehicle — the first one can take a while.
+
+Full details and limitations: [CarConnectivity-connector-vw-eu-data-act](https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act).
+
 ### 3. MQTT Configuration (Mandatory)
 You need to use `MQTT` to send vehicle data to `Home Assistant`, configure these settings:
 - `Username`: MQTT broker login

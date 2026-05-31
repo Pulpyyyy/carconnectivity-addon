@@ -10,7 +10,7 @@
                     "brand": "{{ .brand1.type }}",
                     {{- end }}
                     {{- if eq .brand1.type "volkswagen_na" }}
-                    "country": "us",
+                    "country": "__NA_COUNTRY__",
                     {{- end }}
                     "username": "{{ .brand1.username }}",
                     "password": "{{ .brand1.password }}",
@@ -30,7 +30,7 @@
                     "brand": "{{ .brand2.type }}",
                     {{- end }}
                     {{- if eq .brand2.type "volkswagen_na" }}
-                    "country": "us",
+                    "country": "__NA_COUNTRY__",
                     {{- end }}
                     "username": "{{ .brand2.username }}",
                     "password": "{{ .brand2.password }}",
@@ -53,6 +53,23 @@
                     "api_log_level": "{{ .logs.api_level }}"
                 }
             }
+            {{- end }}
+            {{- if .vw_eu_data_act }}
+            {{- if .vw_eu_data_act.username }}
+            {{- if or .brand1.username .brand2.username .volvo.key_primary }},{{- end }}
+            {
+                "type": "vw_eu_data_act",
+                "config": {
+                    "username": "{{ .vw_eu_data_act.username }}",
+                    "password": "{{ .vw_eu_data_act.password }}",
+                    "country": "__HA_COUNTRY__",
+                    "language": "__HA_LANG__",
+                    "brand": "VOLKSWAGEN_PASSENGER_CARS",
+                    "interval": 900,
+                    "api_log_level": "{{ .logs.api_level }}"
+                }
+            }
+            {{- end }}
             {{- end }}
         ],
         "plugins": [

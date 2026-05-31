@@ -146,6 +146,11 @@ jobs:
             new_version_var="LATEST_${component}_VERSION_${{ matrix.addon }}"
             new_version=$(printenv $new_version_var)
 
+            # Skip components absent from this addon's build.yaml (e.g. edge-only connectors)
+            if ! grep -q "${component}_VERSION:" "${{ matrix.addon }}/build.yaml"; then
+              continue
+            fi
+
             # Version actuelle dans le build.yaml
             old_version=$(grep "${component}_VERSION" "${{ matrix.addon }}/build.yaml" | awk '{print $2}' | tr -d '"')
 

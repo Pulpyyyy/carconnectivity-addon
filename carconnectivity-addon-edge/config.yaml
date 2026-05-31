@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on Edge"
-version: 0.7.7
+version: 0.8.0
 slug: "carconnectivity-addon-edge"
 description: "⚠️EDGE VERSION⚠️ CarConnectivity Add-on Edge, may be unstable !"
 image: "docker.io/pulpyyyy/carconnectivity-addon-edge-{arch}"
@@ -33,6 +33,9 @@ options:
     vehicle_token: ""
     location_token: ""
     interval: 600
+  vw_eu_data_act:
+    username: ""
+    password: "password"
   mqtt:
     username: ""
     password: ""
@@ -68,6 +71,9 @@ schema:
     vehicle_token: str?
     location_token: str?
     interval: int(60,3600)?
+  vw_eu_data_act:
+    username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
+    password: password?
   mqtt:
     username: str?
     password: password?
