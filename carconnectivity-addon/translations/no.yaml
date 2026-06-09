@@ -60,6 +60,18 @@ configuration:
         name: "Volvo-intervall"
         description: "Intervall i sekunder mellom datainnhenting for Volvo-bilen."
 
+  # --- VW EU DATA ACT GRUPPE ---
+  vw_eu_data_act:
+    name: "⚡ Volkswagen EU Data Act"
+    description: "Skrivebeskyttet tilgang til din Volkswagen via EU Data Act-portalen (alternativ når WeConnect er blokkert). Skriv inn Volkswagen ID-legitimasjonen din. Du må først aktivere en kontinuerlig 15-minutters dataforespørsel for kjøretøyet ditt på portalen. Data oppdateres omtrent hvert 15. minutt; ingen fjernkommandoer."
+    fields:
+      username:
+        name: "Brukernavn"
+        description: "E-postadressen til Volkswagen ID-kontoen din."
+      password:
+        name: "Passord"
+        description: "Passordet til Volkswagen ID-kontoen din."
+
   # --- MQTT GRUPPE ---
   mqtt:
     name: "💬 MQTT-konfigurasjon"

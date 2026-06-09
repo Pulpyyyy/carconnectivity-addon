@@ -1,3 +1,30 @@
+## 0.8.2
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-vw-eu-data-act** → v0.1.5
+
+#### ⚠️ Known dependency bypasses
+- ⚠️ `carconnectivity-connector-audi` v0.3.0 installed with `--no-deps` (upstream `requests` constraint conflict)
+
+ --- 
+
+## 0.8.1
+
+### 🚀 New Features
+
+- **CarConnectivity-connector-vw-eu-data-act** → v1.4
+  
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-volkswagen-na** → v0.1.21
+
+#### ⚠️ Known dependency bypasses
+- ⚠️ `carconnectivity-connector-audi` v0.3.0 installed with `--no-deps` (upstream `requests` constraint conflict)
+
+ --- 
+
 ## 0.7.7
 
 

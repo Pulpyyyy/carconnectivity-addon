@@ -60,6 +60,18 @@ configuration:
         name: "Intervalle Volvo"
         description: "Intervalle en secondes entre deux récupérations pour la voiture Volvo."
 
+  # --- GROUPE VW EU DATA ACT ---
+  vw_eu_data_act:
+    name: "⚡ Volkswagen EU Data Act"
+    description: "Accès en lecture seule à votre Volkswagen via le portail EU Data Act (alternative quand WeConnect est bloqué). Saisissez vos identifiants Volkswagen ID. Vous devez d'abord activer une demande de données continue de 15 minutes pour votre véhicule sur le portail. Données rafraîchies environ toutes les 15 minutes ; aucune commande à distance."
+    fields:
+      username:
+        name: "Nom d'utilisateur"
+        description: "Adresse e-mail de votre compte Volkswagen ID."
+      password:
+        name: "Mot de passe"
+        description: "Mot de passe de votre compte Volkswagen ID."
+
   # --- GROUPE MQTT ---
   mqtt:
     name: "💬 Configuration MQTT"
