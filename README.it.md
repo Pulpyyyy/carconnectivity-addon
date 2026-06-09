@@ -31,6 +31,15 @@ Il suo lavoro è disponibile anche come Docker Images. Quindi se stai usando`Hom
 
 **⚠️ Il progetto è ancora in fase di sviluppo,`reverse engineering`dell'API da completare e comunicare con MQTT/Assistente di casa da adattare.**
 
+> [!IMPORTANT]
+> ### 🚧 Blocco dell'API VAG — Volkswagen / Audi / Seat / Cupra / Skoda (maggio 2026)
+>
+> Da fine maggio 2026, il gruppo Volkswagen ha limitato l'accesso di terze parti alle sue API. I connettori classici VW/Audi/Seat/Cupra restituiscono errori `403` e non recuperano più i dati, anche se le app ufficiali continuano a funzionare. Attualmente non esiste alcuna soluzione per questi connettori.
+>
+> **Soluzione alternativa:** il connettore di sola lettura `Volkswagen EU Data Act` è **✅ disponibile nella versione `edge`** dell'add-on.
+>
+> 👉 Segui i progressi nella [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+
 ## Add repository
 
 [![\`Addon Home Assistant\`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)

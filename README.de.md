@@ -35,6 +35,15 @@ Sein Repository ist auch als Docker -Bild verfügbar. Also, wenn Sie `Home Assis
 
 **⚠️Das Projekt befindet sich noch in der Entwicklung,`reverse engineering`der API**
 
+> [!IMPORTANT]
+> ### 🚧 VAG-API-Sperrung — Volkswagen / Audi / Seat / Cupra / Skoda (Mai 2026)
+>
+> Seit Ende Mai 2026 hat der Volkswagen-Konzern den Zugriff Dritter auf seine APIs eingeschränkt. Die regulären VW/Audi/Seat/Cupra-Konnektoren liefern `403`-Fehler und rufen keine Daten mehr ab, obwohl die offiziellen Apps weiterhin funktionieren. Derzeit gibt es keine Lösung für diese Konnektoren.
+>
+> **Workaround:** Der schreibgeschützte Konnektor `Volkswagen EU Data Act` ist **✅ in der `edge`-Version** des Add-ons verfügbar.
+>
+> 👉 Verfolgen Sie den Fortschritt im [Issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+
 ## Repository hinzufügen
 
 [![\`Addon Home Assistant\`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
