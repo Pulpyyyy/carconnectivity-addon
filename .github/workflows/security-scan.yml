@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout config
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           sparse-checkout: ${{ inputs.addon }}/config.yaml
 
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Normalize arch
         id: norm
