@@ -13,7 +13,7 @@
 ### 🛠️ Fixes & Updates
 
 - **CarConnectivity-connector-audi** → v0.3.2
-
+- **CarConnectivity-connector-volkswagen-na** → v0.1.21
  --- 
 
 ## 0.8.2
