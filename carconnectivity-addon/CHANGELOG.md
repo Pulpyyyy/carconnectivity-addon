@@ -15,9 +15,6 @@
 - **CarConnectivity-connector-audi** → v0.3.2
 - **CarConnectivity-connector-volkswagen-na** → v0.1.21
 
-#### ⚠️ Known dependency bypasses
-- ⚠️ `carconnectivity-connector-audi` v0.3.2 installed with `--no-deps` (upstream `requests` constraint conflict)
-
  --- 
 
 ## 0.7.7
