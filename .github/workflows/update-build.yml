@@ -177,10 +177,10 @@ jobs:
           set -euo pipefail
           ADDON="${{ matrix.addon }}"
 
-          # Packages not on PyPI or with a requests constraint bypassed via --no-deps in Dockerfile
-          # AUDI: requests~=2.32.3 conflicts with SEATCUPRA/SKODA>=requests~=2.33.1; installed with --no-deps in Dockerfile
-          PIP_SKIP="VOLVO AUDI"
-          PIP_NO_DEPS="AUDI"
+          # VOLVO: not published on PyPI, skip compatibility validation
+          # (AUDI dropped its requests upper bound in v0.3.2 — no longer needs --no-deps)
+          PIP_SKIP="VOLVO"
+          PIP_NO_DEPS=""
 
           pkg_args=""
           while IFS='=' read -r key repo_url; do
@@ -219,18 +219,20 @@ jobs:
             echo "✅ All dependencies compatible — proceeding"
 
             # Warn in changelog about packages installed with --no-deps
-            {
-              echo ""
-              echo "#### ⚠️ Known dependency bypasses"
-            } >> "$ADDON/bot_changelog.md"
-            while IFS='=' read -r key repo_url; do
-              [[ -z "$key" || "$key" == \#* ]] && continue
-              if echo "$PIP_NO_DEPS" | grep -qw "$key"; then
-                pkg_name=$(basename "$repo_url" .git | tr '[:upper:]' '[:lower:]')
-                ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"')
-                echo "- ⚠️ \`${pkg_name}\` ${ver} installed with \`--no-deps\` (upstream \`requests\` constraint conflict)" >> "$ADDON/bot_changelog.md"
-              fi
-            done < .github/submodules.list
+            if [ -n "$PIP_NO_DEPS" ]; then
+              {
+                echo ""
+                echo "#### ⚠️ Known dependency bypasses"
+              } >> "$ADDON/bot_changelog.md"
+              while IFS='=' read -r key repo_url; do
+                [[ -z "$key" || "$key" == \#* ]] && continue
+                if echo "$PIP_NO_DEPS" | grep -qw "$key"; then
+                  pkg_name=$(basename "$repo_url" .git | tr '[:upper:]' '[:lower:]')
+                  ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"')
+                  echo "- ⚠️ \`${pkg_name}\` ${ver} installed with \`--no-deps\` (upstream \`requests\` constraint conflict)" >> "$ADDON/bot_changelog.md"
+                fi
+              done < .github/submodules.list
+            fi
           else
             echo "::warning::Dependency conflict detected — reverting $ADDON/build.yaml"
             cat /tmp/pip-conflict.txt
