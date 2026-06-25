@@ -1,12 +1,3 @@
-## 0.8.13
-
-
-### 🛠️ Fixes & Updates
-
-- **CarConnectivity-connector-audi** → v0.3.2
-
- --- 
-
 ## 0.8.4
 
 
