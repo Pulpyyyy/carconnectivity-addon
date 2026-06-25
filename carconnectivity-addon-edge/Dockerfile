@@ -33,6 +33,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-connector-skoda==${SKODA_VERSION#v} \
         carconnectivity-connector-volkswagen==${VW_VERSION#v} \
         carconnectivity-connector-audi==${AUDI_VERSION#v} \
+        carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} \
         carconnectivity-connector-vw-eu-data-act==${VWEUDATA_VERSION#v} \
         carconnectivity-connector-renaultdacia==${RENAULTDACIA_VERSION#v} \
         carconnectivity-connector-tronity==${TRONITY_VERSION#v} \
@@ -40,8 +41,6 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-plugin-mqtt==${MQTT_VERSION#v} \
         carconnectivity-plugin-webui==${WEBUI_VERSION#v} \
         carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION#v} && \
-    /opt/venv/bin/pip install --no-cache --no-deps \
-        carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} && \
     apk del build-base libffi-dev && \
     echo "CARCONNECTIVITY_VERSION=${CC_VERSION}" >> versions.txt && \
     echo "AUDI_VERSION=${AUDI_VERSION}" >> versions.txt && \
