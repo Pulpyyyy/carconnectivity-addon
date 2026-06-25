@@ -1,3 +1,15 @@
+## 0.8.3
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-audi** → v0.3.2
+
+#### ⚠️ Known dependency bypasses
+- ⚠️ `carconnectivity-connector-audi` v0.3.2 installed with `--no-deps` (upstream `requests` constraint conflict)
+
+ --- 
+
 ## 0.8.2
 
 
