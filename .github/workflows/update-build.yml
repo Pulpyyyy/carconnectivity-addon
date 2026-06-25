@@ -191,6 +191,12 @@ jobs:
               continue
             fi
 
+            # Skip components absent from this addon's build.yaml (e.g. edge-only connectors)
+            if ! grep -q "${key}_VERSION:" "$ADDON/build.yaml"; then
+              echo "⏭ Skipping $key (not in $ADDON/build.yaml)"
+              continue
+            fi
+
             pkg_name=$(basename "$repo_url" .git | tr '[:upper:]' '[:lower:]')
             ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"' | sed 's/^v//')
 
