@@ -118,12 +118,18 @@ def api_webui():
 
 @app.get("/api/eudataact")
 def api_eudataact():
-    """Whether the running config uses the read-only EU Data Act connector, so the
-    dashboard can warn that location, remote control and vehicle images are gone."""
+    """Whether EU Data Act is in effect, so the dashboard can warn that location,
+    remote control and vehicle images are gone. Checks BOTH the running config
+    (runtime, with migrations applied) and the freshly saved page config: the
+    runtime is only regenerated at startup, so a config just saved on the page
+    would otherwise not light up the dashboard warning until the next restart."""
+    def _has_eu(path: str) -> bool:
+        cfg = _read_json(path) or {}
+        conns = (cfg.get("carConnectivity") or {}).get("connectors") or []
+        return any((c or {}).get("type") == "vw_eu_data_act" for c in conns)
+
     runtime = "/config/.cache/carconnectivity.runtime.json"
-    cfg = _read_json(runtime) or _read_json(CONFIG_PATH) or {}
-    conns = (cfg.get("carConnectivity") or {}).get("connectors") or []
-    active = any((c or {}).get("type") == "vw_eu_data_act" for c in conns)
+    active = _has_eu(runtime) or _has_eu(CONFIG_PATH)
     return jsonify({"active": active})
 
 
