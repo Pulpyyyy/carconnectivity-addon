@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import socket
+import threading
 
 from flask import Flask, jsonify, request, send_from_directory
 
@@ -53,6 +54,35 @@ def _load_state() -> dict:
             return imported
     # 3) Nothing yet — start fresh.
     return dict(_DEFAULT_STATE)
+
+
+_MAX_ACCOUNTS = 50          # a household has a few vehicles, not 50
+_MAX_PASSTHROUGH = 50       # unknown connectors/plugins preserved verbatim
+
+# Serialise the STATE+CONFIG write pair so two concurrent saves (waitress runs
+# several threads) cannot interleave and leave the two files out of sync.
+_write_lock = threading.Lock()
+
+
+def _ensure_shape(state) -> str | None:
+    """Structural guard. Returns a human-readable error, or None if the payload is
+    safe to process. Catches a malformed body before it can crash build_config."""
+    if not isinstance(state, dict):
+        return "Invalid payload: expected a JSON object"
+    accounts = state.get("accounts", [])
+    if not isinstance(accounts, list) or any(not isinstance(a, dict) for a in accounts):
+        return "Invalid payload: 'accounts' must be a list of objects"
+    if len(accounts) > _MAX_ACCOUNTS:
+        return f"Too many accounts (max {_MAX_ACCOUNTS})"
+    if not isinstance(state.get("settings", {}), dict):
+        return "Invalid payload: 'settings' must be an object"
+    for key in ("_passthrough_connectors", "_passthrough_plugins"):
+        val = state.get(key, [])
+        if not isinstance(val, list) or any(not isinstance(x, dict) for x in val):
+            return f"Invalid payload: '{key}' must be a list of objects"
+        if len(val) > _MAX_PASSTHROUGH:
+            return f"Invalid payload: '{key}' too large"
+    return None
 
 
 def _atomic_write(path: str, data: dict) -> None:
@@ -104,7 +134,10 @@ def api_get_state():
 
 @app.post("/api/state")
 def api_post_state():
-    state = request.get_json(force=True, silent=True) or {}
+    state = request.get_json(force=True, silent=True)
+    shape_err = _ensure_shape(state)
+    if shape_err:
+        return jsonify({"ok": False, "errors": [{"index": -1, "error": shape_err}]}), 400
     accounts = state.get("accounts") or []
     # Per-account validation driven by the kind's field schema, so the UI can
     # point at the offending row (fields differ per brand: VAG login, Volvo keys…).
@@ -132,18 +165,19 @@ def api_post_state():
     except ValueError as err:
         return jsonify({"ok": False, "errors": [{"index": -1, "error": str(err)}]}), 400
 
-    _atomic_write(STATE_PATH, state)
-    _atomic_write(CONFIG_PATH, config)
+    with _write_lock:
+        _atomic_write(STATE_PATH, state)
+        _atomic_write(CONFIG_PATH, config)
 
-    # Once the page owns the config, retire the legacy tempio-era file so it is
-    # not re-imported on a later first-open and does not linger in /config.
-    # Renamed (not deleted) to .bak so the user can still recover it.
-    legacy = "/config/carconnectivity.UI.json"
-    try:
-        if os.path.exists(legacy):
-            os.replace(legacy, legacy + ".bak")
-    except OSError:
-        pass
+        # Once the page owns the config, retire the legacy tempio-era file so it is
+        # not re-imported on a later first-open and does not linger in /config.
+        # Renamed (not deleted) to .bak so the user can still recover it.
+        legacy = "/config/carconnectivity.UI.json"
+        try:
+            if os.path.exists(legacy):
+                os.replace(legacy, legacy + ".bak")
+        except OSError:
+            pass
 
     return jsonify({"ok": True, "connectors": len(config["carConnectivity"]["connectors"])})
 
