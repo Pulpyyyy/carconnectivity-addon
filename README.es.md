@@ -38,6 +38,8 @@ Su trabajo también está disponible como imágenes de Docker. Entonces, si est�
 >
 > **Solución alternativa:** el conector de solo lectura `Volkswagen EU Data Act` está **✅ disponible en la versión `edge`** del complemento.
 >
+> ⚠️ **Configuración obligatoria:** este conector solo *descarga* datos que primero debe habilitar en el portal. Regístrese en [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), abra **Request customised data** y elija **todos los clústeres de datos**, un **intervalo de 15 minutos** y una **duración ilimitada**. Los primeros datos pueden tardar **varias horas** en aparecer. Sin esto, el conector no recupera nada, lo que puede parecer que sus credenciales están siendo rechazadas.
+>
 > 👉 Sigue el progreso en la [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]

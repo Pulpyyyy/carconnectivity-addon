@@ -38,6 +38,8 @@ Il suo lavoro è disponibile anche come Docker Images. Quindi se stai usando`Hom
 >
 > **Soluzione alternativa:** il connettore di sola lettura `Volkswagen EU Data Act` è **✅ disponibile nella versione `edge`** dell'add-on.
 >
+> ⚠️ **Configurazione obbligatoria:** questo connettore si limita a *scaricare* i dati che devi prima abilitare sul portale. Registrati su [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), apri **Request customised data** e scegli **tutti i cluster di dati**, un **intervallo di 15 minuti** e una **durata illimitata**. I primi dati possono richiedere **diverse ore** per comparire. Senza questo, il connettore non recupera nulla, il che può sembrare che le tue credenziali vengano rifiutate.
+>
 > 👉 Segui i progressi nella [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]

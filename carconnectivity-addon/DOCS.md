@@ -41,6 +41,8 @@ His work is also available as docker images. So if you're using `Home Assistant`
 >
 > **Workaround:** the read-only `Volkswagen EU Data Act` connector is **✅ available in the `edge` version** of the add-on.
 >
+> ⚠️ **Mandatory setup:** this connector only *downloads* data that you must first enable on the portal. Register at [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), open **Request customised data**, and choose **all data clusters**, a **15-minute interval** and an **unlimited duration**. The first data can take **several hours** to appear. Without this the connector retrieves nothing, which can look like your credentials are being rejected.
+>
 > 👉 Track progress in [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]

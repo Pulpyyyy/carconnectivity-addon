@@ -38,6 +38,8 @@ Hans arbeid er også tilgjengelig som Docker -bilder. Så hvis du bruker`Home As
 >
 > **Løsning:** den skrivebeskyttede koblingen `Volkswagen EU Data Act` er **✅ tilgjengelig i `edge`-versjonen** av tillegget.
 >
+> ⚠️ **Obligatorisk oppsett:** denne koblingen bare *laster ned* data som du først må aktivere på portalen. Registrer deg på [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), åpne **Request customised data** og velg **alle dataklynger**, et **intervall på 15 minutter** og en **ubegrenset varighet**. De første dataene kan ta **flere timer** før de vises. Uten dette henter koblingen ingenting, noe som kan se ut som om påloggingsinformasjonen din blir avvist.
+>
 > 👉 Følg fremdriften i [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]

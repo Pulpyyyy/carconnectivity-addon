@@ -42,6 +42,8 @@ Sein Repository ist auch als Docker -Bild verfügbar. Also, wenn Sie `Home Assis
 >
 > **Workaround:** Der schreibgeschützte Konnektor `Volkswagen EU Data Act` ist **✅ in der `edge`-Version** des Add-ons verfügbar.
 >
+> ⚠️ **Obligatorische Einrichtung:** Dieser Konnektor *lädt* nur Daten herunter, die Sie zuvor im Portal aktivieren müssen. Registrieren Sie sich unter [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), öffnen Sie **Request customised data** und wählen Sie **alle Datencluster**, ein **Intervall von 15 Minuten** und eine **unbegrenzte Dauer**. Die ersten Daten können **mehrere Stunden** brauchen, bis sie erscheinen. Ohne dies ruft der Konnektor nichts ab, was so aussehen kann, als würden Ihre Anmeldedaten abgelehnt.
+>
 > 👉 Verfolgen Sie den Fortschritt im [Issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]

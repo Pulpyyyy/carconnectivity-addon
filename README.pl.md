@@ -38,6 +38,8 @@ Jego praca jest również dostępna jako obrazy Docker. Więc jeśli używasz`Ho
 >
 > **Obejście:** konektor tylko do odczytu `Volkswagen EU Data Act` jest **✅ dostępny w wersji `edge`** dodatku.
 >
+> ⚠️ **Obowiązkowa konfiguracja:** ten konektor jedynie *pobiera* dane, które najpierw musisz włączyć w portalu. Zarejestruj się na [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), otwórz **Request customised data** i wybierz **wszystkie klastry danych**, **interwał 15 minut** oraz **nieograniczony czas trwania**. Pojawienie się pierwszych danych może zająć **kilka godzin**. Bez tego konektor niczego nie pobiera, co może wyglądać tak, jakby Twoje poświadczenia były odrzucane.
+>
 > 👉 Śledź postępy w [zgłoszeniu #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]
