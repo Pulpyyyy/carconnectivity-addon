@@ -1,7 +1,7 @@
 name: "CarConnectivity Add-on"
 version: 0.8.4
 slug: "carconnectivity-addon"
-description: "CarConnectivity Add-on based on Till's project (https://github.com/tillsteinbach/CarConnectivity). May be unstable. MQTT required."
+description: "CarConnectivity Add-on based on Till's project (https://github.com/tillsteinbach/CarConnectivity). May be unstable. MQTT required. VW/Seat/Cupra blocked (403)? The Edge development version (work in progress, not a release) adds the read-only EU Data Act connector."
 image: "docker.io/pulpyyyy/carconnectivity-addon-{arch}"
 panel_icon: "mdi:car-wireless"
 map:
