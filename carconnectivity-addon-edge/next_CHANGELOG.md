@@ -1,0 +1,6 @@
+- **Volkswagen EU Data Act connector** (read-only): works around the VAG API lockdown that breaks the regular VW/Seat/Cupra connectors (`403`). Available for VW/Seat/Cupra/Bentley, and as an alternative data source for Audi/Skoda.
+- **Multi-brand EU Data Act**: pick the brand directly in the configuration (VW, Seat, Cupra, Audi, Skoda, Bentley).
+- **New in-app configuration page**: configure your vehicles, MQTT, dashboard and ABRP from a web page instead of editing YAML. **How to access it:** open the add-on Web UI (the Ingress entry in the Home Assistant sidebar, or the "Open Web UI" button), then use the **Configuration** tab in the top navigation bar. When the dashboard is disabled, the add-on opens straight on the configuration page.
+- **Automatic config migration**: on first open, your existing configuration is imported into the new page (the old `carconnectivity.UI.json` is kept as a `.bak`). In addition, manufacturer connectors that are now blocked (SEAT/Cupra/VW) are migrated to EU Data Act automatically at startup.
+- **Read-only notice**: a warning is shown (config page and dashboard) when EU Data Act is in use, since location, remote control and vehicle images are not available with it.
+- **Localized interface** in 8 languages (English, French, German, Italian, Spanish, Polish, Portuguese, Norwegian), based on the browser language.
