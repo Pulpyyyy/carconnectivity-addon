@@ -63,8 +63,8 @@ Choose the manufacturer corresponding to your vehicle from the supported brands:
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America` *(country automatically set from your Home Assistant country setting — `us` by default, `ca` if your HA is configured for Canada)*
-- `Volkswagen EU Data Act` *(read-only alternative when the regular Volkswagen/WeConnect connector is blocked — see the dedicated section below)*
+- `Volkswagen North America` *(country automatically set from your Home Assistant country setting: `us` by default, `ca` if your HA is configured for Canada)*
+- `Volkswagen EU Data Act` *(read-only alternative when the regular Volkswagen/WeConnect connector is blocked: see the dedicated section below)*
 
 If you own multiple vehicles from different brands, you can configure multiple sections.
 
@@ -91,16 +91,23 @@ For `Volvo`:
 - `Warning:` Setting a refresh rate too frequently may exceed the API request limits imposed by the manufacturer, resulting in temporary access restrictions.
 
 For `Volkswagen EU Data Act` (read-only):
-- `Username`: The email address of your Volkswagen ID.
-- `Password`: The password of your Volkswagen ID account.
+- `Username`: the email of your brand account (Volkswagen ID, SEAT, Cupra, etc.).
+- `Password`: the password of that same brand account.
 
-This connector is a **read-only** alternative for when the regular Volkswagen (WeConnect) connector is blocked. It refreshes data about every 15 minutes and **cannot send remote commands**. The brand, refresh interval and OIDC locale (country/language) are set automatically — you only provide your credentials.
+This connector is a **read-only** alternative for when the regular manufacturer connector is blocked (`403`). It refreshes data about every 15 minutes and **cannot send remote commands, location or vehicle images**. The brand, refresh interval and OIDC locale (country/language) are set automatically: you only provide your credentials.
 
-⚠️ **Prerequisite — enable continuous data on the portal first.** The add-on only *downloads* the datasets the portal generates; it cannot create the data request for you. Before enabling this connector:
-1. Open [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/) and log in with your Volkswagen ID (the same credentials as above).
-2. Go to **Data clusters → Vehicle overview** and connect your car if it isn't already listed.
-3. Click **Get customised data** and configure a **continuous** data request with a **15-minute** frequency.
-4. Wait until datasets (ZIP files) start appearing for the vehicle — the first one can take a while.
+> ⚠️ **Mandatory setup, do this first or it will not work.** This connector only *downloads* the datasets that the EU Data Act portal produces; it never creates them for you. If you skip this step the add-on connects but **receives no data**, which can look exactly like your credentials are being rejected. You must register on the portal and enable a permanent data delivery once:
+>
+> 1. Open **[eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/)** and click **Log in**. Choose your brand (Volkswagen, SEAT, Cupra, ...) and sign in with the **same account** you use in the official brand app.
+> 2. Select your vehicle and authorize **My Data Portal** to access it.
+> 3. Click **Request customised data** (also shown as *Get customised data*) and configure:
+>    - **all data clusters**,
+>    - an **interval of 15 minutes**,
+>    - an **unlimited / continuous** duration (no end date),
+>    - a name of your choice (for example `All data 15min`).
+> 4. Submit, then **be patient**. The first datasets can take **several hours, sometimes more than 24 hours**, to appear. After that a new ZIP file is published roughly every 15 minutes and the add-on picks it up automatically.
+>
+> You can check progress anytime by logging back into the portal and looking at the vehicle's data delivery list. As long as no continuous request is active and producing files, the connector has nothing to read.
 
 Full details and limitations: [CarConnectivity-connector-vw-eu-data-act](https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act).
 
@@ -159,7 +166,7 @@ Each line should follow this format:
 ```
 
 ### 8. Expert Mode
-Expert Mode enables the use of all native Carconnectivity functions, including those not available through the graphical interface—as long as the corresponding functions are supported by the add-on binaries.
+Expert Mode enables the use of all native Carconnectivity functions, including those not available through the graphical interface, as long as the corresponding functions are supported by the add-on binaries.
 
 ⚠️ Warning:
 This mode disables all content validation and safety checks. As a result, even a small mistake (such as an invalid JSON syntax) can prevent the add-on from launching correctly.

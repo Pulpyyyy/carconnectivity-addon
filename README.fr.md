@@ -42,6 +42,8 @@ Son travail est également disponible sous forme d'images Docker. Donc si vous u
 >
 > **Contournement :** le connecteur en lecture seule `Volkswagen EU Data Act` est **✅ disponible dans la version `edge`** de l'add-on.
 >
+> ⚠️ **Configuration obligatoire :** ce connecteur ne fait que *télécharger* des données que vous devez d'abord activer sur le portail. Inscrivez-vous sur [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), ouvrez **Request customised data** et choisissez **tous les clusters de données**, un **intervalle de 15 minutes** et une **durée illimitée**. Les premières données peuvent prendre **plusieurs heures** à apparaître. Sans cela, le connecteur ne récupère rien, ce qui peut donner l'impression que vos identifiants sont rejetés.
+>
 > 👉 Suivez l'avancement dans l'[issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]

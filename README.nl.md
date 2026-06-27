@@ -38,6 +38,8 @@ Zijn werk is ook beschikbaar als Docker -afbeeldingen. Dus als je gebruikt`Home 
 >
 > **Tijdelijke oplossing:** de alleen-lezen connector `Volkswagen EU Data Act` is **✅ beschikbaar in de `edge`-versie** van de add-on.
 >
+> ⚠️ **Verplichte instelling:** deze connector *downloadt* alleen gegevens die u eerst op het portaal moet inschakelen. Registreer u op [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), open **Request customised data** en kies **alle datageclusters**, een **interval van 15 minuten** en een **onbeperkte duur**. De eerste gegevens kunnen **enkele uren** duren voordat ze verschijnen. Zonder dit haalt de connector niets op, wat eruit kan zien alsof uw inloggegevens worden geweigerd.
+>
 > 👉 Volg de voortgang in [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
 
 > [!TIP]
