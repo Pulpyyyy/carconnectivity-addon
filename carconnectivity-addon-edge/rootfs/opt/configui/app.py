@@ -116,17 +116,6 @@ def api_webui():
     return jsonify({"up": up})
 
 
-@app.get("/api/eudataact")
-def api_eudataact():
-    """Whether the running config uses the read-only EU Data Act connector, so the
-    dashboard can warn that location, remote control and vehicle images are gone."""
-    runtime = "/config/.cache/carconnectivity.runtime.json"
-    cfg = _read_json(runtime) or _read_json(CONFIG_PATH) or {}
-    conns = (cfg.get("carConnectivity") or {}).get("connectors") or []
-    active = any((c or {}).get("type") == "vw_eu_data_act" for c in conns)
-    return jsonify({"active": active})
-
-
 @app.get("/api/state")
 def api_get_state():
     return jsonify(_load_state())

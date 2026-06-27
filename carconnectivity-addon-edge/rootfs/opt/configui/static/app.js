@@ -43,26 +43,8 @@ function refreshSource(card, kindValue, selectedSource) {
   fillSelect(sel, opts, selectedSource || (kind.has_choice ? "auto" : kind.sources[0].value));
 }
 
-// EU Data Act is read-only: show a warning when any vehicle effectively uses it
-// (no location tracking, no remote control). "auto" prefers the manufacturer
-// connector, so it only counts as EU Data Act when that is the chosen source.
-function cardUsesEuDataAct(card) {
-  const kind = kindByValue(card.querySelector(".v-brand").value);
-  if (!kind || !kind.sources || !kind.sources.length) return false;
-  let src = card.querySelector(".v-source-wrap").hidden
-    ? kind.sources[0].value
-    : card.querySelector(".v-source").value;
-  if (src === "auto") {
-    const vals = kind.sources.map((s) => s.value);
-    src = vals.includes("manufacturer") ? "manufacturer" : vals[0];
-  }
-  return src === "eu_data_act";
-}
-function updateEuWarning() {
-  const any = [...document.querySelectorAll(".vehicle")].some(cardUsesEuDataAct);
-  const w = el("eu-warning");
-  if (w) w.hidden = !any;
-}
+// The EU Data Act read-only warning is shown permanently in the top bar (see
+// index.html), so there is no per-vehicle toggling to do here.
 
 // Inject the fields the selected brand needs (login, keys, client id/secret…).
 function renderFields(card, kindValue, data = {}) {
@@ -94,12 +76,9 @@ function addVehicle(data = {}) {
   brandSel.addEventListener("change", () => {
     refreshSource(card, brandSel.value);
     renderFields(card, brandSel.value);
-    updateEuWarning();
   });
-  card.querySelector(".v-source").addEventListener("change", updateEuWarning);
-  card.querySelector(".remove").addEventListener("click", () => { card.remove(); updateEuWarning(); });
+  card.querySelector(".remove").addEventListener("click", () => card.remove());
   el("vehicles").appendChild(card);
-  updateEuWarning();
 }
 
 // ── ABRP tokens ──────────────────────────────────────────────────────────────
