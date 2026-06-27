@@ -35,9 +35,9 @@ His work is also available as docker images. So if you're using `Home Assistant`
 **⚠️The project is still under development, `reverse engineering` of the api to be completed and communication with MQTT/Home assistant to be adapted.⚠️**
 
 > [!IMPORTANT]
-> ### 🚧 VAG API lockdown — Volkswagen / Audi / Seat / Cupra / Skoda (May 2026)
+> ### 🚧 VAG API lockdown : Volkswagen / Seat / Cupra (May 2026)
 >
-> Since late May 2026, the Volkswagen Group has restricted third-party API access. The regular VW/Audi/Seat/Cupra connectors return `403` errors and no longer retrieve data, even though the official apps still work. There is currently no fix for these connectors.
+> Since late May 2026, the Volkswagen Group has restricted third-party API access. The regular VW/Seat/Cupra connectors return `403` errors and no longer retrieve data, even though the official apps still work. There is currently no fix for these connectors.
 >
 > **Workaround:** the read-only `Volkswagen EU Data Act` connector is **✅ available in the `edge` version** (see the section below).
 

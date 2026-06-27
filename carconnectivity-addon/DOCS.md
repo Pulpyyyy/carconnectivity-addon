@@ -34,6 +34,19 @@ His work is also available as docker images. So if you're using `Home Assistant`
 
 **⚠️The project is still under development, `reverse engineering` of the api to be completed and communication with MQTT/Home assistant to be adapted.⚠️**
 
+> [!IMPORTANT]
+> ### 🚧 VAG API lockdown: Volkswagen / Seat / Cupra (May 2026)
+>
+> Since late May 2026, the Volkswagen Group has restricted third-party API access. The regular VW/Seat/Cupra connectors return `403` errors and no longer retrieve data, even though the official apps still work. There is currently no fix for these connectors.
+>
+> **Workaround:** the read-only `Volkswagen EU Data Act` connector is **✅ available in the `edge` version** of the add-on.
+>
+> 👉 Track progress in [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+
+> [!TIP]
+> ### An Edge version is available
+> The **Edge** version is the **development build** (a work in progress, not a release): it ships the newest features first and can be unstable. It includes the read-only **Volkswagen EU Data Act** connector (the workaround above) plus a new in-app configuration page. Install **"CarConnectivity Add-on Edge"** from the same repository.
+
 ## Add repository
 
 [![`Addon Home Assistant`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)

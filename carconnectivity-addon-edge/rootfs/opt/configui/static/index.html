@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CarConnectivity: Configuration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="appbar">
+    <a class="tab" id="tab-dashboard" href="../" data-i18n="dashboard" hidden>Dashboard</a>
+    <a class="tab active" href="./" data-i18n="configuration">Configuration</a>
+    <span class="eu-warning" id="eu-warning" data-i18n="eu_warning" hidden>EU Data Act is read-only: no location tracking or remote control.</span>
+  </nav>
+  <main>
+    <h1>CarConnectivity</h1>
+    <p class="sub" data-i18n="sub">Add your vehicles. Pick your brand: the right data source is chosen for you;
+       a choice only appears when more than one works.</p>
+
+    <section>
+      <h2 data-i18n="vehicles">Vehicles</h2>
+      <div id="vehicles"></div>
+      <button type="button" id="add" class="secondary" data-i18n="add_vehicle">+ Add vehicle</button>
+    </section>
+
+    <section>
+      <h2>MQTT <span class="req" data-i18n="required">(required)</span></h2>
+      <p class="hint" data-i18n="mqtt_hint">How vehicles appear in Home Assistant. Leave blank to use the
+         Home Assistant Mosquitto broker defaults.</p>
+      <div class="grid">
+        <label><span data-i18n="broker_host">Broker host</span> <input id="mqtt_broker" placeholder="core-mosquitto" /></label>
+        <label><span data-i18n="port">Port</span> <input id="mqtt_port" type="number" placeholder="1883" /></label>
+        <label><span data-i18n="username">Username</span> <input id="mqtt_username" /></label>
+        <label><span data-i18n="password">Password</span> <input id="mqtt_password" type="password" /></label>
+      </div>
+    </section>
+
+    <section>
+      <h2><span data-i18n="web_dashboard">Web dashboard</span> <span class="opt" data-i18n="optional">(optional)</span></h2>
+      <label class="toggle"><input type="checkbox" id="webui_enabled" /> <span data-i18n="enable_webui">Enable the CarConnectivity web dashboard</span></label>
+      <div class="grid" id="webui_opts">
+        <label><span data-i18n="login_user">Login user</span> <span class="hint" data-i18n="autologin_hint">(use “autologin” for no login)</span><input id="webui_username" placeholder="autologin" /></label>
+        <label><span data-i18n="login_password">Login password</span> <input id="webui_password" type="password" /></label>
+      </div>
+    </section>
+
+    <section>
+      <h2>ABRP: A Better Route Planner <span class="opt" data-i18n="optional">(optional)</span></h2>
+      <label class="toggle"><input type="checkbox" id="abrp_enabled" /> <span data-i18n="send_abrp">Send data to ABRP</span></label>
+      <div id="abrp_tokens"></div>
+      <button type="button" id="abrp_add" class="secondary" data-i18n="add_abrp">+ Add ABRP token</button>
+    </section>
+
+    <section>
+      <h2 data-i18n="logging">Logging</h2>
+      <div class="grid">
+        <label><span data-i18n="general_log">General log level</span>
+          <select id="log_level"></select>
+        </label>
+        <label><span data-i18n="api_log">API log level</span> <span class="hint" data-i18n="api_log_hint">(per-connector network calls)</span>
+          <select id="api_log_level"></select>
+        </label>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="button" id="save" data-i18n="save">Save</button>
+      <span id="status"></span>
+    </div>
+  </main>
+
+  <template id="vehicle-tpl">
+    <div class="vehicle card">
+      <div class="grid">
+        <label><span data-i18n="brand">Brand</span> <select class="v-brand"></select></label>
+        <label class="v-source-wrap" hidden><span data-i18n="data_source">Data source</span> <select class="v-source"></select></label>
+      </div>
+      <!-- fields are injected per brand (VAG login, Volvo keys, Tronity id/secret…) -->
+      <div class="grid v-fields"></div>
+      <div class="row-actions">
+        <span class="v-error"></span>
+        <button type="button" class="remove link" data-i18n="remove">Remove</button>
+      </div>
+    </div>
+  </template>
+
+  <template id="token-tpl">
+    <div class="token grid">
+      <label><span data-i18n="vin">VIN</span> <input class="t-vin" /></label>
+      <label><span data-i18n="abrp_token">ABRP token</span> <input class="t-token" /></label>
+      <button type="button" class="t-remove link" data-i18n="remove">Remove</button>
+    </div>
+  </template>
+
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

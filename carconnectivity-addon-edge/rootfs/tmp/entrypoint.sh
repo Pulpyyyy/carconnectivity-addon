@@ -7,16 +7,16 @@ CACHE_FILE="/config/.cache/carconnectivity.cache"
 HEALTHY_FILE="/tmp/carconnectivity_healthy"
 NGINX_FILE="/etc/nginx/nginx.conf"
 NGINX_CACHE="/config/.cache/nginx"
-OPTIONS_JSON="/data/options.json"
-EXPERT_MODE=$(jq -r '.expert' ${OPTIONS_JSON} 2>/dev/null || echo "false")
 EXPERT_NAME="carconnectivity.expert.json"
-UI_NAME="carconnectivity.UI.json"
 EXPERT_FILE="/config/${EXPERT_NAME}"
-UI_FILE="/config/${UI_NAME}"
+PAGE_FILE="/config/carconnectivity.json"
+RUNTIME_FILE="/config/.cache/carconnectivity.runtime.json"
+CONFIGUI_PORT="8098"
 EXPERT_EXISTS="false"
 EXPERT_SYNTAX="false"
 CC_PID=""
 NGINX_PID=""
+CONFIGUI_PID=""
 
 # Colors
 RED='\033[0;31m'
@@ -55,6 +55,7 @@ term_handler() {
     }
 
     terminate_process "${NGINX_PID}"
+    terminate_process "${CONFIGUI_PID}"
     terminate_process "${CC_PID}"
     exit 143 # 128 + 15 -- SIGTERM
 }
@@ -174,48 +175,52 @@ if [ "${HA_COUNTRY}" = "ca" ]; then
 fi
 color_echo "${CYAN}" "🌍 Detected locale: ${LOCALE} / country: ${HA_COUNTRY} / language: ${HA_LANG}"
 
-if [ "${EXPERT_MODE}" = "true" ]; then
-    color_echo "${YELLOW}" "⚠️ Expert mode is enabled. ⚠️"
-
-    if [ -f "${EXPERT_FILE}" ]; then
-        EXPERT_EXISTS="true"
-        color_echo "${GREEN}" "✅ File ${EXPERT_NAME} exists."
-    else
-        color_echo "${RED}" "❌ File ${EXPERT_NAME} not found."
-    fi
+# Expert mode is implicit: when a hand-written ${EXPERT_NAME} is present it takes
+# precedence over the page config. No toggle — it is detected by its presence.
+if [ -f "${EXPERT_FILE}" ]; then
+    EXPERT_EXISTS="true"
+    color_echo "${YELLOW}" "⚠️ Expert config detected (${EXPERT_NAME}). ⚠️"
 
     if validate_json "${EXPERT_FILE}"; then
         EXPERT_SYNTAX="true"
     fi
 fi
 
-CONFIG_FILE=${UI_FILE}
-if [ "${EXPERT_MODE}" = "true" ] && [ "${EXPERT_EXISTS}" = "true" ] && [ "${EXPERT_SYNTAX}" = "true" ]; then
-    CONFIG_FILE=${EXPERT_FILE}
+# Config precedence: expert.json > custom page (carconnectivity.json) > defaults
+SRC_CONFIG=""
+if [ "${EXPERT_EXISTS}" = "true" ] && [ "${EXPERT_SYNTAX}" = "true" ]; then
+    SRC_CONFIG=${EXPERT_FILE}
     color_echo "${GREEN}" "🔠 Expert configuration applied."
+elif [ -f "${PAGE_FILE}" ] && validate_json "${PAGE_FILE}" >/dev/null 2>&1; then
+    SRC_CONFIG=${PAGE_FILE}
+    color_echo "${GREEN}" "🖥️ Custom page configuration applied (${PAGE_FILE})."
 else
-    if [ "${EXPERT_MODE}" = "true" ]; then
-        if [ "${EXPERT_EXISTS}" != "true" ]; then
-            color_echo "${YELLOW}" "⛔ Using ${UI_NAME} because ${EXPERT_NAME} is missing."
-        elif [ "${EXPERT_SYNTAX}" != "true" ]; then
-            color_echo "${YELLOW}" "⛔ Using ${UI_NAME} because ${EXPERT_NAME} is invalid."
-            print_file ${EXPERT_FILE}
-        fi
+    if [ "${EXPERT_EXISTS}" = "true" ] && [ "${EXPERT_SYNTAX}" != "true" ]; then
+        color_echo "${YELLOW}" "⛔ ${EXPERT_NAME} is present but invalid — ignoring it."
     fi
-
-    color_echo "${BLUE}" "🛠️ Generating configuration..."
-    tempio -conf "${OPTIONS_JSON}" -template carconnectivity.json.gtpl -out "${UI_NAME}"
-    # Inject the HA locale into the rendered config:
-    #  - locale: plugins (mqtt / webui / mqtt_homeassistant)
-    #  - vw_eu_data_act: OIDC state (country uppercase / language lowercase)
-    #  - volkswagen_na: North-America country (us by default, ca for Canada)
-    sed -i "s/\"locale\": \"en_US\"/\"locale\": \"$LOCALE\"/; s/__HA_COUNTRY__/${HA_COUNTRY}/g; s/__HA_LANG__/${HA_LANG}/g; s/__NA_COUNTRY__/${NA_COUNTRY}/g" "$UI_NAME"
-    if validate_json "${UI_NAME}"; then
-        jq . "${UI_NAME}" > "${CONFIG_FILE}"
-    else
-        exit 1
-    fi
+    # No expert.json and no page config yet: start with a minimal default
+    # (MQTT + mqtt_homeassistant, no vehicle) so the container boots and the
+    # configuration page is reachable to create the real config.
+    color_echo "${BLUE}" "🛠️ No configuration yet — starting with defaults. Configure in the Web UI (Ingress → Configuration page)."
+    DEFAULT_FILE="/config/.cache/carconnectivity.default.json"
+    mkdir -p "$(dirname "${DEFAULT_FILE}")"
+    /opt/venv/bin/python -c "import sys, json; sys.path.insert(0, '/opt/configui'); from generator import build_config; json.dump(build_config({'settings': {'mqtt': {'broker': 'core-mosquitto', 'port': 1883}}}), open('${DEFAULT_FILE}', 'w'), indent=2)"
+    SRC_CONFIG=${DEFAULT_FILE}
 fi
+
+# Force-migrate blocked brands (SEAT/Cupra/VW-EU → EU Data Act) and inject the HA
+# locale, writing a RUNTIME copy so the source files are never modified. Applies
+# to every source, including expert.json.
+mkdir -p "$(dirname "${RUNTIME_FILE}")"
+MIGRATED=$(HA_COUNTRY="${HA_COUNTRY}" HA_LANG="${HA_LANG}" NA_COUNTRY="${NA_COUNTRY}" \
+    /opt/venv/bin/python /opt/configui/migrate.py "${SRC_CONFIG}" "${RUNTIME_FILE}" 2>/dev/null) || MIGRATED=""
+if [ ! -f "${RUNTIME_FILE}" ]; then
+    cp "${SRC_CONFIG}" "${RUNTIME_FILE}"
+fi
+if [ -n "${MIGRATED}" ]; then
+    color_echo "${YELLOW}" "🔁 Migrated to EU Data Act: ${MIGRATED}"
+fi
+CONFIG_FILE=${RUNTIME_FILE}
 
 DEBUG_LEVEL=$(jq -r '.carConnectivity.log_level'  ${CONFIG_FILE} 2>/dev/null || echo "")
 ADMINUI=$(jq -r '.carConnectivity.plugins[] | select(.type == "webui") | .config.username' ${CONFIG_FILE} 2>/dev/null || echo "")
@@ -228,19 +233,34 @@ if [ "${DEBUG_LEVEL}" = "debug" ]; then
     print_redacted "${CONFIG_FILE}"
     color_echo "${BLUE}" "-----------"
 fi
-if [ -n "${ADMINUI:-}" ]; then
-    exec nginx -c ${NGINX_FILE} &
-    NGINX_PID=$!
-    color_echo "${GREEN}" "👏 NGNIX server started (PID: ${NGINX_PID})"
-else
-    color_echo "${YELLOW}" "⚠️ NGINX server is disabled (empty admin account) ⚠️"
-fi
+# Custom configuration page (served under Ingress at /configui/) — always on,
+# independent of the webui, so the config is reachable even with webui disabled.
+CONFIGUI_PORT="${CONFIGUI_PORT}" /opt/venv/bin/python /opt/configui/app.py &
+CONFIGUI_PID=$!
+color_echo "${GREEN}" "👏 Config page started (PID: ${CONFIGUI_PID}) on 127.0.0.1:${CONFIGUI_PORT}"
 
-/opt/venv/bin/carconnectivity ${CONFIG_FILE} --tokenfile ${TOKEN_FILE} --cache ${CACHE_FILE} --healthcheckfile ${HEALTHY_FILE} &
+# nginx always runs: it serves the config page, and the webui dashboard when enabled.
+nginx -c ${NGINX_FILE} &
+NGINX_PID=$!
+color_echo "${GREEN}" "👏 NGINX server started (PID: ${NGINX_PID})"
+
+# CarConnectivity prints usernames (often e-mail addresses) in clear in its
+# own logs. Route its output through a redactor before it reaches the addon
+# log. A FIFO is used instead of a pipe so ${CC_PID} stays the real
+# CarConnectivity PID — term_handler and the exit-code wait below rely on it.
+CC_LOG_FIFO="/tmp/carconnectivity.log.fifo"
+rm -f "${CC_LOG_FIFO}"
+mkfifo "${CC_LOG_FIFO}"
+awk '{ gsub(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+/, "***@***"); print; fflush() }' < "${CC_LOG_FIFO}" &
+REDACT_PID=$!
+
+/opt/venv/bin/carconnectivity ${CONFIG_FILE} --tokenfile ${TOKEN_FILE} --cache ${CACHE_FILE} --healthcheckfile ${HEALTHY_FILE} > "${CC_LOG_FIFO}" 2>&1 &
 CC_PID=$!
 
 color_echo "${GREEN}" "👏 CARCONNECTIVITY started (PID: ${CC_PID})"
 wait "${CC_PID}"
 exit_code=$?
+wait "${REDACT_PID}" 2>/dev/null || true
+rm -f "${CC_LOG_FIFO}"
 color_echo "${BLUE}" "ℹ️ Process exited with code $exit_code"
 exit "$exit_code"

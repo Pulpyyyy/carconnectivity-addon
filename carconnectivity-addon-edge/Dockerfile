@@ -24,7 +24,7 @@ COPY rootfs /
 WORKDIR /tmp/
 
 RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
-    apk add --no-cache --update musl curl nginx py3-pip build-base libffi-dev && \
+    apk add --no-cache --update musl curl git nginx py3-pip build-base libffi-dev && \
     python3 -m venv /opt/venv && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install --no-cache \
@@ -34,13 +34,14 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-connector-volkswagen==${VW_VERSION#v} \
         carconnectivity-connector-audi==${AUDI_VERSION#v} \
         carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} \
-        carconnectivity-connector-vw-eu-data-act==${VWEUDATA_VERSION#v} \
+        "carconnectivity-connector-vw-eu-data-act @ git+https://github.com/Pulpyyyy/CarConnectivity-connector-vw-eu-data-act.git@dev" \
         carconnectivity-connector-renaultdacia==${RENAULTDACIA_VERSION#v} \
         carconnectivity-connector-tronity==${TRONITY_VERSION#v} \
         carconnectivity-plugin-abrp==${ABRP_VERSION#v} \
         carconnectivity-plugin-mqtt==${MQTT_VERSION#v} \
         carconnectivity-plugin-webui==${WEBUI_VERSION#v} \
-        carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION#v} && \
+        carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION#v} \
+        waitress && \
     apk del build-base libffi-dev && \
     echo "CARCONNECTIVITY_VERSION=${CC_VERSION}" >> versions.txt && \
     echo "AUDI_VERSION=${AUDI_VERSION}" >> versions.txt && \

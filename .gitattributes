@@ -1,0 +1,10 @@
+# Home Assistant add-ons run on Linux. Files baked into the container
+# image (shell scripts, nginx config, templates) MUST use LF endings:
+# a CRLF in a shebang makes the kernel look for an interpreter that does
+# not exist (e.g. "/bin/sh\r"), so the container fails to start with
+# "/tmp/entrypoint.sh: not found" (exit 127). Forcing eol=lf here keeps
+# Windows checkouts/edits from reintroducing CRLF.
+*.sh    text eol=lf
+*.conf  text eol=lf
+*.gtpl  text eol=lf
+*.types text eol=lf

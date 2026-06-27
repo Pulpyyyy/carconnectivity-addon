@@ -36,13 +36,17 @@ Sein Repository ist auch als Docker -Bild verfügbar. Also, wenn Sie `Home Assis
 **⚠️Das Projekt befindet sich noch in der Entwicklung,`reverse engineering`der API**
 
 > [!IMPORTANT]
-> ### 🚧 VAG-API-Sperrung — Volkswagen / Audi / Seat / Cupra / Skoda (Mai 2026)
+> ### 🚧 VAG-API-Sperrung : Volkswagen / Seat / Cupra (Mai 2026)
 >
-> Seit Ende Mai 2026 hat der Volkswagen-Konzern den Zugriff Dritter auf seine APIs eingeschränkt. Die regulären VW/Audi/Seat/Cupra-Konnektoren liefern `403`-Fehler und rufen keine Daten mehr ab, obwohl die offiziellen Apps weiterhin funktionieren. Derzeit gibt es keine Lösung für diese Konnektoren.
+> Seit Ende Mai 2026 hat der Volkswagen-Konzern den Zugriff Dritter auf seine APIs eingeschränkt. Die regulären VW/Seat/Cupra-Konnektoren liefern `403`-Fehler und rufen keine Daten mehr ab, obwohl die offiziellen Apps weiterhin funktionieren. Derzeit gibt es keine Lösung für diese Konnektoren.
 >
 > **Workaround:** Der schreibgeschützte Konnektor `Volkswagen EU Data Act` ist **✅ in der `edge`-Version** des Add-ons verfügbar.
 >
 > 👉 Verfolgen Sie den Fortschritt im [Issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+
+> [!TIP]
+> ### Eine Edge-Version ist verfügbar
+> Die **Edge**-Version ist der **Entwicklungsbuild** (in Arbeit, keine fertige Version): Sie bietet die neuesten Funktionen zuerst und kann instabil sein. Sie enthält den schreibgeschützten Konnektor **Volkswagen EU Data Act** (den oben genannten Workaround) sowie eine neue integrierte Konfigurationsseite. Installieren Sie **"CarConnectivity Add-on Edge"** aus demselben Repository.
 
 ## Repository hinzufügen
 

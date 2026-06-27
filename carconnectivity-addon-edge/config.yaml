@@ -4,6 +4,7 @@ slug: "carconnectivity-addon-edge"
 description: "⚠️EDGE VERSION⚠️ CarConnectivity Add-on Edge, may be unstable !"
 image: "docker.io/pulpyyyy/carconnectivity-addon-edge-{arch}"
 panel_icon: "mdi:car-wireless"
+panel_title: "CarConnectivity"
 map:
   - addon_config:rw
 arch:
@@ -14,81 +15,7 @@ init: false
 hassio_api: true
 hassio_role: homeassistant
 homeassistant_api: true
-options:
-  brand1:
-    type: "seat"
-    username: ""
-    password: "password"
-    spin: "1234"
-    interval: 600
-  brand2:
-    type: "skoda"
-    username: ""
-    password: "password"
-    spin: "1234"
-    interval: 600
-  volvo:
-    key_primary: ""
-    key_secondary: ""
-    vehicle_token: ""
-    location_token: ""
-    interval: 600
-  vw_eu_data_act:
-    username: ""
-    password: "password"
-  mqtt:
-    username: ""
-    password: ""
-    broker: "core-mosquitto.local.hass.io"
-    port: 1883
-  webui:
-    enabled: true
-    username: "admin"
-    password: "secret_password"
-  abrp:
-    enabled: false
-    tokens: []
-  logs:
-    level: "info"
-    api_level: "info"
-  expert: false
-schema:
-  brand1:
-    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na|renaultdacia)
-    username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
-    password: password?
-    spin: match(^\d{4}$)?
-    interval: int(60,3600)?
-  brand2:
-    type: list(seat|cupra|skoda|volkswagen|tronity|audi|volkswagen_na|renaultdacia)
-    username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
-    password: password?
-    spin: match(^\d{4}$)?
-    interval: int(60,3600)?
-  volvo:
-    key_primary: str?
-    key_secondary: str?
-    vehicle_token: str?
-    location_token: str?
-    interval: int(60,3600)?
-  vw_eu_data_act:
-    username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
-    password: password?
-  mqtt:
-    username: str?
-    password: password?
-    broker: str
-    port: int
-  webui:
-    enabled: bool
-    username: str?
-    password: password?
-  abrp:
-    enabled: bool
-    tokens:
-      - vin: str
-        token: str
-  logs:
-    level: list(info|warning|error|debug)
-    api_level: list(info|warning|error|debug)
-  expert: bool
+# Configuration is done entirely in the addon Web UI (Ingress → /configui/),
+# so the addon exposes no Home Assistant options here.
+options: {}
+schema: {}

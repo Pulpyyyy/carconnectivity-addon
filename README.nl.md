@@ -32,13 +32,17 @@ Zijn werk is ook beschikbaar als Docker -afbeeldingen. Dus als je gebruikt`Home 
 **⚠️Het project is nog in ontwikkeling,`reverse engineering` of the api to be completed and communication with MQTT/Home assistant to be adapted.⚠️**
 
 > [!IMPORTANT]
-> ### 🚧 VAG-API-blokkering — Volkswagen / Audi / Seat / Cupra / Skoda (mei 2026)
+> ### 🚧 VAG-API-blokkering : Volkswagen / Seat / Cupra (mei 2026)
 >
-> Sinds eind mei 2026 heeft de Volkswagen-groep de toegang van derden tot zijn API's beperkt. De gewone VW/Audi/Seat/Cupra-connectoren geven `403`-fouten en halen geen gegevens meer op, ook al werken de officiële apps nog. Er is momenteel geen oplossing voor deze connectoren.
+> Sinds eind mei 2026 heeft de Volkswagen-groep de toegang van derden tot zijn API's beperkt. De gewone VW/Seat/Cupra-connectoren geven `403`-fouten en halen geen gegevens meer op, ook al werken de officiële apps nog. Er is momenteel geen oplossing voor deze connectoren.
 >
 > **Tijdelijke oplossing:** de alleen-lezen connector `Volkswagen EU Data Act` is **✅ beschikbaar in de `edge`-versie** van de add-on.
 >
 > 👉 Volg de voortgang in [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+
+> [!TIP]
+> ### Er is een Edge-versie beschikbaar
+> De **Edge**-versie is de **ontwikkelversie** (een werk in uitvoering, geen definitieve versie): ze biedt de nieuwste functies als eerste en kan onstabiel zijn. Ze bevat de alleen-lezen connector **Volkswagen EU Data Act** (de bovenstaande tijdelijke oplossing) plus een nieuwe ingebouwde configuratiepagina. Installeer **"CarConnectivity Add-on Edge"** vanuit dezelfde repository.
 
 ## Voeg repository toe
 
