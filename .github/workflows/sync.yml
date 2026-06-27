@@ -4,11 +4,14 @@ permissions:
   pull-requests: write
   
 on:
-  push:
-    paths:
-      - 'carconnectivity-addon-edge/**'  # Trigger only when changes occur in this directory
-    branches:
-      - main  # Change this if your main branch has a different name
+  # Auto-sync on push to main is DISABLED for now: edge runs dev/fork code and a
+  # new architecture (configui) that the normal Dockerfile does not yet support.
+  # Re-enable once the upstream PRs are released and the normal addon is aligned.
+  # push:
+  #   paths:
+  #     - 'carconnectivity-addon-edge/**'  # Trigger only when changes occur in this directory
+  #   branches:
+  #     - main  # Change this if your main branch has a different name
   workflow_dispatch: # Allows manually triggering the action if needed
   workflow_call: # Called by orchestrator
 
