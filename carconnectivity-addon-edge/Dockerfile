@@ -40,7 +40,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-plugin-abrp==${ABRP_VERSION#v} \
         carconnectivity-plugin-mqtt==${MQTT_VERSION#v} \
         carconnectivity-plugin-webui==${WEBUI_VERSION#v} \
-        carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION#v} && \
+        "carconnectivity-plugin-mqtt_homeassistant @ git+https://github.com/Pulpyyyy/CarConnectivity-plugin-mqtt_homeassistant.git@dev" && \
     apk del build-base libffi-dev && \
     echo "CARCONNECTIVITY_VERSION=${CC_VERSION}" >> versions.txt && \
     echo "AUDI_VERSION=${AUDI_VERSION}" >> versions.txt && \
