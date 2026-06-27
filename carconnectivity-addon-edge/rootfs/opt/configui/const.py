@@ -63,7 +63,7 @@ KINDS: dict[str, dict] = {
     "skoda":         {"label": "Škoda", "sources": [SOURCE_MANUFACTURER, SOURCE_EU_DATA_ACT], "eu_brand": "SKODA", "manufacturer_connector": "skoda", "fields": _VAG_FIELDS},
     "audi":          {"label": "Audi", "sources": [SOURCE_MANUFACTURER, SOURCE_EU_DATA_ACT], "eu_brand": "AUDI", "manufacturer_connector": "audi", "fields": _VAG_FIELDS},
     "volvo":         {"label": "Volvo", "connector": "volvo", "fields": _VOLVO_FIELDS},
-    "renaultdacia":  {"label": "Renault / Dacia", "connector": "renaultdacia", "fields": _RENAULT_FIELDS},
+    "renaultdacia":  {"label": "Renault / Dacia", "sources": [SOURCE_MANUFACTURER], "manufacturer_connector": "renaultdacia", "fields": _RENAULT_FIELDS},
     "tronity":       {"label": "Tronity", "connector": "tronity", "fields": _TRONITY_FIELDS},
 }
 
