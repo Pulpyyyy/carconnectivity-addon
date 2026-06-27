@@ -85,6 +85,15 @@ def kind_catalog() -> list[dict]:
     return out
 
 
+def redaction_pattern() -> str:
+    """Regex (for ``jq test``) matching config keys whose values must be redacted
+    when the config is dumped to the addon log. Driven by the per-field ``secret``
+    flag so adding a secret field (e.g. client_secret) cannot silently leak."""
+    keys = {f["key"] for k in KINDS.values() for f in k["fields"] if f["secret"]}
+    keys |= {"password", "username", "token", "tokens"}  # plugin creds + abrp map
+    return "|".join(sorted(keys))
+
+
 def resolve_source(kind_key: str, data_source: str) -> str:
     """Resolve a VAG (kind, data_source) to a concrete source; raise if impossible."""
     sources = KINDS[kind_key].get("sources") or []

@@ -91,14 +91,18 @@ validate_json() {
     fi
 }
 
-# Print config with sensitive fields redacted
+# Print config with sensitive fields redacted. The set of secret keys is derived
+# from the field schema in const.py (single source of truth) so a new secret
+# field cannot silently leak here.
 print_redacted() {
     local file="$1"
-    jq '
+    local pat
+    pat=$(/opt/venv/bin/python -c "import sys; sys.path.insert(0, '/opt/configui'); from const import redaction_pattern; print(redaction_pattern())") || pat="password|spin|token|secret|key_primary|key_secondary|username"
+    jq --arg pat "$pat" '
       walk(
         if type == "object" then
           with_entries(
-            if (.key | test("password|spin|token|key_primary|key_secondary|vehicle_token|location_token|username"; "i"))
+            if (.key | test($pat; "i"))
             then .value = "***REDACTED***"
             else .
             end
@@ -164,7 +168,7 @@ trap 'term_handler' TERM INT
 
 mkdir -p ${NGINX_CACHE} && chown -R nginx:nginx ${NGINX_CACHE}
 
-# Get the locale (also sets global HA_COUNTRY)
+# Get the locale; HA_COUNTRY / HA_LANG are derived from it just below.
 LOCALE=$(get_ha_locale) || LOCALE="en_US"
 HA_COUNTRY=$(echo "${LOCALE#*_}" | tr '[:upper:]' '[:lower:]')
 HA_LANG=$(echo "${LOCALE%%_*}" | tr '[:upper:]' '[:lower:]')
