@@ -36,6 +36,7 @@ options:
   vw_eu_data_act:
     username: ""
     password: "password"
+    brand: "seat"
   mqtt:
     username: ""
     password: ""
@@ -74,6 +75,7 @@ schema:
   vw_eu_data_act:
     username: match(^$|^[\w\-\.\+]+@([\w-]+\.)+[\w-]{2,}$)
     password: password?
+    brand: list(volkswagen_passenger_cars|volkswagen_commercial_vehicles|audi|skoda|seat|cupra|bentley)
   mqtt:
     username: str?
     password: password?
