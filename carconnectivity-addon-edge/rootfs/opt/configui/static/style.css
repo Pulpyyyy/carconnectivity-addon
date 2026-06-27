@@ -16,10 +16,14 @@ body { margin:0; background:var(--bg); color:var(--txt);
    Always dark, regardless of the webui light/dark theme, for a consistent header. */
 .appbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:4px;
   background:#212529; border-bottom:1px solid #2c3034; padding:8px 16px; }
-.appbar .tab { padding:7px 16px; border-radius:8px; color:#4dabf7;
-  text-decoration:none; font-size:.9em; font-weight:600; }
-.appbar .tab:hover { background:rgba(255,255,255,.08); }
-.appbar .tab.active { color:#fff; background:var(--accent); }
+/* Physical-looking buttons: white with black text when inactive, blue with white
+   text and a raised "volume" relief when active. */
+.appbar .tab { padding:7px 16px; border-radius:8px; background:#fff; color:#1c1e21;
+  text-decoration:none; font-size:.9em; font-weight:600;
+  box-shadow:0 1px 2px rgba(0,0,0,.35); transition:box-shadow .15s, transform .1s; }
+.appbar .tab:hover { box-shadow:0 2px 5px rgba(0,0,0,.45); transform:translateY(-1px); }
+.appbar .tab.active { background:var(--accent); color:#fff;
+  box-shadow:0 3px 6px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.35); }
 .appbar .eu-warning { margin-left:auto; color:#ff6b6b; font-size:.82em; font-weight:600;
   text-align:right; line-height:1.2; }
 main { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
