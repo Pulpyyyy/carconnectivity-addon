@@ -4,6 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CarConnectivity: Configuration</title>
+  <script>
+    // Follow the webui's theme: it persists the choice ("light"/"dark"/"auto")
+    // in localStorage under "cc-theme" (same Ingress origin, so it is shared) and
+    // applies data-bs-theme on <html> (Bootstrap 5.3 color modes). Mirror that
+    // here, before paint, to avoid a flash; "auto" follows the OS preference.
+    (function () {
+      function resolve(choice) {
+        if (choice === "light" || choice === "dark") return choice;
+        return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+      }
+      function read() { try { return localStorage.getItem("cc-theme") || "auto"; } catch (e) { return "auto"; } }
+      document.documentElement.setAttribute("data-bs-theme", resolve(read()));
+      // Keep "auto" in sync with live OS changes while the page is open.
+      if (window.matchMedia) {
+        try {
+          window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+            if (read() === "auto") document.documentElement.setAttribute("data-bs-theme", resolve("auto"));
+          });
+        } catch (e) {}
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
