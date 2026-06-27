@@ -39,7 +39,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-connector-tronity==${TRONITY_VERSION#v} \
         carconnectivity-plugin-abrp==${ABRP_VERSION#v} \
         carconnectivity-plugin-mqtt==${MQTT_VERSION#v} \
-        carconnectivity-plugin-webui==${WEBUI_VERSION#v} \
+        "carconnectivity-plugin-webui @ git+https://github.com/Pulpyyyy/CarConnectivity-plugin-webui.git@dev" \
         "carconnectivity-plugin-mqtt_homeassistant @ git+https://github.com/Pulpyyyy/CarConnectivity-plugin-mqtt_homeassistant.git@dev" \
         waitress && \
     apk del build-base libffi-dev && \
