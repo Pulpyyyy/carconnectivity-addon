@@ -39,7 +39,7 @@ His work is also available as docker images. So if you're using `Home Assistant`
 >
 > Since late May 2026, the Volkswagen Group has restricted third-party API access. The regular VW/Seat/Cupra connectors return `403` errors and no longer retrieve data, even though the official apps still work. There is currently no fix for these connectors.
 >
-> **Workaround:** the read-only `Volkswagen EU Data Act` connector is **✅ available in the `edge` version** (see the section below).
+> **Workaround:** the read-only `EU Data Act` connector is **✅ available in the `edge` version** (see the section below).
 
 
 
@@ -56,15 +56,15 @@ Only fill in the settings for the brands of vehicles you own. **Leave all other 
 
 ### 1. Selecting Your Vehicle Brand
 Choose the manufacturer corresponding to your vehicle from the supported brands:
-- `Seat`
-- `Cupra`
+- `Seat` *(deprecated: blocked since May 2026, automatically replaced by the EU Data Act connector)*
+- `Cupra` *(deprecated: blocked since May 2026, automatically replaced by the EU Data Act connector)*
 - `Skoda`
-- `Volkswagen`
+- `Volkswagen` *(Europe; deprecated: blocked since May 2026, automatically replaced by the EU Data Act connector)*
 - `Tronity`
 - `Volvo`
 - `Audi`
 - `Volkswagen North America` *(country automatically set from your Home Assistant country setting: `us` by default, `ca` if your HA is configured for Canada)*
-- `Volkswagen EU Data Act` *(read-only alternative when the regular Volkswagen/WeConnect connector is blocked: see the dedicated section below)*
+- `EU Data Act` *(common read-only connector that replaces the blocked Seat / Cupra / Volkswagen (Europe) connectors: see the dedicated section below)*
 
 If you own multiple vehicles from different brands, you can configure multiple sections.
 
@@ -72,7 +72,7 @@ If you own multiple vehicles from different brands, you can configure multiple s
 Each car manufacturer provides an online service that allows you to access your vehicle's data remotely. To connect, you need to provide your login credentials.
 
 #### Required Information:
-For `Seat`, `Cupra`, `Skoda`, `Volkswagen`, `Volkswagen_na` and `Tronity`:
+For `Skoda`, `Audi`, `Volkswagen North America` and `Tronity`:
 - `Brand`: The manufacturer’s brand.
 - `Username`: The email address used to log into the manufacturer’s service.
 - `Password`: The password for your manufacturer account.
@@ -90,11 +90,11 @@ For `Volvo`:
 - `Refresh Interval`: Defines how often (in seconds) the vehicle's data is updated.
 - `Warning:` Setting a refresh rate too frequently may exceed the API request limits imposed by the manufacturer, resulting in temporary access restrictions.
 
-For `Volkswagen EU Data Act` (read-only):
+For `EU Data Act` (Seat, Cupra, Volkswagen Europe; read-only):
 - `Username`: the email of your brand account (Volkswagen ID, SEAT, Cupra, etc.).
 - `Password`: the password of that same brand account.
 
-This connector is a **read-only** alternative for when the regular manufacturer connector is blocked (`403`). It refreshes data about every 15 minutes and **cannot send remote commands, location or vehicle images**. The brand, refresh interval and OIDC locale (country/language) are set automatically: you only provide your credentials.
+This **read-only** connector replaces the Seat / Cupra / Volkswagen (Europe) connectors that have been blocked (`403`) since May 2026. It refreshes data about every 15 minutes and **cannot send remote commands, location or vehicle images**. The brand, refresh interval and OIDC locale (country/language) are set automatically: you only provide your credentials.
 
 > ⚠️ **Mandatory setup, do this first or it will not work.** This connector only *downloads* the datasets that the EU Data Act portal produces; it never creates them for you. If you skip this step the add-on connects but **receives no data**, which can look exactly like your credentials are being rejected. You must register on the portal and enable a permanent data delivery once:
 >
@@ -176,7 +176,7 @@ To use it safely, you must:
 
 Be familiar with JSON syntax and structure.
 
-The Expert Mode allows the use of a custom configuration file. When this mode is enabled, the user can provide a file named `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json` containing the desired settings. This completely replaces the configuration from the graphical interface, which will be available in `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json`. The directory `/addon_configs/1b1291d4_carconnectivity-addon/` may not appear in the `Home Assistant` file system. If this is the case, the supervisor should be restarted.
+Expert Mode is activated simply by the **presence** of a `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.expert.json` file containing the desired settings (no option to toggle). It takes precedence and completely replaces the configuration produced by the configuration page, which is written to `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.json` (the page's editable model is saved separately in `carconnectivity.configui.json`). The directory `/addon_configs/1b1291d4_carconnectivity-addon-edge/` may not appear right away in the `Home Assistant` file system. If this is the case, restart the supervisor.
 
 Refer to the official Carconnectivity documentation for the list of supported functions and expected parameters.
 

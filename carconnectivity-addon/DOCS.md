@@ -39,7 +39,7 @@ His work is also available as docker images. So if you're using `Home Assistant`
 >
 > Since late May 2026, the Volkswagen Group has restricted third-party API access. The regular VW/Seat/Cupra connectors return `403` errors and no longer retrieve data, even though the official apps still work. There is currently no fix for these connectors.
 >
-> **Workaround:** the read-only `Volkswagen EU Data Act` connector is **✅ available in the `edge` version** of the add-on.
+> **Workaround:** the read-only `EU Data Act` connector is **✅ available in the `edge` version** of the add-on.
 >
 > ⚠️ **Mandatory setup:** this connector only *downloads* data that you must first enable on the portal. Register at [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), open **Request customised data**, and choose **all data clusters**, a **15-minute interval** and an **unlimited duration**. The first data can take **several hours** to appear. Without this the connector retrieves nothing, which can look like your credentials are being rejected.
 >
@@ -47,7 +47,7 @@ His work is also available as docker images. So if you're using `Home Assistant`
 
 > [!TIP]
 > ### An Edge version is available
-> The **Edge** version is the **development build** (a work in progress, not a release): it ships the newest features first and can be unstable. It includes the read-only **Volkswagen EU Data Act** connector (the workaround above) plus a new in-app configuration page. Install **"CarConnectivity Add-on Edge"** from the same repository.
+> The **Edge** version is the **development build** (a work in progress, not a release): it ships the newest features first and can be unstable. It includes the read-only **EU Data Act** connector (the workaround above) plus a new in-app configuration page. Install **"CarConnectivity Add-on Edge"** from the same repository.
 
 ## Add repository
 
@@ -62,10 +62,10 @@ Only fill in the settings for the brands of vehicles you own. **Leave all other 
 
 ### 1. Selecting Your Vehicle Brand
 Choose the manufacturer corresponding to your vehicle from the supported brands:
-- `Seat`
-- `Cupra`
+- `Seat` *(deprecated: blocked since May 2026; use the read-only EU Data Act connector available in the edge version)*
+- `Cupra` *(deprecated: blocked since May 2026; use the read-only EU Data Act connector available in the edge version)*
 - `Skoda`
-- `Volkswagen`
+- `Volkswagen` *(Europe; deprecated: blocked since May 2026; use the read-only EU Data Act connector available in the edge version)*
 - `Tronity`
 - `Volvo`
 - `Audi`
@@ -160,7 +160,7 @@ To use it safely, you must:
 
 Be familiar with JSON syntax and structure.
 
-The Expert Mode allows the use of a custom configuration file. When this mode is enabled, the user can provide a file named `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json` containing the desired settings. This completely replaces the configuration from the graphical interface, which will be available in `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json`. The directory `/addon_configs/1b1291d4_carconnectivity-addon/` may not appear in the `Home Assistant` file system. If this is the case, the supervisor should be restarted.
+Expert Mode is activated simply by the **presence** of a `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json` file containing the desired settings (no option to toggle). It takes precedence and completely replaces the configuration generated from the add-on options, which is written to `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json`. The directory `/addon_configs/1b1291d4_carconnectivity-addon/` may not appear right away in the `Home Assistant` file system. If this is the case, restart the supervisor.
 
 Refer to the official Carconnectivity documentation for the list of supported functions and expected parameters.
 
