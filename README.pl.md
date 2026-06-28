@@ -36,7 +36,7 @@ Jego praca jest również dostępna jako obrazy Docker. Więc jeśli używasz`Ho
 >
 > Od końca maja 2026 roku grupa Volkswagen ograniczyła dostęp firm trzecich do swoich API. Standardowe konektory VW/Seat/Cupra zwracają błędy `403` i nie pobierają już danych, mimo że oficjalne aplikacje nadal działają. Obecnie nie ma rozwiązania dla tych konektorów.
 >
-> **Obejście:** konektor tylko do odczytu `Volkswagen EU Data Act` jest **✅ dostępny w wersji `edge`** dodatku.
+> **Obejście:** konektor tylko do odczytu `EU Data Act` jest **✅ dostępny w wersji `edge`** dodatku.
 >
 > ⚠️ **Obowiązkowa konfiguracja:** ten konektor jedynie *pobiera* dane, które najpierw musisz włączyć w portalu. Zarejestruj się na [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), otwórz **Request customised data** i wybierz **wszystkie klastry danych**, **interwał 15 minut** oraz **nieograniczony czas trwania**. Pojawienie się pierwszych danych może zająć **kilka godzin**. Bez tego konektor niczego nie pobiera, co może wyglądać tak, jakby Twoje poświadczenia były odrzucane.
 >
@@ -44,7 +44,7 @@ Jego praca jest również dostępna jako obrazy Docker. Więc jeśli używasz`Ho
 
 > [!TIP]
 > ### Dostępna jest wersja Edge
-> Wersja **Edge** to **kompilacja rozwojowa** (prace w toku, nie wersja finalna): jako pierwsza otrzymuje najnowsze funkcje i może być niestabilna. Zawiera konektor tylko do odczytu **Volkswagen EU Data Act** (powyższe obejście) oraz nową wbudowaną stronę konfiguracji. Zainstaluj **"CarConnectivity Add-on Edge"** z tego samego repozytorium.
+> Wersja **Edge** to **kompilacja rozwojowa** (prace w toku, nie wersja finalna): jako pierwsza otrzymuje najnowsze funkcje i może być niestabilna. Zawiera konektor tylko do odczytu **EU Data Act** (powyższe obejście) oraz nową wbudowaną stronę konfiguracji. Zainstaluj **"CarConnectivity Add-on Edge"** z tego samego repozytorium.
 
 ## Dodaj repozytorium
 
@@ -59,14 +59,15 @@ Wypełnij tylko ustawienia dla marek pojazdów, które posiadasz.**Pozostaw wszy
 ### 1. Wybór marki pojazdu
 
 Wybierz producenta odpowiadającego Twojemu pojazdowi od obsługiwanych marek:
-- `Seat`
-- `Cupra`
+- `Seat` *(przestarzały: zablokowany od maja 2026, automatycznie zastąpiony konektorem EU Data Act)*
+- `Cupra` *(przestarzały: zablokowany od maja 2026, automatycznie zastąpiony konektorem EU Data Act)*
 - `Skoda`
-- `Volkswagen`
+- `Volkswagen` *(Europa; przestarzały: zablokowany od maja 2026, automatycznie zastąpiony konektorem EU Data Act)*
 - `Tronity`
 - `Volvo`
 - `Audi`
 - `Volkswagen North America` *(kraj ustawiany automatycznie na podstawie ustawień kraju w Home Assistant — domyślnie us, ca jeśli Twoje HA jest skonfigurowane dla Kanady)*
+- `EU Data Act` *(wspólny konektor tylko do odczytu, który zastępuje zablokowane konektory Seat / Cupra / Volkswagen (Europa))*
 
 Jeśli posiadasz wiele pojazdów od różnych marek, możesz skonfigurować wiele sekcji.
 
@@ -76,7 +77,7 @@ Każdy producent samochodów zapewnia usługę online, która umożliwia zdalne 
 
 #### Wymagane informacje:
 
-Dla`Seat`,`Cupra`,`Skoda`,`Volkswagen`I`Tronity`:
+Dla `Skoda`, `Audi`, `Volkswagen North America` i `Tronity`:
 
 -   `Brand`: Marka producenta.
 -   `Username`: Adres e -mail używany do zalogowania się do usługi producenta.
@@ -86,6 +87,15 @@ Dla`Seat`,`Cupra`,`Skoda`,`Volkswagen`I`Tronity`:
 -   `Warning:`Zbyt często ustawienie prędkości odświeżania może przekraczać limity żądania API nałożone przez producenta, co powoduje tymczasowe ograniczenia dostępu.
 
 ⚠️ Możesz użyć 2 kont dla 2 różnych marek lub 2 samochodów tej samej marki, które nie są powiązane z tym samym kontem.
+
+Dla `EU Data Act` (Seat, Cupra, Volkswagen Europa; tylko do odczytu):
+
+-   `Username`: adres e-mail Twojego konta marki (Volkswagen ID, SEAT, Cupra itp.).
+-   `Password`: hasło do tego samego konta marki.
+
+Ten konektor **tylko do odczytu** zastępuje konektory Seat / Cupra / Volkswagen (Europa), które są zablokowane (`403`) od maja 2026. Odświeża dane mniej więcej co 15 minut i **nie może wysyłać zdalnych poleceń, lokalizacji ani obrazów pojazdu**. Marka, interwał odświeżania oraz ustawienia regionalne (kraj/język) są ustawiane automatycznie: podajesz tylko swoje poświadczenia.
+
+> ⚠️ **Krok obowiązkowy (w przeciwnym razie konektor niczego nie otrzyma).** Najpierw włącz dostarczanie danych w portalu: zarejestruj się na **[eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/)** za pomocą **tego samego konta** co w oficjalnej aplikacji Twojej marki, a następnie zażądaj **wszystkich klastrów danych**, **interwału 15 minut** oraz **nieograniczonego czasu trwania**. Pojawienie się pierwszych danych może zająć **kilka godzin**. Konektor jedynie **pobiera** to, co portal już wygenerował: dopóki po stronie EU Data Act nie jest dostępny żaden plik, nie może **niczego odczytać**, nawet przy poprawnych poświadczeniach (może to wyglądać jak odrzucenie poświadczeń).
 
 Dla`Volvo`:
 
@@ -168,9 +178,14 @@ Aby korzystać z niego bezpiecznie, musisz:
 
 Zapoznaj się z składnią i strukturą JSON.
 
-Tryb ekspertów umożliwia użycie niestandardowego pliku konfiguracyjnego. Po włączeniu tego trybu użytkownik może podać plik o nazwie`/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json`zawierające pożądane ustawienia. To całkowicie zastępuje konfigurację z interfejsu graficznego, który będzie dostępny w`/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json`. Katalog`/addon_configs/1b1291d4_carconnectivity-addon/`może nie pojawić się w`Home Assistant`system plików. W takim przypadku przełożony powinien zostać ponownie uruchomiony.
+Tryb ekspertów aktywuje się przez samą **obecność** pliku `carconnectivity.expert.json` w katalogu konfiguracyjnym dodatku (brak opcji do zaznaczenia). Ten plik ma priorytet i **całkowicie zastępuje** automatycznie generowaną konfigurację:
 
-Lista funkcji obsługiwanych i oczekiwanych parametrów zapoznaj się z oficjalną dokumentacją CarConnectivity.
+- wersja **stable**: konfiguracja utworzona na podstawie opcji dodatku jest generowana w `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json`; plik eksperta to `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json`.
+- wersja **edge**: konfiguracja utworzona przez stronę konfiguracji jest generowana w `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.json` (edytowalny model strony jest zapisywany osobno w `carconnectivity.configui.json`); plik eksperta to `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.expert.json`.
+
+Katalog konfiguracyjny może nie pojawić się od razu w systemie plików `Home Assistant`. W takim przypadku uruchom ponownie supervisora.
+
+W celu uzyskania listy obsługiwanych funkcji i oczekiwanych parametrów zapoznaj się z oficjalną dokumentacją CarConnectivity.
 
 ## Najlepsze praktyki
 
