@@ -6,9 +6,7 @@ ARG BUILD_DESCRIPTION
 ARG BUILD_NAME
 ARG BUILD_VERSION
 ARG AUDI_VERSION
-ARG SEAT_VERSION
 ARG SKODA_VERSION
-ARG VW_VERSION
 ARG VWNA_VERSION
 ARG VWEUDATA_VERSION
 ARG RENAULTDACIA_VERSION
@@ -29,9 +27,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
     /opt/venv/bin/pip install --upgrade pip && \
     /opt/venv/bin/pip install --no-cache \
         carconnectivity==${CC_VERSION#v} \
-        carconnectivity-connector-seatcupra==${SEAT_VERSION#v} \
         carconnectivity-connector-skoda==${SKODA_VERSION#v} \
-        carconnectivity-connector-volkswagen==${VW_VERSION#v} \
         carconnectivity-connector-audi==${AUDI_VERSION#v} \
         carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} \
         "carconnectivity-connector-vw-eu-data-act @ git+https://github.com/Pulpyyyy/CarConnectivity-connector-vw-eu-data-act.git@dev" \
@@ -45,9 +41,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
     apk del build-base libffi-dev && \
     echo "CARCONNECTIVITY_VERSION=${CC_VERSION}" >> versions.txt && \
     echo "AUDI_VERSION=${AUDI_VERSION}" >> versions.txt && \
-    echo "SEAT_VERSION=${SEAT_VERSION}" >> versions.txt && \
     echo "SKODA_VERSION=${SKODA_VERSION}" >> versions.txt && \
-    echo "VW_VERSION=${VW_VERSION}" >> versions.txt && \
     echo "VWNA_VERSION=${VWNA_VERSION}" >> versions.txt && \
     echo "VWEUDATA_VERSION=${VWEUDATA_VERSION}" >> versions.txt && \
     echo "RENAULTDACIA_VERSION=${RENAULTDACIA_VERSION}" >> versions.txt && \
