@@ -30,7 +30,7 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-connector-skoda==${SKODA_VERSION#v} \
         carconnectivity-connector-audi==${AUDI_VERSION#v} \
         carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} \
-        "carconnectivity-connector-vw-eu-data-act @ git+https://github.com/Pulpyyyy/CarConnectivity-connector-vw-eu-data-act.git@dev" \
+        "carconnectivity-connector-vw-eu-data-act @ git+https://github.com/Pulpyyyy/CarConnectivity-connector-vw-eu-data-act.git@main" \
         carconnectivity-connector-renaultdacia==${RENAULTDACIA_VERSION#v} \
         carconnectivity-connector-tronity==${TRONITY_VERSION#v} \
         carconnectivity-plugin-abrp==${ABRP_VERSION#v} \
