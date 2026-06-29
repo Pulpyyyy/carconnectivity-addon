@@ -513,7 +513,9 @@ function t(key, params) {
   var table = I18N[I18N_LANG] || {};
   var str = (table[key] != null) ? table[key] : (I18N.en[key] != null ? I18N.en[key] : key);
   if (params && typeof str === "string") {
-    str = str.replace(/\{name\}/g, params.name);
+    str = str.replace(/\{(\w+)\}/g, function (m, k) {
+      return (params[k] != null) ? params[k] : m;
+    });
   }
   return str;
 }
