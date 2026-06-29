@@ -1,3 +1,12 @@
+## 0.8.6
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-volkswagen-na** → v0.1.22
+
+ --- 
+
 ## 0.8.4
 
 
