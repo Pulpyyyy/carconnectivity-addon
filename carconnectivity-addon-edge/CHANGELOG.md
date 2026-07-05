@@ -3,7 +3,6 @@
 
 ### 🛠️ Fixes & Updates
 
-- **CarConnectivity-connector-skoda** → v0.12.6
 - **CarConnectivity-connector-tronity** → v0.7.3
 - **CarConnectivity-plugin-abrp** → v0.8.3
 - **CarConnectivity-plugin-mqtt** → v0.10.5.post1
