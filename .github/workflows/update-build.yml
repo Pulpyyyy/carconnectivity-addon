@@ -67,6 +67,10 @@ jobs:
                       if [[ -z "$suffix" ]]; then
                           # Stable = suffix "zzz" pour qu'il soit toujours trié AVANT les prereleases
                           echo "${base}-zzz $t"
+                      elif [[ "$suffix" =~ ^\.post[0-9]+$ ]]; then
+                          # Post-release PEP 440 (X.Y.Z.postN) = stable, PLUS récente que X.Y.Z :
+                          # "zzz.postN" se trie après "zzz" en tri version, donc avant en ordre inverse
+                          echo "${base}-zzz${suffix} $t"
                       else
                           # Prerelease
                           echo "${base}-${suffix} $t"
