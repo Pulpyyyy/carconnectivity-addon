@@ -1,1 +1,0 @@
-- Smaller image: the SEAT/Cupra and Volkswagen (Europe) manufacturer connectors are no longer bundled. They have been blocked (`403`) since May 2026 and are replaced by the read-only EU Data Act connector; existing configurations are migrated automatically.
