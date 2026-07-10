@@ -4,3 +4,4 @@
 - **Automatic config migration**: on first open, your existing configuration is imported into the new page (the old `carconnectivity.UI.json` is kept as a `.bak`). In addition, manufacturer connectors that are now blocked (SEAT/Cupra/VW) are migrated to EU Data Act automatically at startup.
 - **Read-only notice**: a warning is shown (config page and dashboard) when EU Data Act is in use, since location, remote control and vehicle images are not available with it.
 - **Localized interface** in 8 languages (English, French, German, Italian, Spanish, Polish, Portuguese, Norwegian), based on the browser language.
+- **Per-plugin log level**: a new "MQTT log level" selector in the configuration page lets you debug the MQTT plugin alone while the rest of the add-on stays at the global level ("default" inherits it, as before).
