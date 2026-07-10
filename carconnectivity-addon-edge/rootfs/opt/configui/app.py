@@ -76,6 +76,9 @@ def _ensure_shape(state) -> str | None:
         return f"Too many accounts (max {_MAX_ACCOUNTS})"
     if not isinstance(state.get("settings", {}), dict):
         return "Invalid payload: 'settings' must be an object"
+    plugin_logs = state.get("settings", {}).get("plugin_logs") or {}
+    if not isinstance(plugin_logs, dict) or any(not isinstance(v, str) for v in plugin_logs.values()):
+        return "Invalid payload: 'settings.plugin_logs' must be an object of strings"
     for key in ("_passthrough_connectors", "_passthrough_plugins"):
         val = state.get(key, [])
         if not isinstance(val, list) or any(not isinstance(x, dict) for x in val):

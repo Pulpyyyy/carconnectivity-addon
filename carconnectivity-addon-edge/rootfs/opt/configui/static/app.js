@@ -117,11 +117,18 @@ function collect() {
     if (vin || token) tokens.push({ vin, token });
   }
 
+  // Per-plugin overrides: an empty value means "inherit the global level" and
+  // is simply not sent. Only MQTT is exposed in the UI for now; the backend
+  // accepts any managed plugin (webui, abrp, mqtt_homeassistant) the same way.
+  const plugin_logs = {};
+  if (val("mqtt_log_level")) plugin_logs.mqtt = val("mqtt_log_level");
+
   return {
     accounts,
     settings: {
       log_level: val("log_level"),
       api_log_level: val("api_log_level"),
+      plugin_logs,
       mqtt,
       webui: { enabled: el("webui_enabled").checked, username: val("webui_username") || "autologin", password: el("webui_password").value },
       abrp: { enabled: el("abrp_enabled").checked, tokens },
@@ -182,6 +189,8 @@ async function init() {
   const s = state.settings || {};
   fillSelect(el("log_level"), lvl, s.log_level || "info");
   fillSelect(el("api_log_level"), lvl, s.api_log_level || "error");
+  fillSelect(el("mqtt_log_level"), [{ value: "", label: t("default_level") }, ...lvl],
+             (s.plugin_logs || {}).mqtt || "");
 
   (state.accounts || []).forEach(addVehicle);
 
