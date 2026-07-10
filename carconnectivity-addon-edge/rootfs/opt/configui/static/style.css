@@ -51,3 +51,13 @@ button.link { background:none; color:var(--err); padding:0; }
 .notice { background:var(--notice-bg); border:1px solid var(--notice-line); color:var(--notice-txt);
   border-radius:10px; padding:10px 14px; margin:16px 0; font-size:.9em; }
 .notice p { margin:.3em 0; }
+
+/* Per-component log levels (advanced, collapsed by default) */
+#adv_logs { margin-top:10px; }
+#adv_logs summary { cursor:pointer; color:var(--muted); }
+#adv_logs summary .hint { margin-left:6px; }
+.adv-row { display:flex; align-items:end; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.adv-name { flex:1 1 160px; padding-bottom:6px; }
+.adv-col { flex:0 1 170px; }
+.adv-col span { display:block; }
+.adv-col select { width:100%; margin-top:4px; }
