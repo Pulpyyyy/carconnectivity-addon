@@ -58,6 +58,14 @@ def build_config(state: dict[str, Any]) -> dict[str, Any]:
     log_level = settings.get("log_level") or _DEFAULT_LOG
     api_log_level = settings.get("api_log_level") or _DEFAULT_API_LOG
 
+    # Optional per-plugin log levels (e.g. {"mqtt": "debug"}). A missing/empty
+    # entry means "inherit the global level" — nothing special is emitted, the
+    # plugin gets the global level exactly as before.
+    plugin_logs = settings.get("plugin_logs") or {}
+
+    def _plugin_level(name: str) -> str:
+        return plugin_logs.get(name) or log_level
+
     connectors: list[dict[str, Any]] = []
     for i, acc in enumerate(accounts):
         c = build_connector(acc, api_log_level)
@@ -78,7 +86,7 @@ def build_config(state: dict[str, Any]) -> dict[str, Any]:
         connectors.append(pc)
 
     mqtt = dict(settings.get("mqtt") or {})
-    mqtt["log_level"] = log_level
+    mqtt["log_level"] = _plugin_level("mqtt")
     plugins: list[dict[str, Any]] = [{"type": "mqtt", "config": mqtt}]
 
     webui = settings.get("webui") or {}
@@ -90,16 +98,16 @@ def build_config(state: dict[str, Any]) -> dict[str, Any]:
             "username": webui_user,
             "password": webui.get("password", ""),
             "app_config": {"LOGIN_DISABLED": webui_user == "autologin"},
-            "log_level": log_level,
+            "log_level": _plugin_level("webui"),
         },
     })
 
     abrp = settings.get("abrp") or {}
     tokens = {t["vin"]: t["token"] for t in (abrp.get("tokens") or []) if t.get("vin") and t.get("token")}
     plugins.append({"type": "abrp", "disabled": not abrp.get("enabled", False),
-                    "config": {"tokens": tokens, "log_level": log_level}})
+                    "config": {"tokens": tokens, "log_level": _plugin_level("abrp")}})
 
-    plugins.append({"type": "mqtt_homeassistant", "config": {"log_level": log_level}})
+    plugins.append({"type": "mqtt_homeassistant", "config": {"log_level": _plugin_level("mqtt_homeassistant")}})
     plugins.extend(state.get("_passthrough_plugins") or [])
 
     return {"carConnectivity": {"log_level": log_level, "connectors": connectors, "plugins": plugins}}
@@ -169,12 +177,23 @@ def parse_config(config: dict[str, Any]) -> dict[str, Any]:
     abrp = {"enabled": bool(abrp_p) and not abrp_p.get("disabled", False),
             "tokens": [{"vin": k, "token": v} for k, v in ((abrp_p.get("config", {}) or {}).get("tokens", {}) if abrp_p else {}).items()]}
 
+    # A plugin whose log_level differs from the global one is a per-plugin
+    # override; equal values are just the inherited default and stay implicit.
+    global_log = cc.get("log_level") or _DEFAULT_LOG
+    plugin_logs: dict[str, str] = {}
+    for ptype in ("mqtt", "webui", "abrp", "mqtt_homeassistant"):
+        p = _plugin(ptype)
+        lvl = (p.get("config", {}) or {}).get("log_level") if p else None
+        if lvl and lvl != global_log:
+            plugin_logs[ptype] = lvl
+
     settings = {
-        "log_level": cc.get("log_level") or _DEFAULT_LOG,
+        "log_level": global_log,
         "api_log_level": api_log_level or _DEFAULT_API_LOG,
         "mqtt": mqtt,
         "webui": webui,
         "abrp": abrp,
+        "plugin_logs": plugin_logs,
     }
 
     passthrough_plugins = [p for p in plugins if p.get("type") not in _MANAGED_PLUGINS]
