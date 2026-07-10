@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "Niveau des API"
         description: "Niveau de journalisation spécifique pour les API."
+      advanced:
+        name: "Remplacements avancés de journalisation"
+        description: "Niveaux de journalisation facultatifs par connecteur et par plugin. Utilisez default pour hériter des paramètres globaux de journalisation."
+        fields:
+          brand1:
+            name: "Compte véhicule 1"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
+              api_log_level:
+                name: "Niveau de journalisation API"
+          brand2:
+            name: "Compte véhicule 2"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
+              api_log_level:
+                name: "Niveau de journalisation API"
+          volvo:
+            name: "Connecteur Volvo"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
+              api_log_level:
+                name: "Niveau de journalisation API"
+          mqtt:
+            name: "Plugin MQTT"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
+          webui:
+            name: "Plugin interface web"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
+          abrp:
+            name: "Plugin ABRP"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
+          mqtt_homeassistant:
+            name: "Plugin MQTT Home Assistant"
+            fields:
+              log_level:
+                name: "Niveau de journalisation"
 
   # --- OPTION EXPERT ---
   expert:

@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "API-nivå"
         description: "Loggnivå spesifikk for API-er."
+      advanced:
+        name: "Avanserte overstyringer for logging"
+        description: "Valgfrie loggnivåer per kobling og per plugin. Bruk default for å arve de globale logginnstillingene."
+        fields:
+          brand1:
+            name: "Kjøretøykonto 1"
+            fields:
+              log_level:
+                name: "Loggnivå"
+              api_log_level:
+                name: "API-loggnivå"
+          brand2:
+            name: "Kjøretøykonto 2"
+            fields:
+              log_level:
+                name: "Loggnivå"
+              api_log_level:
+                name: "API-loggnivå"
+          volvo:
+            name: "Volvo-kobling"
+            fields:
+              log_level:
+                name: "Loggnivå"
+              api_log_level:
+                name: "API-loggnivå"
+          mqtt:
+            name: "MQTT-plugin"
+            fields:
+              log_level:
+                name: "Loggnivå"
+          webui:
+            name: "Webgrensesnitt-plugin"
+            fields:
+              log_level:
+                name: "Loggnivå"
+          abrp:
+            name: "ABRP-plugin"
+            fields:
+              log_level:
+                name: "Loggnivå"
+          mqtt_homeassistant:
+            name: "MQTT Home Assistant-plugin"
+            fields:
+              log_level:
+                name: "Loggnivå"
 
   # --- EXPERT ALTERNATIV ---
   expert:

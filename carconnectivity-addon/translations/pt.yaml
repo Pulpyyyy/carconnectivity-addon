@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "Nível das APIs"
         description: "Nível de registo específico para as APIs."
+      advanced:
+        name: "Substituições avançadas de registo"
+        description: "Níveis de registo opcionais por conector e por plugin. Use default para herdar as definições globais de registo."
+        fields:
+          brand1:
+            name: "Conta de veículo 1"
+            fields:
+              log_level:
+                name: "Nível de registo"
+              api_log_level:
+                name: "Nível de registo da API"
+          brand2:
+            name: "Conta de veículo 2"
+            fields:
+              log_level:
+                name: "Nível de registo"
+              api_log_level:
+                name: "Nível de registo da API"
+          volvo:
+            name: "Conector Volvo"
+            fields:
+              log_level:
+                name: "Nível de registo"
+              api_log_level:
+                name: "Nível de registo da API"
+          mqtt:
+            name: "Plugin MQTT"
+            fields:
+              log_level:
+                name: "Nível de registo"
+          webui:
+            name: "Plugin da interface web"
+            fields:
+              log_level:
+                name: "Nível de registo"
+          abrp:
+            name: "Plugin ABRP"
+            fields:
+              log_level:
+                name: "Nível de registo"
+          mqtt_homeassistant:
+            name: "Plugin MQTT Home Assistant"
+            fields:
+              log_level:
+                name: "Nível de registo"
 
   # --- OPÇÃO EXPERT ---
   expert:

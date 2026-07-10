@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "Livello API"
         description: "Livello di registrazione specifico per le API."
+      advanced:
+        name: "Override avanzati della registrazione"
+        description: "Livelli di log opzionali per connettore e per plugin. Usa default per ereditare le impostazioni globali di registrazione."
+        fields:
+          brand1:
+            name: "Account veicolo 1"
+            fields:
+              log_level:
+                name: "Livello di log"
+              api_log_level:
+                name: "Livello di log API"
+          brand2:
+            name: "Account veicolo 2"
+            fields:
+              log_level:
+                name: "Livello di log"
+              api_log_level:
+                name: "Livello di log API"
+          volvo:
+            name: "Connettore Volvo"
+            fields:
+              log_level:
+                name: "Livello di log"
+              api_log_level:
+                name: "Livello di log API"
+          mqtt:
+            name: "Plugin MQTT"
+            fields:
+              log_level:
+                name: "Livello di log"
+          webui:
+            name: "Plugin interfaccia web"
+            fields:
+              log_level:
+                name: "Livello di log"
+          abrp:
+            name: "Plugin ABRP"
+            fields:
+              log_level:
+                name: "Livello di log"
+          mqtt_homeassistant:
+            name: "Plugin MQTT Home Assistant"
+            fields:
+              log_level:
+                name: "Livello di log"
 
   # --- OPZIONE EXPERT ---
   expert:

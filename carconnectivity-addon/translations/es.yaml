@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "Nivel de APIs"
         description: "Nivel de registro específico para las APIs."
+      advanced:
+        name: "Anulaciones avanzadas de registro"
+        description: "Niveles de registro opcionales por conector y por plugin. Usa default para heredar la configuración global de registro."
+        fields:
+          brand1:
+            name: "Cuenta de vehículo 1"
+            fields:
+              log_level:
+                name: "Nivel de registro"
+              api_log_level:
+                name: "Nivel de registro de API"
+          brand2:
+            name: "Cuenta de vehículo 2"
+            fields:
+              log_level:
+                name: "Nivel de registro"
+              api_log_level:
+                name: "Nivel de registro de API"
+          volvo:
+            name: "Conector Volvo"
+            fields:
+              log_level:
+                name: "Nivel de registro"
+              api_log_level:
+                name: "Nivel de registro de API"
+          mqtt:
+            name: "Plugin MQTT"
+            fields:
+              log_level:
+                name: "Nivel de registro"
+          webui:
+            name: "Plugin de interfaz web"
+            fields:
+              log_level:
+                name: "Nivel de registro"
+          abrp:
+            name: "Plugin ABRP"
+            fields:
+              log_level:
+                name: "Nivel de registro"
+          mqtt_homeassistant:
+            name: "Plugin MQTT Home Assistant"
+            fields:
+              log_level:
+                name: "Nivel de registro"
 
   # --- OPCIÓN EXPERT ---
   expert:

@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "API-Ebene"
         description: "Protokollierungsniveau spezifisch für APIs."
+      advanced:
+        name: "Erweiterte Protokollierungsüberschreibungen"
+        description: "Optionale Protokollstufen pro Connector und Plugin. Verwenden Sie default, um die globalen Protokollierungseinstellungen zu übernehmen."
+        fields:
+          brand1:
+            name: "Fahrzeugkonto 1"
+            fields:
+              log_level:
+                name: "Protokollstufe"
+              api_log_level:
+                name: "API-Protokollstufe"
+          brand2:
+            name: "Fahrzeugkonto 2"
+            fields:
+              log_level:
+                name: "Protokollstufe"
+              api_log_level:
+                name: "API-Protokollstufe"
+          volvo:
+            name: "Volvo-Connector"
+            fields:
+              log_level:
+                name: "Protokollstufe"
+              api_log_level:
+                name: "API-Protokollstufe"
+          mqtt:
+            name: "MQTT-Plugin"
+            fields:
+              log_level:
+                name: "Protokollstufe"
+          webui:
+            name: "Web-UI-Plugin"
+            fields:
+              log_level:
+                name: "Protokollstufe"
+          abrp:
+            name: "ABRP-Plugin"
+            fields:
+              log_level:
+                name: "Protokollstufe"
+          mqtt_homeassistant:
+            name: "MQTT-Home-Assistant-Plugin"
+            fields:
+              log_level:
+                name: "Protokollstufe"
 
   # --- EXPERT OPTION ---
   expert:

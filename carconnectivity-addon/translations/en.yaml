@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "API level"
         description: "Logging level specific to APIs."
+      advanced:
+        name: "Advanced logging overrides"
+        description: "Optional per-connector and per-plugin log levels. Use default to inherit the global logging settings."
+        fields:
+          brand1:
+            name: "Vehicle account 1"
+            fields:
+              log_level:
+                name: "Log level"
+              api_log_level:
+                name: "API log level"
+          brand2:
+            name: "Vehicle account 2"
+            fields:
+              log_level:
+                name: "Log level"
+              api_log_level:
+                name: "API log level"
+          volvo:
+            name: "Volvo connector"
+            fields:
+              log_level:
+                name: "Log level"
+              api_log_level:
+                name: "API log level"
+          mqtt:
+            name: "MQTT plugin"
+            fields:
+              log_level:
+                name: "Log level"
+          webui:
+            name: "Web UI plugin"
+            fields:
+              log_level:
+                name: "Log level"
+          abrp:
+            name: "ABRP plugin"
+            fields:
+              log_level:
+                name: "Log level"
+          mqtt_homeassistant:
+            name: "MQTT Home Assistant plugin"
+            fields:
+              log_level:
+                name: "Log level"
 
   # --- EXPERT OPTION ---
   expert:

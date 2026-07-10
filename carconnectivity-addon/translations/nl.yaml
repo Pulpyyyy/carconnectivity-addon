@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "API-niveau"
         description: "Logboekniveau specifiek voor API's."
+      advanced:
+        name: "Geavanceerde logboek-overschrijvingen"
+        description: "Optionele logboekniveaus per connector en per plugin. Gebruik default om de globale logboekinstellingen over te nemen."
+        fields:
+          brand1:
+            name: "Voertuigaccount 1"
+            fields:
+              log_level:
+                name: "Logboekniveau"
+              api_log_level:
+                name: "API-logboekniveau"
+          brand2:
+            name: "Voertuigaccount 2"
+            fields:
+              log_level:
+                name: "Logboekniveau"
+              api_log_level:
+                name: "API-logboekniveau"
+          volvo:
+            name: "Volvo-connector"
+            fields:
+              log_level:
+                name: "Logboekniveau"
+              api_log_level:
+                name: "API-logboekniveau"
+          mqtt:
+            name: "MQTT-plugin"
+            fields:
+              log_level:
+                name: "Logboekniveau"
+          webui:
+            name: "Webinterface-plugin"
+            fields:
+              log_level:
+                name: "Logboekniveau"
+          abrp:
+            name: "ABRP-plugin"
+            fields:
+              log_level:
+                name: "Logboekniveau"
+          mqtt_homeassistant:
+            name: "MQTT Home Assistant-plugin"
+            fields:
+              log_level:
+                name: "Logboekniveau"
 
   # --- EXPERT OPTIE ---
   expert:

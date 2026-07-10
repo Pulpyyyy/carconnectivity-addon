@@ -122,6 +122,51 @@ configuration:
       api_level:
         name: "Poziom API"
         description: "Poziom logowania specyficzny dla API."
+      advanced:
+        name: "Zaawansowane nadpisania rejestrowania"
+        description: "Opcjonalne poziomy logowania dla poszczególnych konektorów i pluginów. Użyj default, aby odziedziczyć globalne ustawienia logowania."
+        fields:
+          brand1:
+            name: "Konto pojazdu 1"
+            fields:
+              log_level:
+                name: "Poziom logowania"
+              api_log_level:
+                name: "Poziom logowania API"
+          brand2:
+            name: "Konto pojazdu 2"
+            fields:
+              log_level:
+                name: "Poziom logowania"
+              api_log_level:
+                name: "Poziom logowania API"
+          volvo:
+            name: "Konektor Volvo"
+            fields:
+              log_level:
+                name: "Poziom logowania"
+              api_log_level:
+                name: "Poziom logowania API"
+          mqtt:
+            name: "Plugin MQTT"
+            fields:
+              log_level:
+                name: "Poziom logowania"
+          webui:
+            name: "Plugin interfejsu WWW"
+            fields:
+              log_level:
+                name: "Poziom logowania"
+          abrp:
+            name: "Plugin ABRP"
+            fields:
+              log_level:
+                name: "Poziom logowania"
+          mqtt_homeassistant:
+            name: "Plugin MQTT Home Assistant"
+            fields:
+              log_level:
+                name: "Poziom logowania"
 
   # --- OPCJA EXPERT ---
   expert:
