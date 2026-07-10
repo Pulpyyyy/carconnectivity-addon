@@ -48,6 +48,24 @@ options:
   logs:
     level: "info"
     api_level: "info"
+    advanced:
+      brand1:
+        log_level: "default"
+        api_log_level: "default"
+      brand2:
+        log_level: "default"
+        api_log_level: "default"
+      volvo:
+        log_level: "default"
+        api_log_level: "default"
+      mqtt:
+        log_level: "default"
+      webui:
+        log_level: "default"
+      abrp:
+        log_level: "default"
+      mqtt_homeassistant:
+        log_level: "default"
   expert: false
 schema:
   brand1:
@@ -85,5 +103,23 @@ schema:
   logs:
     level: list(info|warning|error|debug)
     api_level: list(info|warning|error|debug)
+    advanced:
+      brand1:
+        log_level: list(default|info|warning|error|debug)
+        api_log_level: list(default|info|warning|error|debug)
+      brand2:
+        log_level: list(default|info|warning|error|debug)
+        api_log_level: list(default|info|warning|error|debug)
+      volvo:
+        log_level: list(default|info|warning|error|debug)
+        api_log_level: list(default|info|warning|error|debug)
+      mqtt:
+        log_level: list(default|info|warning|error|debug)
+      webui:
+        log_level: list(default|info|warning|error|debug)
+      abrp:
+        log_level: list(default|info|warning|error|debug)
+      mqtt_homeassistant:
+        log_level: list(default|info|warning|error|debug)
   expert: bool
 

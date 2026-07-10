@@ -134,6 +134,23 @@ Define the amount of information recorded in logs:
 - `Error`: Displays only error messages.
 - `Debug`: Displays additional details useful for troubleshooting.
 
+### Advanced Logging Overrides
+The global logging settings are used by default. In `logs.advanced`, you can override the log level for a single configured connector or plugin while keeping everything else at the global level.
+
+Use `default` to inherit the global setting. For example, to debug only the first configured vehicle account while keeping the rest at `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Connector overrides are available for `brand1`, `brand2`, and `volvo`. Plugin overrides are available for `mqtt`, `webui`, `abrp`, and `mqtt_homeassistant`.
+
 ### 7. `ABRP - A Better Routeplanner`
 
 For each vehicle you wish to connect to ABRP (A Better Routeplanner), you must provide a unique identifier for each vehicle (`vin`) as well as an authentication token (`token`). These pairs of values allow you to establish a match between your vehicle and its token in the ABRP system.

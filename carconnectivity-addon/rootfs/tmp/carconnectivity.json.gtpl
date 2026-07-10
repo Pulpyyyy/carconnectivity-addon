@@ -6,6 +6,9 @@
             {
                 "type": "{{ if or (eq .brand1.type "seat") (eq .brand1.type "cupra") }}seatcupra{{ else }}{{ .brand1.type }}{{ end }}",
                 "config": {
+                    {{- if and .logs.advanced.brand1.log_level (ne .logs.advanced.brand1.log_level "default") }}
+                    "log_level": "{{ .logs.advanced.brand1.log_level }}",
+                    {{- end }}
                     {{- if or (eq .brand1.type "seat") (eq .brand1.type "cupra") }}
                     "brand": "{{ .brand1.type }}",
                     {{- end }}
@@ -16,7 +19,7 @@
                     "password": "{{ .brand1.password }}",
                     "interval": {{ .brand1.interval }},
                     "spin": "{{ .brand1.spin }}",
-                    "api_log_level": "{{ .logs.api_level }}"
+                    "api_log_level": "{{ if and .logs.advanced.brand1.api_log_level (ne .logs.advanced.brand1.api_log_level "default") }}{{ .logs.advanced.brand1.api_log_level }}{{ else }}{{ .logs.api_level }}{{ end }}"
                 }
             }
             {{- end }}
@@ -26,6 +29,9 @@
                 "type": "{{ if or (eq .brand2.type "seat") (eq .brand2.type "cupra") }}seatcupra{{ else }}{{ .brand2.type }}{{ end }}",
                 "connector_id": "{{ .brand2.type }}2",
                 "config": {
+                    {{- if and .logs.advanced.brand2.log_level (ne .logs.advanced.brand2.log_level "default") }}
+                    "log_level": "{{ .logs.advanced.brand2.log_level }}",
+                    {{- end }}
                     {{- if or (eq .brand2.type "seat") (eq .brand2.type "cupra") }}
                     "brand": "{{ .brand2.type }}",
                     {{- end }}
@@ -36,7 +42,7 @@
                     "password": "{{ .brand2.password }}",
                     "interval": {{ .brand2.interval }},
                     "spin": "{{ .brand2.spin }}",
-                    "api_log_level": "{{ .logs.api_level }}"
+                    "api_log_level": "{{ if and .logs.advanced.brand2.api_log_level (ne .logs.advanced.brand2.api_log_level "default") }}{{ .logs.advanced.brand2.api_log_level }}{{ else }}{{ .logs.api_level }}{{ end }}"
                 }
             }
             {{- end }}
@@ -45,12 +51,15 @@
             {
                 "type": "volvo",
                 "config": {
+                    {{- if and .logs.advanced.volvo.log_level (ne .logs.advanced.volvo.log_level "default") }}
+                    "log_level": "{{ .logs.advanced.volvo.log_level }}",
+                    {{- end }}
                     "key_primary": "{{ .volvo.key_primary }}",
                     "key_secondary": "{{ .volvo.key_secondary }}",
                     "connected_volvo_vehicle_token": "{{ .volvo.vehicle_token }}",
                     "location_token": "{{ .volvo.location_token }}",
                     "interval": {{ .volvo.interval }},
-                    "api_log_level": "{{ .logs.api_level }}"
+                    "api_log_level": "{{ if and .logs.advanced.volvo.api_log_level (ne .logs.advanced.volvo.api_log_level "default") }}{{ .logs.advanced.volvo.api_log_level }}{{ else }}{{ .logs.api_level }}{{ end }}"
                 }
             }
             {{- end }}
@@ -82,7 +91,7 @@
                     "port": {{ .mqtt.port }},
                     "locale": "en_US",
                     "time_format": "%Y-%m-%dT%H:%M:%S%z",
-                    "log_level": "{{ .logs.level }}"
+                    "log_level": "{{ if and .logs.advanced.mqtt.log_level (ne .logs.advanced.mqtt.log_level "default") }}{{ .logs.advanced.mqtt.log_level }}{{ else }}{{ .logs.level }}{{ end }}"
                 }
             },
             {
@@ -103,7 +112,7 @@
                         {{- end }}
                         },
                     "locale": "en_US",
-                    "log_level": "{{ .logs.level }}"
+                    "log_level": "{{ if and .logs.advanced.webui.log_level (ne .logs.advanced.webui.log_level "default") }}{{ .logs.advanced.webui.log_level }}{{ else }}{{ .logs.level }}{{ end }}"
                 }
             },
             {
@@ -122,7 +131,7 @@
                             {{- $first = false }}
                         {{- end }}
                     },
-                    "log_level": "{{ .logs.level }}"
+                    "log_level": "{{ if and .logs.advanced.abrp.log_level (ne .logs.advanced.abrp.log_level "default") }}{{ .logs.advanced.abrp.log_level }}{{ else }}{{ .logs.level }}{{ end }}"
                 }
             },
             {
@@ -130,7 +139,7 @@
                 "config": {
                     "locale": "en_US",
                     "time_format": "%Y-%m-%dT%H:%M:%S%z",
-                    "log_level": "{{ .logs.level }}"
+                    "log_level": "{{ if and .logs.advanced.mqtt_homeassistant.log_level (ne .logs.advanced.mqtt_homeassistant.log_level "default") }}{{ .logs.advanced.mqtt_homeassistant.log_level }}{{ else }}{{ .logs.level }}{{ end }}"
                 }
             }
         ]
