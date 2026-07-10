@@ -73,12 +73,82 @@ function addVehicle(data = {}) {
   fillSelect(brandSel, KINDS, data.brand || (KINDS[0] && KINDS[0].value));
   refreshSource(card, brandSel.value, data.data_source);
   renderFields(card, brandSel.value, data);
+  // Per-account level overrides live on the card itself (not as brand fields),
+  // and are edited from the advanced logging table.
+  if (data.log_level) card.dataset.logLevel = data.log_level;
+  if (data.api_log_level) card.dataset.apiLogLevel = data.api_log_level;
   brandSel.addEventListener("change", () => {
     refreshSource(card, brandSel.value);
     renderFields(card, brandSel.value);
+    renderAdvLogs();
   });
-  card.querySelector(".remove").addEventListener("click", () => card.remove());
+  card.querySelector(".remove").addEventListener("click", () => { card.remove(); renderAdvLogs(); });
   el("vehicles").appendChild(card);
+  renderAdvLogs();
+}
+
+// ── Per-component log levels (advanced) ──────────────────────────────────────
+// One collapsed block: a row per configured vehicle (log + API) and one per
+// managed plugin. "default" (empty value) inherits the global level and emits
+// nothing; only real overrides are saved. Rows are re-rendered whenever the
+// vehicle list changes; plugin choices live in PLUGIN_LOGS.
+let PLUGIN_LOGS = {};
+const ADV_PLUGINS = ["mqtt", "webui", "abrp", "mqtt_homeassistant"];
+
+function pluginLabel(key) {
+  if (key === "webui") return t("web_dashboard");
+  if (key === "mqtt_homeassistant") return "MQTT Home Assistant";
+  return key.toUpperCase();
+}
+
+function levelSelect(value, onChange) {
+  const sel = document.createElement("select");
+  fillSelect(sel, [{ value: "", label: t("default_level") }, ...LOG_LEVELS.map((l) => ({ value: l, label: l }))], value || "");
+  sel.addEventListener("change", onChange);
+  return sel;
+}
+
+function advCol(i18nKey, sel) {
+  const lab = document.createElement("label");
+  lab.className = "adv-col";
+  const span = document.createElement("span");
+  span.className = "hint"; span.textContent = t(i18nKey);
+  lab.appendChild(span); lab.appendChild(sel);
+  return lab;
+}
+
+function updateAdvBadge() {
+  let n = ADV_PLUGINS.filter((k) => PLUGIN_LOGS[k]).length;
+  for (const c of document.querySelectorAll(".vehicle")) {
+    n += (c.dataset.logLevel ? 1 : 0) + (c.dataset.apiLogLevel ? 1 : 0);
+  }
+  el("adv_logs_badge").textContent = n ? t("overrides_count", { n }) : "";
+}
+
+function renderAdvLogs() {
+  const wrap = el("adv_logs_rows");
+  if (!wrap) return;
+  wrap.innerHTML = "";
+  const addRow = (label) => {
+    const row = document.createElement("div");
+    row.className = "adv-row";
+    const name = document.createElement("span");
+    name.className = "adv-name"; name.textContent = label;
+    row.appendChild(name);
+    wrap.appendChild(row);
+    return row;
+  };
+  document.querySelectorAll(".vehicle").forEach((card, i) => {
+    const opt = card.querySelector(".v-brand").selectedOptions[0];
+    const row = addRow(`${opt ? opt.textContent : "?"} ${i + 1}`);
+    row.appendChild(advCol("log_col", levelSelect(card.dataset.logLevel, (e) => { card.dataset.logLevel = e.target.value; updateAdvBadge(); })));
+    row.appendChild(advCol("api_col", levelSelect(card.dataset.apiLogLevel, (e) => { card.dataset.apiLogLevel = e.target.value; updateAdvBadge(); })));
+  });
+  for (const key of ADV_PLUGINS) {
+    const row = addRow(pluginLabel(key));
+    row.appendChild(advCol("log_col", levelSelect(PLUGIN_LOGS[key], (e) => { PLUGIN_LOGS[key] = e.target.value; updateAdvBadge(); })));
+  }
+  updateAdvBadge();
 }
 
 // ── ABRP tokens ──────────────────────────────────────────────────────────────
@@ -101,6 +171,8 @@ function collect() {
       const v = inp.value.trim();
       if (v) acc[inp.dataset.key] = v;
     }
+    if (card.dataset.logLevel) acc.log_level = card.dataset.logLevel;
+    if (card.dataset.apiLogLevel) acc.api_log_level = card.dataset.apiLogLevel;
     accounts.push(acc);
   }
 
@@ -118,10 +190,9 @@ function collect() {
   }
 
   // Per-plugin overrides: an empty value means "inherit the global level" and
-  // is simply not sent. Only MQTT is exposed in the UI for now; the backend
-  // accepts any managed plugin (webui, abrp, mqtt_homeassistant) the same way.
+  // is simply not sent.
   const plugin_logs = {};
-  if (val("mqtt_log_level")) plugin_logs.mqtt = val("mqtt_log_level");
+  for (const key of ADV_PLUGINS) if (PLUGIN_LOGS[key]) plugin_logs[key] = PLUGIN_LOGS[key];
 
   return {
     accounts,
@@ -189,10 +260,10 @@ async function init() {
   const s = state.settings || {};
   fillSelect(el("log_level"), lvl, s.log_level || "info");
   fillSelect(el("api_log_level"), lvl, s.api_log_level || "error");
-  fillSelect(el("mqtt_log_level"), [{ value: "", label: t("default_level") }, ...lvl],
-             (s.plugin_logs || {}).mqtt || "");
+  PLUGIN_LOGS = { ...(s.plugin_logs || {}) };
 
   (state.accounts || []).forEach(addVehicle);
+  renderAdvLogs(); // also covers the no-vehicle case (plugin rows only)
 
   const mqtt = s.mqtt || {};
   setVal("mqtt_broker", mqtt.broker); setVal("mqtt_port", mqtt.port);

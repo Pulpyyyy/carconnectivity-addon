@@ -47,7 +47,11 @@ def build_connector(account: dict[str, Any], api_log_level: str = _DEFAULT_API_L
         v = account.get(f["key"])
         if v not in (None, ""):
             config[f["key"]] = _field_value(f, v)
-    config["api_log_level"] = api_log_level
+    # Optional per-account level overrides; absent means "inherit the globals"
+    # (log_level is then simply not written, api_log_level gets the global).
+    if account.get("log_level"):
+        config["log_level"] = account["log_level"]
+    config["api_log_level"] = account.get("api_log_level") or api_log_level
     return {"type": ctype, "config": config}
 
 
@@ -119,13 +123,16 @@ def parse_config(config: dict[str, Any]) -> dict[str, Any]:
     accounts: list[dict[str, Any]] = []
     passthrough_connectors: list[dict[str, Any]] = []
     migrated: list[str] = []
-    api_log_level = None
+    # Per-connector api_log_level values: the most common one is the global
+    # setting, any other value is a per-account override (kept on the account).
+    api_levels: list[str] = []
+    account_api: list[tuple[dict[str, Any], str | None]] = []
 
     for c in cc.get("connectors", []) or []:
         ctype = c.get("type")
         cfg = c.get("config", {}) or {}
-        if cfg.get("api_log_level") and api_log_level is None:
-            api_log_level = cfg["api_log_level"]
+        if cfg.get("api_log_level"):
+            api_levels.append(cfg["api_log_level"])
 
         data_source = None
         if ctype == "vw_eu_data_act":
@@ -155,6 +162,9 @@ def parse_config(config: dict[str, Any]) -> dict[str, Any]:
         for f in KINDS[kind_key]["fields"]:
             if cfg.get(f["key"]) not in (None, ""):
                 acc[f["key"]] = cfg[f["key"]]
+        if cfg.get("log_level"):
+            acc["log_level"] = cfg["log_level"]
+        account_api.append((acc, cfg.get("api_log_level")))
         accounts.append(acc)
 
     plugins = cc.get("plugins", []) or []
@@ -176,6 +186,16 @@ def parse_config(config: dict[str, Any]) -> dict[str, Any]:
     abrp_p = _plugin("abrp")
     abrp = {"enabled": bool(abrp_p) and not abrp_p.get("disabled", False),
             "tokens": [{"vin": k, "token": v} for k, v in ((abrp_p.get("config", {}) or {}).get("tokens", {}) if abrp_p else {}).items()]}
+
+    # Global api_log_level = the most common per-connector value (first seen
+    # wins a tie); accounts whose value differs carry it as an override.
+    api_log_level = None
+    if api_levels:
+        api_log_level = max(dict.fromkeys(api_levels),
+                            key=lambda v: api_levels.count(v))
+        for acc, v in account_api:
+            if v and v != api_log_level:
+                acc["api_log_level"] = v
 
     # A plugin whose log_level differs from the global one is a per-plugin
     # override; equal values are just the inherited default and stay implicit.
