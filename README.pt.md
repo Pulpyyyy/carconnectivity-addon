@@ -144,6 +144,26 @@ Defina a quantidade de informações registradas em logs:
 -   `Error`: Exibe apenas mensagens de erro.
 -   `Debug`: Exibe detalhes adicionais úteis para solução de problemas.
 
+### Substituições avançadas de registo
+
+As definições globais de registo são utilizadas por predefinição. Em `logs.advanced`, pode substituir o nível de registo de um único conector ou plugin configurado, enquanto todo o resto mantém a definição global.
+
+Use `default` para herdar a definição global. Por exemplo, para depurar apenas a primeira conta de veículo configurada, mantendo as restantes em `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Isto ativa o registo de depuração apenas para a primeira conta de veículo configurada, enquanto o resto do add-on continua a usar o nível global `info`.
+
+As substituições de conectores estão disponíveis para `brand1`, `brand2` e `volvo`. As substituições de plugins estão disponíveis para `mqtt`, `webui`, `abrp` e `mqtt_homeassistant`.
+
 ### 7.`ABRP - A Better Routeplanner`
 
 Para cada veículo que você deseja conectar ao ABRP (um melhor planejador de rota), você deve fornecer um identificador exclusivo para cada veículo (`vin`), bem como um token de autenticação (`token`). Esses pares de valores permitem estabelecer uma correspondência entre seu veículo e seu token no sistema ABRP.

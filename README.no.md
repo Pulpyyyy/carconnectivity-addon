@@ -144,6 +144,26 @@ Definer mengden informasjon registrert i logger:
 -   `Error`: Viser bare feilmeldinger.
 -   `Debug`: Viser ytterligere detaljer som er nyttige for feilsøking.
 
+### Avanserte innstillinger for loggføring
+
+De globale logginnstillingene brukes som standard. I `logs.advanced` kan du overstyre loggnivået for én konfigurert kobling eller plugin, mens alt annet beholder den globale innstillingen.
+
+Bruk `default` for å arve den globale innstillingen. For eksempel, for å feilsøke bare den første konfigurerte kjøretøykontoen mens resten forblir på `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Dette aktiverer feilsøkingslogging bare for den første konfigurerte kjøretøykontoen, mens resten av tillegget fortsatt bruker det globale nivået `info`.
+
+Koblingsoverstyringer er tilgjengelige for `brand1`, `brand2` og `volvo`. Plugin-overstyringer er tilgjengelige for `mqtt`, `webui`, `abrp` og `mqtt_homeassistant`.
+
 ### 7.`ABRP - A Better Routeplanner`
 
 For hvert kjøretøy du ønsker å koble til ABRP (en bedre ruteplan), må du gi en unik identifikator for hvert kjøretøy (`vin`) samt en autentiseringstoken (`token`). Disse verdiene lar deg etablere en kamp mellom kjøretøyet og dets token i ABRP -systemet.

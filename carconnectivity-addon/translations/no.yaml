@@ -123,7 +123,7 @@ configuration:
         name: "API-nivå"
         description: "Loggnivå spesifikk for API-er."
       advanced:
-        name: "Avanserte overstyringer for logging"
+        name: "Avanserte logginnstillinger"
         description: "Valgfrie loggnivåer per kobling og per plugin. Bruk default for å arve de globale logginnstillingene."
         fields:
           brand1:

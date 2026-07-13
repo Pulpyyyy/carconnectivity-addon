@@ -144,6 +144,26 @@ Definire la quantità di informazioni registrate nei registri:
 -   `Error`: Visualizza solo i messaggi di errore.
 -   `Debug`: Visualizza ulteriori dettagli utili per la risoluzione dei problemi.
 
+### Impostazioni avanzate di registrazione
+
+Per impostazione predefinita vengono usate le impostazioni globali di registrazione. In `logs.advanced` puoi sovrascrivere il livello di log per un singolo connettore o plugin configurato, mentre tutto il resto mantiene l'impostazione globale.
+
+Usa `default` per ereditare l'impostazione globale. Ad esempio, per eseguire il debug solo del primo account veicolo configurato mantenendo il resto su `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Questo abilita la registrazione di debug solo per il primo account veicolo configurato, mentre il resto dell'add-on continua a usare il livello globale `info`.
+
+Le sovrascritture dei connettori sono disponibili per `brand1`, `brand2` e `volvo`. Le sovrascritture dei plugin sono disponibili per `mqtt`, `webui`, `abrp` e `mqtt_homeassistant`.
+
 ### 7.`ABRP - A Better Routeplanner`
 
 Per ogni veicolo che si desidera connettere ad ABRP (un percorso migliore), è necessario fornire un identificatore univoco per ciascun veicolo (`vin`) così come un token di autenticazione (`token`). Queste coppie di valori consentono di stabilire una corrispondenza tra il veicolo e il suo token nel sistema ABRP.

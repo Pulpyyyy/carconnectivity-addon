@@ -123,7 +123,7 @@ configuration:
         name: "Niveau des API"
         description: "Niveau de journalisation spécifique pour les API."
       advanced:
-        name: "Remplacements avancés de journalisation"
+        name: "Paramètres avancés de journalisation"
         description: "Niveaux de journalisation facultatifs par connecteur et par plugin. Utilisez default pour hériter des paramètres globaux de journalisation."
         fields:
           brand1:
@@ -132,21 +132,21 @@ configuration:
               log_level:
                 name: "Niveau de journalisation"
               api_log_level:
-                name: "Niveau de journalisation API"
+                name: "Niveau de journalisation de l'API"
           brand2:
             name: "Compte véhicule 2"
             fields:
               log_level:
                 name: "Niveau de journalisation"
               api_log_level:
-                name: "Niveau de journalisation API"
+                name: "Niveau de journalisation de l'API"
           volvo:
             name: "Connecteur Volvo"
             fields:
               log_level:
                 name: "Niveau de journalisation"
               api_log_level:
-                name: "Niveau de journalisation API"
+                name: "Niveau de journalisation de l'API"
           mqtt:
             name: "Plugin MQTT"
             fields:

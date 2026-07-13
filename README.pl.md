@@ -144,6 +144,26 @@ Zdefiniuj ilość informacji zarejestrowanych w dziennikach:
 -   `Error`: Wyświetla tylko komunikaty o błędach.
 -   `Debug`: Wyświetla dodatkowe szczegóły przydatne do rozwiązywania problemów.
 
+### Zaawansowane opcje nadpisywania logów
+
+Domyślnie używane są globalne ustawienia logowania. W `logs.advanced` można nadpisać poziom logowania dla pojedynczego skonfigurowanego konektora lub pluginu, podczas gdy wszystko inne pozostaje przy ustawieniu globalnym.
+
+Użyj `default`, aby odziedziczyć ustawienie globalne. Na przykład, aby debugować tylko pierwsze skonfigurowane konto pojazdu, pozostawiając resztę na poziomie `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Włącza to logowanie debugowania tylko dla pierwszego skonfigurowanego konta pojazdu, podczas gdy reszta dodatku nadal używa globalnego poziomu `info`.
+
+Nadpisania konektorów są dostępne dla `brand1`, `brand2` i `volvo`. Nadpisania pluginów są dostępne dla `mqtt`, `webui`, `abrp` i `mqtt_homeassistant`.
+
 ### 7.`ABRP - A Better Routeplanner`
 
 Dla każdego pojazdu, który chcesz połączyć z ABRP (lepszy planner trasy), musisz podać unikalny identyfikator dla każdego pojazdu (`vin`) a także token uwierzytelniający (`token`). Te pary wartości pozwalają ustalić dopasowanie między pojazdem a jego tokenem w systemie ABRP.

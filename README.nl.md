@@ -144,6 +144,26 @@ Definieer de hoeveelheid informatie die is vastgelegd in logboeken:
 -   `Error`: Geeft alleen foutmeldingen weer.
 -   `Debug`: Toont aanvullende details die nuttig zijn voor het oplossen van problemen.
 
+### Geavanceerde instellingen voor logboekregistratie
+
+Standaard worden de globale logboekinstellingen gebruikt. In `logs.advanced` kun je het logboekniveau voor één geconfigureerde connector of plug-in overschrijven, terwijl al het overige de globale instelling blijft gebruiken.
+
+Gebruik `default` om de globale instelling over te nemen. Bijvoorbeeld om alleen het eerste geconfigureerde voertuigaccount te debuggen en de rest op `info` te laten staan:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Hiermee wordt debug-logboekregistratie alleen ingeschakeld voor het eerste geconfigureerde voertuigaccount, terwijl de rest van de add-on het globale niveau `info` blijft gebruiken.
+
+Connector-overschrijvingen zijn beschikbaar voor `brand1`, `brand2` en `volvo`. Plug-in-overschrijvingen zijn beschikbaar voor `mqtt`, `webui`, `abrp` en `mqtt_homeassistant`.
+
 ### 7.`ABRP - A Better Routeplanner`
 
 Voor elk voertuig dat u wilt aansluiten op ABRP (een betere routeplanner), moet u voor elk voertuig een unieke identificatie geven (`vin`) evenals een authenticatietoken (`token`). Met deze paren waarden kunt u een match tussen uw voertuig en het token in het ABRP -systeem vaststellen.

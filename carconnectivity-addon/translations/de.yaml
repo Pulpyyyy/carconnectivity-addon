@@ -124,7 +124,7 @@ configuration:
         description: "Protokollierungsniveau spezifisch für APIs."
       advanced:
         name: "Erweiterte Protokollierungsüberschreibungen"
-        description: "Optionale Protokollstufen pro Connector und Plugin. Verwenden Sie default, um die globalen Protokollierungseinstellungen zu übernehmen."
+        description: "Optionale Protokollstufen pro Connector und pro Plugin. Verwenden Sie default, um die globalen Protokollierungseinstellungen zu übernehmen."
         fields:
           brand1:
             name: "Fahrzeugkonto 1"

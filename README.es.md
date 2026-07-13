@@ -144,6 +144,26 @@ Defina la cantidad de información registrada en los registros:
 -   `Error`: Muestra solo mensajes de error.
 -   `Debug`: Muestra detalles adicionales útiles para solucionar problemas.
 
+### Anulaciones avanzadas de registro
+
+De forma predeterminada se utilizan los ajustes globales de registro. En `logs.advanced`, puedes anular el nivel de registro de un único conector o plugin configurado, mientras todo lo demás mantiene la configuración global.
+
+Usa `default` para heredar la configuración global. Por ejemplo, para depurar solo la primera cuenta de vehículo configurada y mantener el resto en `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Esto activa el registro de depuración solo para la primera cuenta de vehículo configurada, mientras que el resto del complemento sigue utilizando el nivel global `info`.
+
+Las anulaciones de conectores están disponibles para `brand1`, `brand2` y `volvo`. Las anulaciones de plugins están disponibles para `mqtt`, `webui`, `abrp` y `mqtt_homeassistant`.
+
 ### 7.`ABRP - A Better Routeplanner`
 
 Para cada vehículo que desea conectarse a ABRP (un mejor rutinPlanner), debe proporcionar un identificador único para cada vehículo (`vin`) así como un token de autenticación (`token`). Estos pares de valores le permiten establecer una coincidencia entre su vehículo y su token en el sistema ABRP.

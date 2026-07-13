@@ -148,6 +148,26 @@ Définissez la quantité d'informations enregistrées dans les journaux:
 -   `Error`: Affiche uniquement les messages d'erreur.
 -   `Debug`: Affiche des détails supplémentaires utiles pour le dépannage.
 
+### Paramètres avancés de journalisation
+
+Les paramètres globaux de journalisation sont utilisés par défaut. Dans `logs.advanced`, vous pouvez remplacer le niveau de journalisation d'un seul connecteur ou plugin configuré, tandis que tout le reste conserve le paramètre global.
+
+Utilisez `default` pour hériter du paramètre global. Par exemple, pour déboguer uniquement le premier compte véhicule configuré tout en gardant le reste sur `info`:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Cela active la journalisation de débogage uniquement pour le premier compte véhicule configuré, tandis que le reste de l'add-on continue d'utiliser le niveau global `info`.
+
+Les remplacements de connecteur sont disponibles pour `brand1`, `brand2` et `volvo`. Les remplacements de plugin sont disponibles pour `mqtt`, `webui`, `abrp` et `mqtt_homeassistant`.
+
 ### 7. `ABRP - A Better Routeplanner`
 
 Pour chaque véhicule que vous souhaitez connecter à ABRP (A Better Routeplanner), vous devez fournir un identifiant unique pour chaque véhicule (`vin`) ainsi qu'un jeton d'authentification (`token`). Ces paires de valeurs permettent d'établir une correspondance entre votre véhicule et son token dans le système ABRP.

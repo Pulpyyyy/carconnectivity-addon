@@ -148,6 +148,26 @@ Definieren Sie die Menge an Informationen, die in Protokollen aufgezeichnet wurd
 -   `Error`: Zeigt nur Fehlermeldungen an.
 -   `Debug`: Zeigt zusätzliche Details an, die für die Fehlerbehebung nützlich sind.
 
+### Erweiterte Protokollierungsüberschreibungen
+
+Standardmäßig werden die globalen Protokollierungseinstellungen verwendet. In `logs.advanced` können Sie die Protokollstufe für einen einzelnen konfigurierten Connector oder ein Plugin überschreiben, während alles andere die globale Einstellung beibehält.
+
+Verwenden Sie `default`, um die globale Einstellung zu übernehmen. Um beispielsweise nur das erste konfigurierte Fahrzeugkonto zu debuggen, während der Rest auf `info` bleibt:
+
+```yaml
+logs:
+  level: info
+  api_level: info
+  advanced:
+    brand1:
+      log_level: debug
+      api_log_level: debug
+```
+
+Dadurch wird die Debug-Protokollierung nur für das erste konfigurierte Fahrzeugkonto aktiviert, während der Rest des Add-ons weiterhin die globale Stufe `info` verwendet.
+
+Connector-Überschreibungen sind für `brand1`, `brand2` und `volvo` verfügbar. Plugin-Überschreibungen sind für `mqtt`, `webui`, `abrp` und `mqtt_homeassistant` verfügbar.
+
 ### 7. `ABRP - A Better Routeplanner`
 
 Für jedes Fahrzeug, das Sie mit ABRP (A Better Routeplanner) verbinden möchten, müssen Sie eine eindeutige Kennung für jedes Fahrzeug (`vin`) sowie ein Authentifizierungstoken (`token`) angeben. Diese Wertpaare ermöglichen die Zuordnung zwischen Ihrem Fahrzeug und seinem Token im ABRP-System.

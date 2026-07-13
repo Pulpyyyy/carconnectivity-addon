@@ -124,7 +124,7 @@ configuration:
         description: "Nível de registo específico para as APIs."
       advanced:
         name: "Substituições avançadas de registo"
-        description: "Níveis de registo opcionais por conector e por plugin. Use default para herdar as definições globais de registo."
+        description: "Níveis de registo opcionais por conector e por plugin. Utilize default para herdar as definições globais de registo."
         fields:
           brand1:
             name: "Conta de veículo 1"

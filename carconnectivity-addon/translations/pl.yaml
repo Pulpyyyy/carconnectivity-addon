@@ -123,50 +123,50 @@ configuration:
         name: "Poziom API"
         description: "Poziom logowania specyficzny dla API."
       advanced:
-        name: "Zaawansowane nadpisania rejestrowania"
-        description: "Opcjonalne poziomy logowania dla poszczególnych konektorów i pluginów. Użyj default, aby odziedziczyć globalne ustawienia logowania."
+        name: "Zaawansowane opcje nadpisywania logów"
+        description: "Opcjonalne poziomy logowania dla poszczególnych konektorów i pluginów. Użyj default, aby zastosować globalne ustawienia logowania."
         fields:
           brand1:
             name: "Konto pojazdu 1"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
               api_log_level:
                 name: "Poziom logowania API"
           brand2:
             name: "Konto pojazdu 2"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
               api_log_level:
                 name: "Poziom logowania API"
           volvo:
             name: "Konektor Volvo"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
               api_log_level:
                 name: "Poziom logowania API"
           mqtt:
             name: "Plugin MQTT"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
           webui:
             name: "Plugin interfejsu WWW"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
           abrp:
             name: "Plugin ABRP"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
           mqtt_homeassistant:
             name: "Plugin MQTT Home Assistant"
             fields:
               log_level:
-                name: "Poziom logowania"
+                name: "Poziom dziennika"
 
   # --- OPCJA EXPERT ---
   expert:

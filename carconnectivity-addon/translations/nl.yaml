@@ -123,7 +123,7 @@ configuration:
         name: "API-niveau"
         description: "Logboekniveau specifiek voor API's."
       advanced:
-        name: "Geavanceerde logboek-overschrijvingen"
+        name: "Geavanceerde instellingen voor logboekregistratie"
         description: "Optionele logboekniveaus per connector en per plugin. Gebruik default om de globale logboekinstellingen over te nemen."
         fields:
           brand1:

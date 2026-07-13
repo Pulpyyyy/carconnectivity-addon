@@ -149,6 +149,8 @@ logs:
       api_log_level: debug
 ```
 
+This enables debug logging only for the first configured vehicle account while the rest of the add-on continues to use the global `info` level.
+
 Connector overrides are available for `brand1`, `brand2`, and `volvo`. Plugin overrides are available for `mqtt`, `webui`, `abrp`, and `mqtt_homeassistant`.
 
 ### 7. `ABRP - A Better Routeplanner`
