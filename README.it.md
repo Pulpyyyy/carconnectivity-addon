@@ -1,4 +1,8 @@
-![Supports aarch64 Architecture][aarch64-shield]![Supports amd64 Architecture][amd64-shield][![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+[![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 
@@ -24,10 +28,10 @@
 
 ## Introduzione
 
-`CarConnectivity-Addon`Ti consente di connettere e recuperare informazioni sul veicolo dai servizi online dei produttori compatibili. Questa guida spiega come configurare correttamente il modulo.
+`CarConnectivity-Addon` Ti consente di connettere e recuperare informazioni sul veicolo dai servizi online dei produttori compatibili. Questa guida spiega come configurare correttamente il modulo.
 Sto semplicemente confezionando[Il lavoro (eccellente) svolto da Till.](https://github.com/tillsteinbach/CarConnectivity)
 
-Il suo lavoro è disponibile anche come Docker Images. Quindi se stai usando`Home Assistant`come autonomo`docker`, puoi usarlo direttamente anche tu.
+Il suo lavoro è disponibile anche come Docker Images. Quindi se stai usando `Home Assistant` come autonomo `docker`, puoi usarlo direttamente anche tu.
 
 **⚠️ Il progetto è ancora in fase di sviluppo,`reverse engineering`dell'API da completare e comunicare con MQTT/Assistente di casa da adattare.**
 
@@ -48,7 +52,7 @@ Il suo lavoro è disponibile anche come Docker Images. Quindi se stai usando`Hom
 
 ## Add repository
 
-[![\`Addon Home Assistant\`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
+[![`Addon Home Assistant`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/mqtt_device.png)
 
@@ -66,7 +70,7 @@ Scegli il produttore corrispondente al tuo veicolo dai marchi supportati:
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America` *(paese impostato automaticamente dalle impostazioni del paese di Home Assistant — usper impostazione predefinita,ca se il tuo HA è configurato per il Canada)*
+- `Volkswagen North America` *(paese impostato automaticamente dalle impostazioni del paese di Home Assistant — `us` per impostazione predefinita, `ca` se il tuo HA è configurato per il Canada)*
 - `EU Data Act` *(connettore comune di sola lettura che sostituisce i connettori Seat / Cupra / Volkswagen (Europa) bloccati)*
 
 Se possiedi più veicoli di marchi diversi, è possibile configurare più sezioni.
@@ -81,7 +85,7 @@ Per `Skoda`, `Audi`, `Volkswagen North America` e `Tronity` :
 
 -   `Brand`: Il marchio del produttore.
 -   `Username`: L'indirizzo e -mail utilizzato per accedere al servizio del produttore.
--   `Password`: The password for your manufacturer account.
+-   `Password`: La password del tuo account del produttore.
 -   `PIN Code`: Un codice a 4 cifre richiesto per l'accesso remoto a determinate funzionalità del veicolo.
 -   `Refresh Interval`: Definisce la frequenza con cui (in secondi) i dati del veicolo vengono aggiornati.
 -   `Warning:`L'impostazione di una frequenza di aggiornamento troppo frequentemente può superare i limiti di richiesta API imposti dal produttore, con conseguenti restrizioni di accesso temporanee.
@@ -108,17 +112,17 @@ Per`Volvo`:
 
 ### 3. Configurazione MQTT (obbligatoria)
 
-Devi usare`MQTT`Per inviare i dati del veicolo a`Home Assistant`, Configura queste impostazioni:
+Devi usare `MQTT` Per inviare i dati del veicolo a `Home Assistant`, Configura queste impostazioni:
 
 -   `Username`: Accesso al broker MQTT
 -   `Password`: Password del broker MQTT
 -   `Broker Address`: IP o nome di dominio del server MQTT
 
-⚠️ Se non stai già usando MQTT`Home Assistant`, puoi aggiungere, ad esempio,[`Mosquito Addon`E`MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
+⚠️ Se non stai già usando MQTT `Home Assistant`, puoi aggiungere, ad esempio, [`Mosquito Addon` E `MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
 
 ### 4.`WEBUI`
 
-Puoi accedere al`Carconnectivity`L'interfaccia originale dall'uso direttamente da`Home Assistant`.
+Puoi accedere al `Carconnectivity` L'interfaccia originale dall'uso direttamente da `Home Assistant`.
 Puoi definire le tue credenziali di accesso:
 
 -   `Username`: admin
@@ -144,7 +148,7 @@ Definire la quantità di informazioni registrate nei registri:
 -   `Error`: Visualizza solo i messaggi di errore.
 -   `Debug`: Visualizza ulteriori dettagli utili per la risoluzione dei problemi.
 
-### 7.`ABRP - A Better Routeplanner`
+### 7. `ABRP - A Better Routeplanner`
 
 Per ogni veicolo che si desidera connettere ad ABRP (un percorso migliore), è necessario fornire un identificatore univoco per ciascun veicolo (`vin`) così come un token di autenticazione (`token`). Queste coppie di valori consentono di stabilire una corrispondenza tra il veicolo e il suo token nel sistema ABRP.
 
@@ -154,21 +158,23 @@ Per recuperare il token, visitare il veicolo su un percorso migliore, selezionar
 
 #### Formato di configurazione
 
-Each line should follow this format:
+Ogni riga deve seguire questo formato:
 
--   `vin`: This field represents the **Numero di identificazione del veicolo**(Vin). È unico per ogni veicolo e contiene 17 caratteri alfanumerici.
+-   `vin`: Questo campo rappresenta il **Numero di identificazione del veicolo** (VIN). È unico per ogni veicolo e contiene 17 caratteri alfanumerici.
 -   `token`: Questo campo rappresenta un**token di autenticazione**specifico per ogni veicolo. Questo token è generato da ABRP quando si collega il veicolo alla piattaforma.
 
 ##### Esempio di una configurazione valida:
 
-    - vin: TMBLJ9NY8SF000000
-      token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-    - vin: TMLLJ9NY23F000000
-      token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
+- vin: TMBLJ9NY8SF000000
+  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
+- vin: TMLLJ9NY23F000000
+  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
 
 ### 8. Modalità esperta
 
-Expert Mode enables the use of all native Carconnectivity functions, including those not available through the graphical interface—as long as the corresponding functions are supported by the add-on binaries.
+La modalità Expert consente di utilizzare tutte le funzioni native di Carconnectivity, comprese quelle non disponibili tramite l'interfaccia grafica, purché le funzioni corrispondenti siano supportate dai binari dell'add-on.
 
 ⚠️ ATTENZIONE:
 Questa modalità disabilita tutti i controlli di convalida e sicurezza dei contenuti. Di conseguenza, anche un piccolo errore (come una sintassi JSON non valida) può impedire l'avvio corretto del componente aggiuntivo.
@@ -190,9 +196,9 @@ Fare riferimento alla documentazione ufficiale di Carconnettività per l'elenco 
 ## Best practice
 
 -   **Compila solo le impostazioni per i marchi del veicolo che possiedi.**
--   \***\*Non condividere le credenziali di accesso. \*\***
+-   **Non condividere le credenziali di accesso.**
 -   **Regolare l'intervallo di aggiornamento per evitare il superamento dei limiti di richiesta API. Ricorda il limite sembra essere circa 1000 req/giorno.**
--   **Utilizzare il livello di registrazione "debug" solo durante la risoluzione dei problemi.**\`\*\*
+-   **Utilizzare il livello di registrazione "Debug" solo durante la risoluzione dei problemi.**
 
 * * *
 

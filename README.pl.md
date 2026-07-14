@@ -161,10 +161,12 @@ Każda linia powinna postępować zgodnie z tym formatem:
 
 ##### Przykład prawidłowej konfiguracji:
 
-    - vin: TMBLJ9NY8SF000000
-      token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-    - vin: TMLLJ9NY23F000000
-      token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
+- vin: TMBLJ9NY8SF000000
+  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
+- vin: TMLLJ9NY23F000000
+  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
 
 ### 8. Tryb ekspertów
 
@@ -190,9 +192,9 @@ W celu uzyskania listy obsługiwanych funkcji i oczekiwanych parametrów zapozna
 ## Najlepsze praktyki
 
 -   **Wypełnij tylko ustawienia posiadanych marek pojazdów.**
--   \***\*Nie udostępniaj swoich poświadczeń logowania. \*\***
+-   **Nie udostępniaj swoich poświadczeń logowania.**
 -   **Dostosuj interwał odświeżania, aby uniknąć przekroczenia limitów żądania API. Pamiętaj, że limit wydaje się być około 1000 wymagań/dzień.**
--   **Użyj poziomu rejestrowania „debugowania” tylko podczas problemów z rozwiązywaniem problemów.**\`\*\*
+-   **Użyj poziomu rejestrowania „Debug” tylko podczas rozwiązywania problemów.**
 
 * * *
 

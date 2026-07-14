@@ -33,7 +33,7 @@ Je ne fais simplement qu'integrer [Le travail (excellent) fait par Till.](https:
 
 Son travail est également disponible sous forme d'images Docker. Donc si vous utilisez `Home Assistant` en tant que autonome`docker`, vous pouvez également l'utiliser directement.
 
-**⚠️ Le projet est toujours en cours de développement, le `reverse engineering` de l'API à terminer et la communication avec MQTT / Assistant à domicile à adapter.**
+**⚠️ Le projet est toujours en cours de développement, le `reverse engineering` de l'API à terminer et la communication avec MQTT / Assistant à domicile à adapter.⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 Blocage de l'API VAG : Volkswagen / Seat / Cupra (mai 2026)
@@ -106,7 +106,7 @@ Pour`Volvo`:
 -   `API Key primary`: Clé primaire de l'API Volvo.
 -   `API Key secondary`: Clé secondaire de l'API Volvo.
 -   `Vehicule Token`: Jeton d'accès pour le véhicule.
--   `Vehicule Location Token`: Access token for the location endpoint.
+-   `Vehicule Location Token`: Jeton d'accès pour le point de terminaison de localisation.
 -   `Refresh Interval`: Définit la fréquence à la mise à jour des données du véhicule.
 -   `Warning:`La définition d'un taux de rafraîchissement trop fréquemment peut dépasser les limites de demande de l'API imposées par le fabricant, ce qui entraîne des restrictions d'accès temporaires.
 
@@ -196,9 +196,9 @@ Reportez-vous à la documentation officielle de `CarConnectivity` pour la liste 
 ## Bonnes pratiques
 
 -   **Remplissez uniquement les paramètres des marques de véhicules que vous possédez.**
--   \***\* Ne partagez pas vos informations d'identification de connexion. \*\***
+-   **Ne partagez pas vos informations d'identification de connexion.**
 -   **Ajustez l'intervalle de rafraîchissement pour éviter de dépasser les limites de demande d'API. N'oubliez pas que la limite semble être d'environ 1000 req / jour.**
--   **Utilisez le niveau de journalisation "de débogage" uniquement lors du dépannage des problèmes.**\`\*\*
+-   **Utilisez le niveau de journalisation "Debug" uniquement lors du dépannage des problèmes.**
 
 * * *
 

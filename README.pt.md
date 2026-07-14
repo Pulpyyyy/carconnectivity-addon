@@ -1,4 +1,8 @@
-![Supports aarch64 Architecture][aarch64-shield]![Supports amd64 Architecture][amd64-shield][![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+[![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 
@@ -29,7 +33,7 @@ Estou simplesmente embalando[O trabalho (excelente) feito por Till.](https://git
 
 Seu trabalho também está disponível como imagens do Docker. Então, se você está usando`Home Assistant`como um independente`docker`, você também pode usá -lo diretamente.
 
-**⚠️ O projeto ainda está em desenvolvimento,`reverse engineering`da API a ser concluída e comunicação com o MQTT/Home Assistant a ser adaptado.**
+**⚠️ O projeto ainda está em desenvolvimento,`reverse engineering`da API a ser concluída e comunicação com o MQTT/Home Assistant a ser adaptado.⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 Bloqueio da API da VAG : Volkswagen / Seat / Cupra (maio de 2026)
@@ -66,7 +70,7 @@ Escolha o fabricante correspondente ao seu veículo das marcas suportadas:
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America` *(país definido automaticamente pelas configurações de país do seu Home Assistant — uspor padrão,ca se o seu HA estiver configurado para o Canadá)*
+- `Volkswagen North America` *(país definido automaticamente pelas configurações de país do seu Home Assistant — `us` por padrão, `ca` se o seu HA estiver configurado para o Canadá)*
 - `EU Data Act` *(conector comum somente leitura que substitui os conectores Seat / Cupra / Volkswagen (Europa) bloqueados)*
 
 Se você possui vários veículos de diferentes marcas, poderá configurar várias seções.
@@ -118,7 +122,7 @@ Você precisa usar`MQTT`Para enviar dados do veículo para`Home Assistant`, defi
 
 ### 4.`WEBUI`
 
-You can access the `Carconnectivity`a interface original de usar diretamente de`Home Assistant`.
+Você pode acessar a interface original do `Carconnectivity` diretamente do `Home Assistant`.
 Você pode definir suas próprias credenciais de acesso:
 
 -   `Username`: admin
@@ -161,10 +165,12 @@ Cada linha deve seguir este formato:
 
 ##### Exemplo de uma configuração válida:
 
-    - vin: TMBLJ9NY8SF000000
-      token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-    - vin: TMLLJ9NY23F000000
-      token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
+- vin: TMBLJ9NY8SF000000
+  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
+- vin: TMLLJ9NY23F000000
+  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
 
 ### 8. Modo de especialista
 
@@ -190,9 +196,9 @@ Consulte a documentação oficial da carconnectividade para obter a lista de fun
 ## Práticas recomendadas
 
 -   **Preencha apenas as configurações das marcas de veículos que você possui.**
--   \***\*Não compartilhe suas credenciais de login. \*\***
+-   **Não compartilhe suas credenciais de login.**
 -   **Ajuste o intervalo de atualização para evitar exceder os limites da solicitação da API. Lembre -se de que o limite parece ser cerca de 1000 req/dia.**
--   **Use o nível de registro "Debug" somente ao solucionar problemas.**\`\*\*
+-   **Use o nível de registro "Debug" somente ao solucionar problemas.**
 
 * * *
 
