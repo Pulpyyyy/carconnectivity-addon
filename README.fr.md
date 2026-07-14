@@ -7,11 +7,10 @@
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 
-
 # `Home Assistant Add-on: CarConnectivity`
 
-|         | `Stable`                                                                                                                                                                                                     | `Edge`                                                                                                                                                                                                                                                          |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|         | `Stable`                                                                                                                         | `Edge`                                                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | Version | [![GitHub release (latest by date)](https://img.shields.io/docker/v/pulpyyyy/carconnectivity-addon-amd64?&sort=date&label=&style=for-the-badge)](https://github.com/pulpyyyy/carconnectivity-addon/releases) | [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/pulpyyyy/carconnectivity-addon-edge-amd64?&sort=date&label=&style=for-the-badge)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/carconnectivity-addon-edge/CHANGELOG.md) |
 
 # Guides traduits
@@ -22,185 +21,182 @@
 [![Spanish](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/ES.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.es.md)
 [![Polish](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/PL.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.pl.md)
 [![Portuguese](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/PT.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.pt.md)
- [![Norwegian](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NO.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.no.md)
+[![Norwegian](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NO.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.no.md)
 [![Dutch](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NL.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.nl.md)
 [![English](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/US.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.md)
 
+
 ## Introduction
 
-`CarConnectivity-Addon`Vous permet de connecter et de récupérer des informations sur votre véhicule à partir des services en ligne des fabricants compatibles. Ce guide explique comment configurer correctement le module.
+`CarConnectivity-Addon` vous permet de connecter et de récupérer des informations sur votre véhicule à partir des services en ligne des fabricants compatibles. Ce guide explique comment configurer correctement le module.
 Je ne fais simplement qu'integrer [Le travail (excellent) fait par Till.](https://github.com/tillsteinbach/CarConnectivity)
 
-Son travail est également disponible sous forme d'images Docker. Donc si vous utilisez `Home Assistant` en tant que autonome`docker`, vous pouvez également l'utiliser directement.
+Son travail est également disponible sous forme d'images Docker. Donc si vous utilisez `Home Assistant` en tant que `docker` autonome, vous pouvez également l'utiliser directement.
 
-**⚠️ Le projet est toujours en cours de développement, le `reverse engineering` de l'API à terminer et la communication avec MQTT / Assistant à domicile à adapter.⚠️**
+**⚠️ Le projet est toujours en cours de développement, le `reverse engineering` de l'API à terminer et la communication avec MQTT/Home Assistant à adapter.⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 Blocage de l'API VAG : Volkswagen / Seat / Cupra (mai 2026)
 >
 > Depuis fin mai 2026, le groupe Volkswagen a restreint l'accès tiers à ses API. Les connecteurs classiques VW/Seat/Cupra renvoient des erreurs `403` et ne récupèrent plus de données, alors que les applications officielles fonctionnent toujours. Il n'existe actuellement aucun correctif pour ces connecteurs.
 >
-> **Contournement :** le connecteur en lecture seule `EU Data Act` est **✅ disponible dans la version `edge`** de l'add-on.
->
-> ⚠️ **Configuration obligatoire :** ce connecteur ne fait que *télécharger* des données que vous devez d'abord activer sur le portail. Inscrivez-vous sur [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), ouvrez **Request customised data** et choisissez **tous les clusters de données**, un **intervalle de 15 minutes** et une **durée illimitée**. Les premières données peuvent prendre **plusieurs heures** à apparaître. Sans cela, le connecteur ne récupère rien, ce qui peut donner l'impression que vos identifiants sont rejetés.
->
-> 👉 Suivez l'avancement dans l'[issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+> **Contournement :** le connecteur en lecture seule `EU Data Act` est **✅ intégré dans cet add-on** (voir la section dédiée ci-dessous) ; les configurations bloquées y sont migrées automatiquement.
 
 > [!TIP]
 > ### Une version Edge est disponible
-> La version **Edge** est la **version de développement** (un travail en cours, pas une version finale) : elle propose les nouvelles fonctionnalités en premier et peut être instable. Elle inclut le connecteur en lecture seule **EU Data Act** (le contournement ci-dessus) ainsi qu'une nouvelle page de configuration intégrée. Installez **"CarConnectivity Add-on Edge"** depuis le même référentiel.
+> La version **Edge** est la **version de développement** (un travail en cours, pas une version finale) : elle propose les nouvelles fonctionnalités en premier et peut être instable. Installez **"CarConnectivity Add-on Edge"** depuis le même référentiel.
 
 ## Ajouter le référentiel
 
-[![\`Addon Home Assistant\`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
+[![`Addon Home Assistant`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
+
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/mqtt_device.png)
 
-## Configuration générale
+## Configuration
 
-Remplissez uniquement les champs relatifs aux marques de véhicules que vous possédez.**Laissez tous les autres champs vides.**
+L'add-on se configure entièrement depuis sa **page de configuration intégrée**, et non depuis l'onglet d'options de Home Assistant (qui n'affiche plus qu'un renvoi vers elle).
 
-### 1. Sélection de votre marque de véhicule
+**Comment l'ouvrir :** onglet **Info** de l'add-on → bouton **OPEN WEB UI** → bouton **Configuration** dans la barre supérieure de la page. Lorsque le tableau de bord web est désactivé (ou pas encore démarré), la Web UI s'ouvre directement sur la page de configuration.
 
-Choisissez le fabricant correspondant à votre véhicule dans les marques prises en charge:
-- `Seat` *(déprécié : bloqué depuis mai 2026, remplacé automatiquement par le connecteur EU Data Act)*
-- `Cupra` *(déprécié : bloqué depuis mai 2026, remplacé automatiquement par le connecteur EU Data Act)*
-- `Skoda`
-- `Volkswagen` *(Europe ; déprécié : bloqué depuis mai 2026, remplacé automatiquement par le connecteur EU Data Act)*
-- `Tronity`
-- `Volvo`
+À la première ouverture, une configuration existante est **importée automatiquement** (y compris celle produite par une ancienne version de l'add-on), et les connecteurs Seat / Cupra / Volkswagen (Europe) bloqués sont **migrés automatiquement** vers le connecteur EU Data Act au démarrage. Après l'enregistrement, **redémarrez l'add-on** pour appliquer la nouvelle configuration.
+
+### 1. Véhicules
+
+Cliquez sur **« + Ajouter un véhicule »** et choisissez votre marque ; ajoutez une carte par compte. Marques prises en charge :
 - `Audi`
-- `Volkswagen North America` *(pays défini automatiquement par votre paramètre de pays Home Assistant — « us » par défaut, « ca » si votre HA est configuré pour le Canada)*
-- `EU Data Act` *(connecteur commun en lecture seule qui remplace les connecteurs Seat / Cupra / Volkswagen (Europe) bloqués)*
+- `Bentley` *(EU Data Act uniquement)*
+- `Cupra` *(EU Data Act uniquement : le connecteur constructeur est bloqué depuis mai 2026)*
+- `Renault / Dacia`
+- `SEAT` *(EU Data Act uniquement : le connecteur constructeur est bloqué depuis mai 2026)*
+- `Škoda`
+- `Tronity`
+- `Volkswagen (Europe)` *(EU Data Act uniquement : le connecteur constructeur est bloqué depuis mai 2026)*
+- `Volkswagen (North America)` *(pays défini automatiquement à partir du paramètre de pays de votre Home Assistant : `us` par défaut, `ca` si votre HA est configuré pour le Canada)*
+- `Volvo`
 
-Si vous possédez plusieurs véhicules à partir de différentes marques, vous pouvez configurer plusieurs sections.
+La bonne **source de données** est choisie pour vous. Un choix n'apparaît que lorsque plusieurs sont possibles (Škoda et Audi peuvent utiliser soit leur compte constructeur, soit le portail EU Data Act en lecture seule ; `Automatic` privilégie le compte constructeur).
+
+⚠️ Vous pouvez ajouter plusieurs véhicules, de marques différentes ou deux voitures d'une même marque qui ne sont pas liées au même compte.
 
 ### 2. Connexion aux services en ligne du fabricant
 
-Chaque constructeur automobile fournit un service en ligne qui vous permet d'accéder aux données de votre véhicule à distance. Pour vous connecter, vous devez fournir vos informations d'identification de connexion.
+Les champs affichés sur chaque carte de véhicule dépendent de la marque :
 
-#### Informations requises:
+Pour les marques VAG (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`) :
+- `Username` : l'adresse e-mail utilisée pour se connecter au service du fabricant.
+- `Password` : le mot de passe de votre compte fabricant.
+- `S-PIN` *(facultatif)* : le code à 4 chiffres requis pour l'accès à distance à certaines fonctionnalités du véhicule.
+- `VIN` *(facultatif)* : restreint le compte à un seul véhicule.
 
-Pour `Skoda`, `Audi`, `Volkswagen North America` et `Tronity` :
+Pour `Volvo` :
+- `API key (primary)` / `API key (secondary)` : clés de l'API Volvo.
+- `Vehicle token` : jeton d'accès pour le véhicule.
+- `Location token` *(facultatif)* : jeton d'accès pour le point de terminaison de localisation.
+- `Interval` *(facultatif, secondes)* : intervalle de rafraîchissement. ⚠️ Des rafraîchissements trop fréquents peuvent dépasser les limites de demande de l'API imposées par le fabricant et entraîner des restrictions temporaires.
 
--   `Brand`: La marque du fabricant.
--   `Username`: L'adresse e-mail utilisée pour se connecter au service du fabricant.
--   `Password`: Le mot de passe de votre compte fabricant.
--   `PIN Code`: Un code à 4 chiffres requis pour l'accès à distance à certaines fonctionnalités du véhicule.
--   `Refresh Interval`: Définit la fréquence à la mise à jour des données du véhicule.
--   `Warning:`La définition d'un taux de rafraîchissement trop fréquemment peut dépasser les limites de demande de l'API imposées par le fabricant, ce qui entraîne des restrictions d'accès temporaires.
+Pour `Renault / Dacia` :
+- `Username` / `Password` : les identifiants de votre compte My Renault.
+- `Locale` *(facultatif)* : par exemple `fr_FR`, `de_DE`.
+- `VIN` *(facultatif)* : restreint le compte à un seul véhicule.
 
-⚠️ Vous pouvez utiliser 2 comptes pour 2 marques différentes ou 2 voitures d'une même marque qui ne sont pas liées au même compte.
+Pour `Tronity` :
+- `Client ID` / `Client secret` : vos identifiants d'API Tronity.
+- `Interval` *(facultatif, secondes)* : intervalle de rafraîchissement.
+- `VIN` *(facultatif)* : restreint le compte à un seul véhicule.
 
-Pour `EU Data Act` (Seat, Cupra, Volkswagen Europe ; lecture seule) :
+#### La source de données `EU Data Act` (Seat, Cupra, Volkswagen Europe, Bentley ; en option pour Škoda et Audi)
 
--   `Username` : l'e-mail de votre compte de marque (Volkswagen ID, SEAT, Cupra, etc.).
--   `Password` : le mot de passe de ce même compte.
+Lorsqu'un véhicule utilise la source de données EU Data Act, seuls deux champs comptent :
+- `Username` : l'e-mail de votre compte de marque (Volkswagen ID, SEAT, Cupra, etc.).
+- `Password` : le mot de passe de ce même compte.
 
-Ce connecteur **en lecture seule** remplace les connecteurs Seat / Cupra / Volkswagen (Europe) bloqués (`403`) depuis mai 2026. Il rafraîchit les données environ toutes les 15 minutes et **ne peut pas envoyer de commandes à distance, ni la localisation, ni les images du véhicule**. La marque, l'intervalle de rafraîchissement et la locale (pays/langue) sont réglés automatiquement : vous ne fournissez que vos identifiants.
+Ce connecteur **en lecture seule** remplace les connecteurs Seat / Cupra / Volkswagen (Europe) bloqués (`403`) depuis mai 2026. Il rafraîchit les données environ toutes les 15 minutes et **ne peut pas envoyer de commandes à distance, ni la localisation, ni les images du véhicule** (un avertissement dans la barre supérieure vous le rappelle dès qu'il est utilisé). La marque, l'intervalle de rafraîchissement et la locale OIDC (pays/langue) sont réglés automatiquement : vous ne fournissez que vos identifiants.
 
-> ⚠️ **Étape obligatoire (sinon le connecteur ne reçoit rien).** Activez d'abord la livraison des données sur le portail : inscrivez-vous sur **[eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/)** avec le **même compte** que l'application officielle de votre marque, puis demandez **tous les clusters de données**, un **intervalle de 15 minutes** et une **durée illimitée**. Les premières données peuvent mettre **plusieurs heures** à apparaître. Le connecteur ne fait que **télécharger** ce que le portail a déjà produit : tant qu'aucun fichier n'est disponible côté EU Data Act, il ne peut **rien lire**, même avec des identifiants corrects (cela peut ressembler à un refus d'identifiants).
+> ⚠️ **Configuration obligatoire, à faire en premier sinon cela ne fonctionnera pas.** Ce connecteur ne fait que *télécharger* les jeux de données produits par le portail EU Data Act ; il ne les crée jamais pour vous. Si vous sautez cette étape, l'add-on se connecte mais **ne reçoit aucune donnée**, ce qui peut ressembler exactement à un refus de vos identifiants. Vous devez vous inscrire sur le portail et activer une fois une livraison permanente des données :
+>
+> 1. Ouvrez **[eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/)** et cliquez sur **Log in**. Choisissez votre marque (Volkswagen, SEAT, Cupra, ...) et connectez-vous avec le **même compte** que celui utilisé dans l'application officielle de votre marque.
+> 2. Sélectionnez votre véhicule et autorisez **My Data Portal** à y accéder.
+> 3. Cliquez sur **Request customised data** (aussi affiché comme *Get customised data*) et configurez :
+>    - **tous les clusters de données**,
+>    - un **intervalle de 15 minutes**,
+>    - une durée **illimitée / continue** (pas de date de fin),
+>    - un nom de votre choix (par exemple `All data 15min`).
+> 4. Validez, puis **soyez patient**. Les premiers jeux de données peuvent mettre **plusieurs heures, parfois plus de 24 heures**, à apparaître. Ensuite, un nouveau fichier ZIP est publié environ toutes les 15 minutes et l'add-on le récupère automatiquement.
+>
+> Vous pouvez vérifier l'avancement à tout moment en vous reconnectant au portail et en consultant la liste des livraisons de données du véhicule. Tant qu'aucune demande continue n'est active et ne produit de fichiers, le connecteur n'a rien à lire.
 
-Pour`Volvo`:
-
--   `API Key primary`: Clé primaire de l'API Volvo.
--   `API Key secondary`: Clé secondaire de l'API Volvo.
--   `Vehicule Token`: Jeton d'accès pour le véhicule.
--   `Vehicule Location Token`: Jeton d'accès pour le point de terminaison de localisation.
--   `Refresh Interval`: Définit la fréquence à la mise à jour des données du véhicule.
--   `Warning:`La définition d'un taux de rafraîchissement trop fréquemment peut dépasser les limites de demande de l'API imposées par le fabricant, ce qui entraîne des restrictions d'accès temporaires.
+Détails complets et limitations : [CarConnectivity-connector-vw-eu-data-act](https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act).
 
 ### 3. Configuration MQTT (obligatoire)
+`MQTT` est le moyen par lequel les données du véhicule arrivent dans `Home Assistant` :
+- `Broker host` : IP ou nom de domaine du serveur MQTT (laissez vide pour la valeur par défaut de l'add-on Mosquitto de Home Assistant, `core-mosquitto`)
+- `Port` : port du broker (par défaut `1883`)
+- `Username` / `Password` : identifiants du broker MQTT
 
-Vous devez utiliser `MQTT` pour envoyer des données de véhicule à `Home Assistant`, Configurez ces paramètres:
+⚠️ Si vous n'utilisez pas déjà MQTT dans `Home Assistant`, vous pouvez ajouter, par exemple, [`Mosquitto Addon` et `MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
 
--   `Username`: Connexion du courtier MQTT
--   `Password`: Mot de passe du courtier MQTT
--   `Broker Address`: IP ou nom de domaine du serveur MQTT
+### 4. Tableau de bord web
+Le tableau de bord d'origine de `CarConnectivity` peut être activé avec l'interrupteur **« Activer le tableau de bord web CarConnectivity »**. Une fois l'add-on redémarré, la Web UI s'ouvre sur le tableau de bord, et la barre supérieure permet de basculer à tout moment entre **Tableau de bord** et **Configuration**.
 
-⚠️ Si vous n'utilisez pas déjà MQTT dans `Home Assistant`, vous pouvez ajouter, par exemple,[`Mosquito Addon` et `MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
-
-### 4.`WEBUI`
-
-Vous pouvez accéder au`Carconnectivity`, l'interface d'origine de l'utilisation directement depuis `Home Assistant`.
-Vous pouvez définir vos propres informations d'accès:
-
--   `Username`: admin
--   `Password`: secret
+- `Login user` / `Login password` *(facultatif)* : laissez l'utilisateur vide (ou `autologin`) pour être connecté automatiquement ; renseignez les deux pour exiger une connexion.
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/webui.png)
 
 ### 5. Niveau de journalisation
-
-Définissez la quantité d'informations enregistrées dans les journaux:
-
--   `Info`: Affiche des informations opérationnelles générales.
--   `Warning`: Affiche uniquement les avertissements.
--   `Error`: Affiche uniquement les messages d'erreur.
--   `Debug`: Affiche des détails supplémentaires utiles pour le dépannage.
+Définissez la quantité d'informations enregistrées dans les journaux :
+- `Info` : affiche des informations opérationnelles générales.
+- `Warning` : affiche uniquement les avertissements.
+- `Error` : affiche uniquement les messages d'erreur.
+- `Debug` : affiche des détails supplémentaires utiles pour le dépannage.
 
 ### 6. Niveau de journalisation de l'API
+Définissez la quantité d'informations enregistrées dans les journaux :
+- `Info` : affiche des informations opérationnelles générales.
+- `Warning` : affiche uniquement les avertissements.
+- `Error` : affiche uniquement les messages d'erreur.
+- `Debug` : affiche des détails supplémentaires utiles pour le dépannage.
 
-Définissez la quantité d'informations enregistrées dans les journaux:
+#### Niveaux par composant (avancé)
 
--   `Info`: Affiche des informations opérationnelles générales.
--   `Warning`: Affiche uniquement les avertissements.
--   `Error`: Affiche uniquement les messages d'erreur.
--   `Debug`: Affiche des détails supplémentaires utiles pour le dépannage.
+Les deux niveaux ci-dessus s'appliquent globalement. Pour dépanner un seul composant sans inonder le journal, dépliez **« Niveaux par composant (avancé) »** dans la section Journalisation de la page de configuration : chaque compte de véhicule configuré (niveau journal + niveau API) et chaque plugin (MQTT, tableau de bord web, ABRP, MQTT Home Assistant) dispose de son propre sélecteur. `default` hérite du niveau global, vous pouvez donc par exemple laisser tout le reste à `info` et passer uniquement le plugin MQTT en `debug`. Un badge sur la ligne repliée indique le nombre de personnalisations actives.
+
+Note : une personnalisation `debug` sur un **compte de véhicule** rend aussi les bibliothèques HTTP partagées verbeuses pour tout l'add-on ; les personnalisations de plugins sont totalement isolées.
 
 ### 7. `ABRP - A Better Routeplanner`
 
-Pour chaque véhicule que vous souhaitez connecter à ABRP (A Better Routeplanner), vous devez fournir un identifiant unique pour chaque véhicule (`vin`) ainsi qu'un jeton d'authentification (`token`). Ces paires de valeurs permettent d'établir une correspondance entre votre véhicule et son token dans le système ABRP.
+Activez **« Envoyer les données à ABRP »**, puis ajoutez une ligne par véhicule avec **« + Ajouter un jeton ABRP »** :
+
+- `VIN` : le **Vehicle Identification Number** (numéro d'identification du véhicule, 17 caractères alphanumériques), unique pour chaque véhicule.
+- `ABRP token` : le **jeton d'authentification** généré par ABRP pour ce véhicule.
 
 #### Pré-requis
 
-Pour récupérer votre jeton, accédez à votre véhicule sur A Better Routeplanner, sélectionnez « Live Data », puis reliez votre véhicule à l'aide de la section « Generic ». Le jeton à coller dans la configuration s'affichera. Vous devez configurer une correspondance entre le VIN et le jeton pour chaque véhicule que vous souhaitez connecter à ABRP.
-
-#### Format de la Configuration
-
-Chaque ligne doit suivre le format suivant :
-
-- `vin`: Ce champ représente le **Vehicle Identification Number** (numéro d'identification du véhicule). Il est unique pour chaque véhicule et contient 17 caractères alphanumériques.
-- `token`: Ce champ représente un **jeton d'authentification** spécifique à chaque véhicule. Ce jeton est généré par ABRP lorsque vous connectez votre véhicule à la plateforme.
-
-##### Exemple de configuration valide :
-
-```
-- vin: TMBLJ9NY8SF000000
-  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-- vin: TMLLJ9NY23F000000
-  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
-```
+Pour récupérer votre jeton, accédez à votre véhicule sur A Better Routeplanner, sélectionnez « Live Data », puis reliez votre véhicule à l'aide de la section « Generic ». Le jeton à coller dans la configuration s'affichera. Ajoutez une ligne VIN/jeton pour chaque véhicule que vous souhaitez connecter à ABRP.
 
 ### 8. Mode expert
+Le mode expert permet d'utiliser toutes les fonctions natives de Carconnectivity, y compris celles non disponibles via l'interface graphique, tant que les fonctions correspondantes sont prises en charge par les binaires du module complémentaire.
 
-Le mode expert permet d'utiliser toutes les fonctions natives de `CarConnectivity`, y compris celles non disponibles via l'interface de configuration graphique, tant que les fonctions correspondantes sont prises en charge par les binaires contenus dans le module complémentaire.
-
-⚠️ AVERTISSEMENT:
+⚠️ AVERTISSEMENT :
 Ce mode désactive toutes les vérifications de la validation et de la sécurité du contenu. En conséquence, même une petite erreur (comme une syntaxe JSON non valide) peut empêcher le module complémentaire de se lancer correctement.
 
 Le mode expert est uniquement destiné aux utilisateurs avancés.
-Pour l'utiliser en toute sécurité, vous devez:
+Pour l'utiliser en toute sécurité, vous devez :
 
 Être familier avec la syntaxe et la structure JSON.
 
-Le mode expert s'active par la simple **présence** d'un fichier `carconnectivity.expert.json` dans le dossier de configuration de l'add-on (aucune option à cocher). Ce fichier est prioritaire et **remplace complètement** la configuration générée automatiquement :
+Le mode expert s'active par la simple **présence** d'un fichier `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json` contenant les réglages souhaités (aucune option à cocher). Il est prioritaire et remplace complètement la configuration produite par la page de configuration, qui est écrite dans `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.json` (le modèle éditable de la page est enregistré à part dans `carconnectivity.configui.json`). Le dossier `/addon_configs/1b1291d4_carconnectivity-addon/` peut ne pas apparaître tout de suite dans le système de fichiers `Home Assistant`. Si tel est le cas, redémarrez le superviseur.
 
-- version **stable** : la configuration issue des options de l'add-on est générée dans `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json` ; le fichier expert est `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json`.
-- version **edge** : la configuration issue de la page de configuration est générée dans `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.json` (le modèle éditable de la page est enregistré à part dans `carconnectivity.configui.json`) ; le fichier expert est `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.expert.json`.
-
-Le dossier de configuration peut ne pas apparaître tout de suite dans le système de fichiers `Home Assistant`. Si tel est le cas, redémarrez le superviseur.
-
-Reportez-vous à la documentation officielle de `CarConnectivity` pour la liste des fonctions prises en charge et les paramètres attendus.
+Reportez-vous à la documentation officielle de Carconnectivity pour la liste des fonctions prises en charge et les paramètres attendus.
 
 ## Bonnes pratiques
+- **N'ajoutez des cartes de véhicule que pour les comptes que vous possédez.**
+- **Ne partagez pas vos informations d'identification de connexion.**
+- **Ajustez l'intervalle de rafraîchissement (lorsqu'il est disponible) pour éviter de dépasser les limites de demande d'API. N'oubliez pas que la limite semble être d'environ 1000 req / jour.**
+- **Utilisez le niveau de journalisation "Debug" uniquement lors du dépannage des problèmes, et préférez une personnalisation par composant pour garder le reste du journal silencieux.**
+- **Redémarrez l'add-on après avoir enregistré la configuration.**
 
--   **Remplissez uniquement les paramètres des marques de véhicules que vous possédez.**
--   **Ne partagez pas vos informations d'identification de connexion.**
--   **Ajustez l'intervalle de rafraîchissement pour éviter de dépasser les limites de demande d'API. N'oubliez pas que la limite semble être d'environ 1000 req / jour.**
--   **Utilisez le niveau de journalisation "Debug" uniquement lors du dépannage des problèmes.**
-
-* * *
+---
 
 Si vous avez des questions ou rencontrez des problèmes pendant la configuration, reportez-vous à la documentation du module.
 Si vous trouvez un bogue, veuillez ouvrir un problème.
