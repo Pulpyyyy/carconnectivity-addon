@@ -1,3 +1,42 @@
+## 0.8.7
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-tronity** → v0.7.3
+- **CarConnectivity-plugin-abrp** → v0.8.3
+- **CarConnectivity-plugin-mqtt** → v0.10.5.post1
+- **CarConnectivity-plugin-mqtt_homeassistant** → v0.6.6
+- **CarConnectivity** → v0.11.10
+- **CarConnectivity-plugin-webui** → v0.7.3
+
+ --- 
+
+## 0.8.6
+
+### 🚀 New Features
+- Smaller image: the SEAT/Cupra and Volkswagen (Europe) manufacturer connectors are no longer bundled. They have been blocked (`403`) since May 2026 and are replaced by the read-only EU Data Act connector; existing configurations are migrated automatically.
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-volkswagen-na** → v0.1.22
+
+ --- 
+
+## 0.8.5
+
+
+### 🚀 New Features
+
+- **Volkswagen EU Data Act connector** (read-only): works around the VAG API lockdown that breaks the regular VW/Seat/Cupra connectors (`403`). Available for VW/Seat/Cupra/Bentley, and as an alternative data source for Audi/Skoda.
+- **Multi-brand EU Data Act**: pick the brand directly in the configuration (VW, Seat, Cupra, Audi, Skoda, Bentley).
+- **New in-app configuration page**: configure your vehicles, MQTT, dashboard and ABRP from a web page instead of editing YAML. **How to access it:** open the add-on Web UI (the Ingress entry in the Home Assistant sidebar, or the "Open Web UI" button), then use the **Configuration** tab in the top navigation bar. When the dashboard is disabled, the add-on opens straight on the configuration page.
+- **Automatic config migration**: on first open, your existing configuration is imported into the new page (the old `carconnectivity.UI.json` is kept as a `.bak`). In addition, manufacturer connectors that are now blocked (SEAT/Cupra/VW) are migrated to EU Data Act automatically at startup.
+- **Read-only notice**: a warning is shown (config page and dashboard) when EU Data Act is in use, since location, remote control and vehicle images are not available with it.
+- **Localized interface** in 8 languages (English, French, German, Italian, Spanish, Polish, Portuguese, Norwegian), based on the browser language.
+
+ --- 
+
 ## 0.8.4
 
 
@@ -13,7 +52,7 @@
 ### 🛠️ Fixes & Updates
 
 - **CarConnectivity-connector-audi** → v0.3.2
-
+- **CarConnectivity-connector-volkswagen-na** → v0.1.21
  --- 
 
 ## 0.8.2

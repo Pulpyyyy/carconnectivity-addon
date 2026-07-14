@@ -1,3 +1,31 @@
+## 0.8.7
+
+### 🚀 New Features
+- Smaller image: the SEAT/Cupra and Volkswagen (Europe) manufacturer connectors are no longer bundled. They have been blocked (`403`) since May 2026 and are replaced by the read-only EU Data Act connector; existing configurations are migrated automatically.
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-seatcupra** → v0.6.4
+- **CarConnectivity-connector-skoda** → v0.12.6
+- **CarConnectivity-connector-volkswagen** → v0.10.6
+- **CarConnectivity-connector-tronity** → v0.7.3
+- **CarConnectivity-plugin-abrp** → v0.8.3
+- **CarConnectivity-plugin-mqtt** → v0.10.5.post1
+- **CarConnectivity-plugin-mqtt_homeassistant** → v0.6.6
+- **CarConnectivity** → v0.11.10
+- **CarConnectivity-plugin-webui** → v0.7.3
+
+ --- 
+
+## 0.8.6
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-volkswagen-na** → v0.1.22
+
+ --- 
+
 ## 0.8.4
 
 
