@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on Edge"
-version: 0.8.7
+version: 0.8.8
 slug: "carconnectivity-addon-edge"
 description: "⚠️EDGE VERSION⚠️ CarConnectivity Add-on Edge, may be unstable !"
 image: "docker.io/pulpyyyy/carconnectivity-addon-edge-{arch}"
@@ -15,7 +15,11 @@ init: false
 hassio_api: true
 hassio_role: homeassistant
 homeassistant_api: true
-# Configuration is done entirely in the addon Web UI (Ingress → /configui/),
-# so the addon exposes no Home Assistant options here.
-options: {}
-schema: {}
+# Configuration is done entirely in the addon Web UI (Ingress → /configui/).
+# The single "info" option only exists to show a translated pointer on this
+# otherwise empty Configuration tab; its value is never read by the addon.
+options:
+  info: "Infos → Web UI → Configuration"
+schema:
+  info: str
+

@@ -1,0 +1,22 @@
+/* Single source for the top bar, used by BOTH the config page (linked from
+   index.html) and the webui dashboard (injected via nginx into the webui page).
+   Self-contained: literal colours, no CSS variables, since the webui page does
+   not define the configui palette. Only positioning differs per context and is
+   set by each side (config page: sticky; dashboard: fixed + body padding). */
+.appbar { display:flex; align-items:center; gap:4px; background:#212529;
+  border-bottom:1px solid #2c3034; padding:8px 16px; box-sizing:border-box;
+  font:500 14px/1 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+
+/* Physical-looking buttons: white with black text when inactive, blue with white
+   text and a raised "volume" relief when active. !important defeats the webui's
+   Bootstrap link rules (e.g. a:not([href]):not([class])) that would otherwise
+   win on the dashboard and wash the text out. */
+.appbar .tab { padding:7px 16px; border-radius:8px; background:#fff!important; color:#1c1e21!important;
+  text-decoration:none; font-size:.9em; font-weight:600;
+  box-shadow:0 1px 2px rgba(0,0,0,.35); transition:box-shadow .15s, transform .1s; }
+.appbar .tab:hover { box-shadow:0 2px 5px rgba(0,0,0,.45); transform:translateY(-1px); }
+.appbar .tab.active { background:#03a9f4!important; color:#fff!important;
+  box-shadow:0 3px 6px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.35); }
+
+.appbar .eu-warning { margin-left:auto; color:#ff6b6b; font-size:.82em; font-weight:600;
+  text-align:right; line-height:1.2; }

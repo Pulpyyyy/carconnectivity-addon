@@ -1,13 +1,16 @@
-![Supports aarch64 Architecture][aarch64-shield]![Supports amd64 Architecture][amd64-shield][![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+[![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
 
 # `Home Assistant Add-on: CarConnectivity`
 
-|         | `Stable`                                                                                                                                                                                                     | `Edge`                                                                                                                                                                                                                                                          |
-| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|         | `Stable`                                                                                                                         | `Edge`                                                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | Versjon | [![GitHub release (latest by date)](https://img.shields.io/docker/v/pulpyyyy/carconnectivity-addon-amd64?&sort=date&label=&style=for-the-badge)](https://github.com/pulpyyyy/carconnectivity-addon/releases) | [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/pulpyyyy/carconnectivity-addon-edge-amd64?&sort=date&label=&style=for-the-badge)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/carconnectivity-addon-edge/CHANGELOG.md) |
 
 # Oversatte guider
@@ -18,183 +21,182 @@
 [![Spanish](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/ES.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.es.md)
 [![Polish](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/PL.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.pl.md)
 [![Portuguese](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/PT.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.pt.md)
- [![Norwegian](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NO.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.no.md)
+[![Norwegian](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NO.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.no.md)
 [![Dutch](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NL.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.nl.md)
 [![English](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/US.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.md)
 
+
 ## Introduksjon
 
-`CarConnectivity-Addon`Lar deg koble til og hente informasjon om kjøretøyet ditt fra kompatible produsenters online tjenester. Denne guiden forklarer hvordan du konfigurerer modulen riktig.
-Jeg pakker ganske enkelt[Arbeidet (utmerket) gjort av Till.](https://github.com/tillsteinbach/CarConnectivity)
+`CarConnectivity-Addon` lar deg koble til og hente informasjon om kjøretøyet ditt fra kompatible produsenters online tjenester. Denne guiden forklarer hvordan du konfigurerer modulen riktig.
+Jeg pakker ganske enkelt [arbeidet (utmerket) gjort av Till.](https://github.com/tillsteinbach/CarConnectivity)
 
-Hans arbeid er også tilgjengelig som Docker -bilder. Så hvis du bruker`Home Assistant`som en frittstående`docker`, kan du også bruke den direkte.
+Hans arbeid er også tilgjengelig som Docker-bilder. Så hvis du bruker `Home Assistant` som en frittstående `docker`, kan du også bruke den direkte.
 
-**⚠ Prosjektet er fremdeles under utvikling,`reverse engineering`av API som skal fullføres og kommunikasjon med MQTT/Home Assistant som skal tilpasses.⚠**
+**⚠️ Prosjektet er fremdeles under utvikling, `reverse engineering` av API-et skal fullføres og kommunikasjonen med MQTT/Home Assistant skal tilpasses. ⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 VAG-API-blokkering : Volkswagen / Seat / Cupra (mai 2026)
 >
 > Siden slutten av mai 2026 har Volkswagen-konsernet begrenset tredjepartstilgang til API-ene sine. De vanlige VW/Seat/Cupra-koblingene returnerer `403`-feil og henter ikke lenger data, selv om de offisielle appene fortsatt fungerer. Det finnes for øyeblikket ingen løsning for disse koblingene.
 >
-> **Løsning:** den skrivebeskyttede koblingen `EU Data Act` er **✅ tilgjengelig i `edge`-versjonen** av tillegget.
->
-> ⚠️ **Obligatorisk oppsett:** denne koblingen bare *laster ned* data som du først må aktivere på portalen. Registrer deg på [eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/), åpne **Request customised data** og velg **alle dataklynger**, et **intervall på 15 minutter** og en **ubegrenset varighet**. De første dataene kan ta **flere timer** før de vises. Uten dette henter koblingen ingenting, noe som kan se ut som om påloggingsinformasjonen din blir avvist.
->
-> 👉 Følg fremdriften i [issue #142](https://github.com/Pulpyyyy/carconnectivity-addon/issues/142).
+> **Løsning:** den skrivebeskyttede koblingen `EU Data Act` er **✅ integrert i dette tillegget** (se den egne seksjonen nedenfor); blokkerte konfigurasjoner flyttes automatisk over til den.
 
 > [!TIP]
 > ### En Edge-versjon er tilgjengelig
-> **Edge**-versjonen er **utviklingsbygget** (et pågående arbeid, ikke en ferdig versjon): den får de nyeste funksjonene først og kan være ustabil. Den inkluderer den skrivebeskyttede koblingen **EU Data Act** (løsningen ovenfor) pluss en ny innebygd konfigurasjonsside. Installer **"CarConnectivity Add-on Edge"** fra det samme depotet.
+> **Edge**-versjonen er **utviklingsbygget** (et pågående arbeid, ikke en ferdig versjon): den får de nyeste funksjonene først og kan være ustabil. Installer **"CarConnectivity Add-on Edge"** fra det samme depotet.
 
 ## Legg til depot
 
-[![\`Addon Home Assistant\`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
+[![`Addon Home Assistant`](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/addon-ha.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FPulpyyyy%2Fcarconnectivity-addon)
+
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/mqtt_device.png)
 
-## Generell konfigurasjon
+## Konfigurasjon
 
-Bare fyll ut innstillingene for merkevarene du eier.**La alle andre felt tomme.**
+Tillegget konfigureres i sin helhet fra den **innebygde konfigurasjonssiden**, ikke fra Home Assistant-fanen for alternativer (som bare viser en henvisning til den).
 
-### 1. Valg av kjøretøymerke
+**Slik åpner du den:** tilleggets **Info**-fane → **OPEN WEB UI**-knappen → **"Konfigurasjon"**-knappen i topplinjen på siden. Når nettpanelet er deaktivert (eller ikke startet ennå), åpnes Web UI direkte på konfigurasjonssiden.
 
-Velg produsenten som tilsvarer kjøretøyet ditt fra de støttede merkene:
-- `Seat` *(utfaset: blokkert siden mai 2026, erstattes automatisk av EU Data Act-koblingen)*
-- `Cupra` *(utfaset: blokkert siden mai 2026, erstattes automatisk av EU Data Act-koblingen)*
-- `Skoda`
-- `Volkswagen` *(Europa; utfaset: blokkert siden mai 2026, erstattes automatisk av EU Data Act-koblingen)*
-- `Tronity`
-- `Volvo`
+Ved første åpning blir en eksisterende konfigurasjon **importert automatisk** (også en som er laget av en eldre versjon av tillegget), og blokkerte Seat / Cupra / Volkswagen (Europa)-koblinger blir **automatisk flyttet over** til EU Data Act-koblingen ved oppstart. Etter lagring må du **starte tillegget på nytt** for å ta i bruk den nye konfigurasjonen.
+
+### 1. Kjøretøy
+
+Klikk på **"+ Legg til kjøretøy"** og velg merket ditt; legg til ett kort per konto. Støttede merker:
 - `Audi`
-- `Volkswagen North America` *(land settes automatisk fra din Home Assistant-landsinnstilling — ussom standard,ca hvis din HA er konfigurert for Canada)*
-- `EU Data Act` *(felles skrivebeskyttet kobling som erstatter de blokkerte koblingene Seat / Cupra / Volkswagen (Europa))*
+- `Bentley` *(kun EU Data Act)*
+- `Cupra` *(kun EU Data Act: produsentkoblingen er blokkert siden mai 2026)*
+- `Renault / Dacia`
+- `SEAT` *(kun EU Data Act: produsentkoblingen er blokkert siden mai 2026)*
+- `Škoda`
+- `Tronity`
+- `Volkswagen (Europe)` *(kun EU Data Act: produsentkoblingen er blokkert siden mai 2026)*
+- `Volkswagen (North America)` *(land settes automatisk fra din Home Assistant-landsinnstilling: `us` som standard, `ca` hvis din HA er konfigurert for Canada)*
+- `Volvo`
 
-Hvis du eier flere kjøretøyer fra forskjellige merker, kan du konfigurere flere seksjoner.
+Riktig **datakilde** velges for deg. Et valg vises bare når mer enn én fungerer (Škoda og Audi kan bruke enten produsentkontoen sin eller den skrivebeskyttede EU Data Act-portalen; `Automatisk` foretrekker produsentkontoen).
+
+⚠️ Du kan legge til flere kjøretøy, fra forskjellige merker eller to biler av samme merke som ikke er knyttet til samme konto.
 
 ### 2. Koble til produsentens online tjenester
 
-Hver bilprodusent leverer en online tjeneste som lar deg få tilgang til kjøretøyets data eksternt. For å koble til, må du oppgi påloggingsinformasjon.
+Feltene som vises på hvert kjøretøykort avhenger av merket:
 
-#### Nødvendig informasjon:
+For VAG-merkene (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
+- `Username`: E-postadressen som brukes til å logge på produsentens tjeneste.
+- `Password`: Passordet for produsentkontoen din.
+- `S-PIN` *(valgfritt)*: Den 4-sifrede koden som kreves for fjerntilgang til visse kjøretøyfunksjoner.
+- `VIN` *(valgfritt)*: Begrens kontoen til ett kjøretøy.
 
-Til`Skoda`,`Audi`,`Volkswagen North America`og`Tronity`:
+For `Volvo`:
+- `API key (primary)` / `API key (secondary)`: Volvo API-nøkler.
+- `Vehicle token`: Tilgangstoken for kjøretøyet.
+- `Location token` *(valgfritt)*: Tilgangstoken for posisjonsendepunktet.
+- `Interval` *(valgfritt, sekunder)*: Oppdateringsintervall. ⚠️ For hyppige oppdateringer kan overskride produsentens API-forespørselsgrenser og utløse midlertidige begrensninger.
 
--   `Brand`: Produsentens merkevare.
--   `Username`: E -postadressen som ble brukt til å logge på produsentens tjeneste.
--   `Password`: Passordet for produsentkontoen din.
--   `PIN Code`: En 4-sifret kode som kreves for fjerntilgang til visse kjøretøyfunksjoner.
--   `Refresh Interval`: Definerer hvor ofte (på sekunder) kjøretøyets data blir oppdatert.
--   `Warning:`Å sette en oppdateringsfrekvens for ofte kan overstige API -forespørselsgrensene pålagt av produsenten, noe som resulterer i midlertidige tilgangsbegrensninger.
+For `Renault / Dacia`:
+- `Username` / `Password`: Påloggingsinformasjonen for My Renault-kontoen din.
+- `Locale` *(valgfritt)*: f.eks. `fr_FR`, `de_DE`.
+- `VIN` *(valgfritt)*: Begrens kontoen til ett kjøretøy.
 
-⚠ Du kan bruke 2 kontoer for 2 forskjellige merker eller 2 biler av samme merke som ikke er koblet til samme konto.
+For `Tronity`:
+- `Client ID` / `Client secret`: Tronity API-påloggingsinformasjonen din.
+- `Interval` *(valgfritt, sekunder)*: Oppdateringsintervall.
+- `VIN` *(valgfritt)*: Begrens kontoen til ett kjøretøy.
 
-Til `EU Data Act` (Seat, Cupra, Volkswagen Europa; skrivebeskyttet):
+#### Datakilden `EU Data Act` (Seat, Cupra, Volkswagen Europe, Bentley; valgfri for Škoda og Audi)
 
--   `Username`: e-posten til merkekontoen din (Volkswagen ID, SEAT, Cupra, osv.).
--   `Password`: passordet til den samme merkekontoen.
+Når et kjøretøy bruker EU Data Act-datakilden, er det bare to felt som betyr noe:
+- `Username`: e-posten til merkekontoen din (Volkswagen ID, SEAT, Cupra, osv.).
+- `Password`: passordet til den samme merkekontoen.
 
-Denne **skrivebeskyttede** koblingen erstatter koblingene Seat / Cupra / Volkswagen (Europa) som har vært blokkert (`403`) siden mai 2026. Den oppdaterer data omtrent hvert 15. minutt og **kan ikke sende fjernkommandoer, plassering eller bilder av kjøretøyet**. Merke, oppdateringsintervall og lokale innstillinger (land/språk) settes automatisk: du oppgir kun påloggingsinformasjonen din.
+Denne **skrivebeskyttede** koblingen erstatter koblingene Seat / Cupra / Volkswagen (Europa) som har vært blokkert (`403`) siden mai 2026. Den oppdaterer data omtrent hvert 15. minutt og **kan ikke sende fjernkommandoer, plassering eller bilder av kjøretøyet** (en advarsel i topplinjen minner deg på dette når den er i bruk). Merke, oppdateringsintervall og OIDC-regioninnstilling (land/språk) settes automatisk: du oppgir kun påloggingsinformasjonen din.
 
-> ⚠️ **Obligatorisk steg (ellers mottar koblingen ingenting).** Aktiver først datautleveringen på portalen: registrer deg på **[eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/)** med **samme konto** som den offisielle appen til merket ditt, og be deretter om **alle dataklynger**, et **intervall på 15 minutter** og en **ubegrenset varighet**. De første dataene kan ta **flere timer** før de vises. Koblingen bare **laster ned** det portalen allerede har produsert: så lenge ingen fil er tilgjengelig på EU Data Act-siden kan den **ikke lese noe**, selv med korrekt påloggingsinformasjon (dette kan se ut som et avslag på påloggingsinformasjonen).
+> ⚠️ **Obligatorisk oppsett, gjør dette først, ellers fungerer det ikke.** Denne koblingen bare *laster ned* datasettene som EU Data Act-portalen produserer; den oppretter dem aldri for deg. Hvis du hopper over dette steget, kobler tillegget seg til, men **mottar ingen data**, noe som kan se ut nøyaktig som om påloggingsinformasjonen din blir avvist. Du må registrere deg på portalen og aktivere en permanent datautlevering én gang:
+>
+> 1. Åpne **[eu-data-act.drivesomethinggreater.com](https://eu-data-act.drivesomethinggreater.com/)** og klikk på **Log in**. Velg merket ditt (Volkswagen, SEAT, Cupra, ...) og logg inn med **samme konto** som du bruker i den offisielle merkeappen.
+> 2. Velg kjøretøyet ditt og gi **My Data Portal** tilgang til det.
+> 3. Klikk på **Request customised data** (vises også som *Get customised data*) og konfigurer:
+>    - **alle dataklynger**,
+>    - et **intervall på 15 minutter**,
+>    - en **ubegrenset / kontinuerlig** varighet (ingen sluttdato),
+>    - et navn du velger selv (for eksempel `All data 15min`).
+> 4. Send inn, og **vær tålmodig**. De første datasettene kan ta **flere timer, noen ganger mer enn 24 timer**, før de vises. Deretter publiseres en ny ZIP-fil omtrent hvert 15. minutt, og tillegget henter den automatisk.
+>
+> Du kan når som helst sjekke fremdriften ved å logge inn på portalen igjen og se på kjøretøyets liste over datautleveringer. Så lenge ingen kontinuerlig forespørsel er aktiv og produserer filer, har koblingen ingenting å lese.
 
-Til`Volvo`:
+Alle detaljer og begrensninger: [CarConnectivity-connector-vw-eu-data-act](https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act).
 
--   `API Key primary`: Volvo API primærnøkkel.
--   `API Key secondary`: Volvo API sekundærnøkkel.
--   `Vehicule Token`: Tilgangstoken for kjøretøyet.
--   `Vehicule Location Token`: Tilgangstoken for plasseringsendpunktet.
--   `Refresh Interval`: Definerer hvor ofte (på sekunder) kjøretøyets data blir oppdatert.
--   `Warning:`Å sette en oppdateringsfrekvens for ofte kan overstige API -forespørselsgrensene pålagt av produsenten, noe som resulterer i midlertidige tilgangsbegrensninger.
+### 3. MQTT-konfigurasjon (obligatorisk)
+`MQTT` er måten kjøretøydata når `Home Assistant` på:
+- `Broker host`: IP eller domenenavn på MQTT-serveren (la stå tomt for standardverdien til Home Assistant Mosquitto-tillegget, `core-mosquitto`)
+- `Port`: meglerport (standard `1883`)
+- `Username` / `Password`: påloggingsinformasjon for MQTT-megleren
 
-### 3. MQTT -konfigurasjon (obligatorisk)
+⚠️ Hvis du ikke allerede bruker MQTT på `Home Assistant`, kan du for eksempel legge til [`Mosquitto Addon` og `MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
 
-Du må bruke`MQTT`å sende kjøretøydata til`Home Assistant`, Konfigurer disse innstillingene:
+### 4. Nettpanel
+Det originale `CarConnectivity`-panelet kan aktiveres med bryteren **"Aktiver CarConnectivity-nettpanelet"**. Når tillegget har startet på nytt, åpnes Web UI på panelet, og topplinjen lar deg når som helst bytte mellom **"Panel"** og **"Konfigurasjon"**.
 
--   `Username`: MQTT Megler pålogging
--   `Password`: MQTT Meglerpassord
--   `Broker Address`: IP eller domenenavn på MQTT -serveren
-
-⚠️ If you're not already using MQTT on `Home Assistant`, kan du for eksempel legge til[`Mosquito Addon`et`MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
-
-### 4.`WEBUI`
-
-Du kan få tilgang til`Carconnectivity`sitt originale grensesnitt fra å bruke direkte fra`Home Assistant`.
-Du kan definere din egen tilgangsopplysning:
-
--   `Username`: admin
--   `Password`: secret
+- `Login user` / `Login password` *(valgfritt)*: la brukeren stå tom (eller `autologin`) for å bli logget inn automatisk; sett begge for å kreve pålogging.
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/webui.png)
 
 ### 5. Loggnivå
-
 Definer mengden informasjon registrert i logger:
+- `Info`: Viser generell operativ informasjon.
+- `Warning`: Viser bare advarsler.
+- `Error`: Viser bare feilmeldinger.
+- `Debug`: Viser ytterligere detaljer som er nyttige for feilsøking.
 
--   `Info`: Viser generell operativ informasjon.
--   `Warning`: Viser bare advarsler.
--   `Error`: Viser bare feilmeldinger.
--   `Debug`: Viser ytterligere detaljer som er nyttige for feilsøking.
-
-### 6. API -loggnivå
-
+### 6. API-loggnivå
 Definer mengden informasjon registrert i logger:
+- `Info`: Viser generell operativ informasjon.
+- `Warning`: Viser bare advarsler.
+- `Error`: Viser bare feilmeldinger.
+- `Debug`: Viser ytterligere detaljer som er nyttige for feilsøking.
 
--   `Info`: Viser generell operativ informasjon.
--   `Warning`: Viser bare advarsler.
--   `Error`: Viser bare feilmeldinger.
--   `Debug`: Viser ytterligere detaljer som er nyttige for feilsøking.
+#### Nivåer per komponent (avansert)
 
-### 7.`ABRP - A Better Routeplanner`
+De to nivåene ovenfor gjelder globalt. For å feilsøke en enkelt komponent uten å oversvømme loggen, utvid **"Nivåer per komponent (avansert)"** i Logging-seksjonen på konfigurasjonssiden: hver konfigurerte kjøretøykonto (logg- + API-nivå) og hver plugin (MQTT, Nettpanel, ABRP, MQTT Home Assistant) får sin egen velger. `default` arver det globale nivået, så du kan for eksempel beholde alt på `info` og sette bare MQTT-pluginen til `debug`. Et merke på den sammenfoldede linjen viser hvor mange tilpasninger som er aktive.
 
-For hvert kjøretøy du ønsker å koble til ABRP (en bedre ruteplan), må du gi en unik identifikator for hvert kjøretøy (`vin`) samt en autentiseringstoken (`token`). Disse verdiene lar deg etablere en kamp mellom kjøretøyet og dets token i ABRP -systemet.
+Merk: en `debug`-tilpasning på en **kjøretøykonto** gjør også de delte HTTP-bibliotekene detaljerte for hele tillegget; plugin-tilpasninger er helt isolerte.
+
+### 7. `ABRP - A Better Routeplanner`
+
+Aktiver **"Send data til ABRP"**, og legg deretter til én rad per kjøretøy med **"+ Legg til ABRP-token"**:
+
+- `VIN`: **kjøretøyets identifikasjonsnummer** (17 alfanumeriske tegn), unikt for hvert kjøretøy.
+- `ABRP token`: **autentiseringstokenet** generert av ABRP for det kjøretøyet.
 
 #### Forutsetninger
 
-For å hente tokenet ditt, gå til kjøretøyet ditt på en bedre ruteplan, velg "Live Data", og koble deretter kjøretøyet ditt ved å bruke den "generiske" -delen. Tokenet å lime inn i konfigurasjonen vises. Du må konfigurere en kamp mellom VIN og tokenet for hvert kjøretøy du ønsker å koble til ABRP.
-
-#### Konfigurasjonsformat
-
-Hver linje skal følge dette formatet:
-
--   `vin`: Dette feltet representerer**Kjøretøyets identifikasjonsnummer**(Vin). Det er unikt for hvert kjøretøy og inneholder 17 alfanumeriske tegn.
--   `token`: Dette feltet representerer en**Autentiseringstoken**spesifikk for hvert kjøretøy. Dette tokenet genereres av ABRP når du kobler kjøretøyet til plattformen.
-
-##### Eksempel på en gyldig konfigurasjon:
-
-    - vin: TMBLJ9NY8SF000000
-      token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-    - vin: TMLLJ9NY23F000000
-      token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+For å hente tokenet ditt, gå til kjøretøyet ditt på A Better Routeplanner, velg "Live Data", og koble deretter kjøretøyet ditt ved å bruke "Generic"-delen. Tokenet som skal limes inn i konfigurasjonen vises. Legg til en VIN/token-rad for hvert kjøretøy du ønsker å koble til ABRP.
 
 ### 8. Ekspertmodus
+Ekspertmodus muliggjør bruk av alle native Carconnectivity-funksjoner, inkludert de som ikke er tilgjengelige gjennom det grafiske grensesnittet, så lenge de tilsvarende funksjonene støttes av tilleggets binærfiler.
 
-Ekspertmodus muliggjør bruk av alle innfødte carconnectivity-funksjoner, inkludert de som ikke er tilgjengelige gjennom det grafiske grensesnittet-så lenge de tilsvarende funksjonene støttes av tilleggsbokstene.
-
-⚠ Advarsel:
-Denne modusen deaktiverer all innholdsvalidering og sikkerhetskontroller. Som et resultat kan til og med en liten feil (for eksempel en ugyldig JSON-syntaks) forhindre at tillegget lanseres riktig.
+⚠️ Advarsel:
+Denne modusen deaktiverer all innholdsvalidering og alle sikkerhetskontroller. Som et resultat kan selv en liten feil (for eksempel ugyldig JSON-syntaks) forhindre at tillegget starter riktig.
 
 Ekspertmodus er kun ment for avanserte brukere.
-For å bruke det trygt, må du:
+For å bruke den trygt, må du:
 
-Vær kjent med JSON -syntaks og struktur.
+Være kjent med JSON-syntaks og -struktur.
 
-Ekspertmodus aktiveres ganske enkelt ved at en `carconnectivity.expert.json`-fil er **til stede** i konfigurasjonskatalogen til tillegget (ingen bryter å slå på). Denne filen har forrang og **erstatter fullstendig** konfigurasjonen som genereres automatisk:
+Ekspertmodus aktiveres ganske enkelt ved at en fil `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json` med de ønskede innstillingene er **til stede** (ingen bryter å slå på). Den har forrang og erstatter fullstendig konfigurasjonen som lages av konfigurasjonssiden, som skrives til `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.json` (sidens redigerbare modell lagres separat i `carconnectivity.configui.json`). Katalogen `/addon_configs/1b1291d4_carconnectivity-addon/` vises kanskje ikke umiddelbart i `Home Assistant`-filsystemet. Hvis dette er tilfelle, start veilederen på nytt.
 
-- **stable**-versjonen: konfigurasjonen som lages ut fra tilleggets innstillinger genereres i `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.UI.json`; ekspertfilen er `/addon_configs/1b1291d4_carconnectivity-addon/carconnectivity.expert.json`.
-- **edge**-versjonen: konfigurasjonen som lages av konfigurasjonssiden genereres i `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.json` (sidens redigerbare modell lagres separat i `carconnectivity.configui.json`); ekspertfilen er `/addon_configs/1b1291d4_carconnectivity-addon-edge/carconnectivity.expert.json`.
-
-Konfigurasjonskatalogen vises kanskje ikke umiddelbart i `Home Assistant`-filsystemet. Hvis dette er tilfelle, start veilederen på nytt.
-
-Se den offisielle carconnectivity -dokumentasjonen for listen over støttede funksjoner og forventede parametere.
+Se den offisielle Carconnectivity-dokumentasjonen for listen over støttede funksjoner og forventede parametere.
 
 ## Beste praksis
+- **Legg bare til kjøretøykort for kontoene du eier.**
+- **Ikke del påloggingsinformasjonen din.**
+- **Juster oppdateringsintervallet (der det er tilgjengelig) for å unngå å overskride API-forespørselsgrenser. Husk at grensen ser ut til å være omtrent 1000 req/dag.**
+- **Bruk "Debug"-loggnivået bare når du feilsøker problemer, og foretrekk en tilpasning per komponent for å holde resten av loggen rolig.**
+- **Start tillegget på nytt etter at du har lagret konfigurasjonen.**
 
--   **Bare fyll ut innstillingene for kjøretøymerkene du eier.**
--   \***\*Ikke del påloggingsinformasjonen din. \*\***
--   **Juster oppdateringsintervallet for å unngå å overskride API -forespørselsgrenser. Husk at grensen ser ut til å være omtrent 1000 req/dag.**
--   **Bruk "feilsøking" -loggingsnivå bare når du feilsøker problemer.**\`\*\*
-
-* * *
+---
 
 Hvis du har spørsmål eller møter problemer under konfigurasjonen, kan du se moduldokumentasjonen.
 Hvis du finner en feil, kan du åpne et problem.

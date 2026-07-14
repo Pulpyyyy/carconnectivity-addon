@@ -21,7 +21,8 @@
 [![Spanish](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/ES.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.es.md)
 [![Polish](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/PL.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.pl.md)
 [![Portuguese](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/PT.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.pt.md)
- [![Norwegian](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NO.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.no.md)
+[![Norwegian](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NO.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.no.md)
+[![Dutch](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/NL.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.nl.md)
 [![English](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/.github/img/US.svg)](https://github.com/Pulpyyyy/carconnectivity-addon/blob/main/README.md)
 
 
@@ -50,51 +51,65 @@ His work is also available as docker images. So if you're using `Home Assistant`
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/mqtt_device.png)
 
-## General Configuration
+## Configuration
 
-Only fill in the settings for the brands of vehicles you own. **Leave all other fields empty.**
+The add-on is configured entirely from its **built-in configuration page**, not from the Home Assistant options tab (which only shows a pointer to it).
 
-### 1. Selecting Your Vehicle Brand
-Choose the manufacturer corresponding to your vehicle from the supported brands:
-- `Seat` *(deprecated: blocked since May 2026, automatically replaced by the EU Data Act connector)*
-- `Cupra` *(deprecated: blocked since May 2026, automatically replaced by the EU Data Act connector)*
-- `Skoda`
-- `Volkswagen` *(Europe; deprecated: blocked since May 2026, automatically replaced by the EU Data Act connector)*
-- `Tronity`
-- `Volvo`
+**How to open it:** add-on **Info** tab → **OPEN WEB UI** button → **Configuration** button in the top bar of the page. When the web dashboard is disabled (or not started yet), the Web UI opens straight on the configuration page.
+
+On first open, an existing configuration is **imported automatically** (including one produced by an older version of the add-on), and blocked Seat / Cupra / Volkswagen (Europe) connectors are **migrated automatically** to the EU Data Act connector at startup. After saving, **restart the add-on** to apply the new configuration.
+
+### 1. Vehicles
+
+Click **"+ Add vehicle"** and pick your brand; add one card per account. Supported brands:
 - `Audi`
-- `Volkswagen North America` *(country automatically set from your Home Assistant country setting: `us` by default, `ca` if your HA is configured for Canada)*
-- `EU Data Act` *(common read-only connector that replaces the blocked Seat / Cupra / Volkswagen (Europe) connectors: see the dedicated section below)*
+- `Bentley` *(EU Data Act only)*
+- `Cupra` *(EU Data Act only: the manufacturer connector is blocked since May 2026)*
+- `Renault / Dacia`
+- `SEAT` *(EU Data Act only: the manufacturer connector is blocked since May 2026)*
+- `Škoda`
+- `Tronity`
+- `Volkswagen (Europe)` *(EU Data Act only: the manufacturer connector is blocked since May 2026)*
+- `Volkswagen (North America)` *(country automatically set from your Home Assistant country setting: `us` by default, `ca` if your HA is configured for Canada)*
+- `Volvo`
 
-If you own multiple vehicles from different brands, you can configure multiple sections.
+The right **data source** is chosen for you. A choice only appears when more than one works (Škoda and Audi can use either their manufacturer account or the read-only EU Data Act portal; `Automatic` prefers the manufacturer one).
+
+⚠️ You can add several vehicles, from different brands or two cars of the same brand that are not linked to the same account.
 
 ### 2. Connecting to the Manufacturer’s Online Services
-Each car manufacturer provides an online service that allows you to access your vehicle's data remotely. To connect, you need to provide your login credentials.
 
-#### Required Information:
-For `Skoda`, `Audi`, `Volkswagen North America` and `Tronity`:
-- `Brand`: The manufacturer’s brand.
+The fields shown on each vehicle card depend on the brand:
+
+For the VAG brands (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
 - `Username`: The email address used to log into the manufacturer’s service.
 - `Password`: The password for your manufacturer account.
-- `PIN Code`: A 4-digit code required for remote access to certain vehicle features.
-- `Refresh Interval`: Defines how often (in seconds) the vehicle's data is updated.
-- `Warning:` Setting a refresh rate too frequently may exceed the API request limits imposed by the manufacturer, resulting in temporary access restrictions.
-
-⚠️ You can use 2 accounts for 2 different brands or 2 cars of a same brand that are not linked to the same account.
+- `S-PIN` *(optional)*: The 4-digit code required for remote access to certain vehicle features.
+- `VIN` *(optional)*: Restrict the account to one vehicle.
 
 For `Volvo`:
-- `API Key primary`: Volvo API primary key.
-- `API Key secondary`: Volvo API secondary key.
-- `Vehicule Token`: Access token for the vehicule.
-- `Vehicule Location Token`: Access token for the location endpoint.
-- `Refresh Interval`: Defines how often (in seconds) the vehicle's data is updated.
-- `Warning:` Setting a refresh rate too frequently may exceed the API request limits imposed by the manufacturer, resulting in temporary access restrictions.
+- `API key (primary)` / `API key (secondary)`: Volvo API keys.
+- `Vehicle token`: Access token for the vehicle.
+- `Location token` *(optional)*: Access token for the location endpoint.
+- `Interval` *(optional, seconds)*: Refresh interval. ⚠️ Too frequent refreshes may exceed the manufacturer's API request limits and trigger temporary restrictions.
 
-For `EU Data Act` (Seat, Cupra, Volkswagen Europe; read-only):
+For `Renault / Dacia`:
+- `Username` / `Password`: Your My Renault account credentials.
+- `Locale` *(optional)*: e.g. `fr_FR`, `de_DE`.
+- `VIN` *(optional)*: Restrict the account to one vehicle.
+
+For `Tronity`:
+- `Client ID` / `Client secret`: Your Tronity API credentials.
+- `Interval` *(optional, seconds)*: Refresh interval.
+- `VIN` *(optional)*: Restrict the account to one vehicle.
+
+#### The `EU Data Act` data source (Seat, Cupra, Volkswagen Europe, Bentley; optional for Škoda and Audi)
+
+When a vehicle uses the EU Data Act data source, only two fields matter:
 - `Username`: the email of your brand account (Volkswagen ID, SEAT, Cupra, etc.).
 - `Password`: the password of that same brand account.
 
-This **read-only** connector replaces the Seat / Cupra / Volkswagen (Europe) connectors that have been blocked (`403`) since May 2026. It refreshes data about every 15 minutes and **cannot send remote commands, location or vehicle images**. The brand, refresh interval and OIDC locale (country/language) are set automatically: you only provide your credentials.
+This **read-only** connector replaces the Seat / Cupra / Volkswagen (Europe) connectors that have been blocked (`403`) since May 2026. It refreshes data about every 15 minutes and **cannot send remote commands, location or vehicle images** (a warning in the top bar reminds you of this whenever it is in use). The brand, refresh interval and OIDC locale (country/language) are set automatically: you only provide your credentials.
 
 > ⚠️ **Mandatory setup, do this first or it will not work.** This connector only *downloads* the datasets that the EU Data Act portal produces; it never creates them for you. If you skip this step the add-on connects but **receives no data**, which can look exactly like your credentials are being rejected. You must register on the portal and enable a permanent data delivery once:
 >
@@ -112,18 +127,17 @@ This **read-only** connector replaces the Seat / Cupra / Volkswagen (Europe) con
 Full details and limitations: [CarConnectivity-connector-vw-eu-data-act](https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act).
 
 ### 3. MQTT Configuration (Mandatory)
-You need to use `MQTT` to send vehicle data to `Home Assistant`, configure these settings:
-- `Username`: MQTT broker login
-- `Password`: MQTT broker password
-- `Broker Address`: IP or domain name of the MQTT server
+`MQTT` is how vehicle data reaches `Home Assistant`:
+- `Broker host`: IP or domain name of the MQTT server (leave blank for the Home Assistant Mosquitto add-on default, `core-mosquitto`)
+- `Port`: broker port (default `1883`)
+- `Username` / `Password`: MQTT broker credentials
 
-⚠️ If you're not already using MQTT on `Home Assistant`, you can add, for example, [`Mosquito Addon`et `MQTT integration`](https://www.home-assistant.io/integrations/mqtt) 
+⚠️ If you're not already using MQTT on `Home Assistant`, you can add, for example, [`Mosquitto Addon` and the `MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
 
-### 4. `WEBUI`
-You can access the `Carconnectivity`'s original interface from  using directly from `Home Assistant`.
-You can define your own access credentials:
-- `Username`: admin
-- `Password`: secret
+### 4. Web dashboard
+The original `CarConnectivity` dashboard can be enabled with the **"Enable the CarConnectivity web dashboard"** toggle. Once the add-on restarts, the Web UI opens on the dashboard, and the top bar lets you switch between **Dashboard** and **Configuration** at any time.
+
+- `Login user` / `Login password` *(optional)*: leave the user empty (or `autologin`) to be logged in automatically; set both to require a login.
 
 ![image](https://raw.githubusercontent.com/Pulpyyyy/carconnectivity-addon/refs/heads/main/img/webui.png)
 
@@ -141,29 +155,22 @@ Define the amount of information recorded in logs:
 - `Error`: Displays only error messages.
 - `Debug`: Displays additional details useful for troubleshooting.
 
+#### Per-component levels (advanced)
+
+The two levels above apply globally. To troubleshoot a single component without flooding the log, expand **"Per-component levels (advanced)"** in the Logging section of the configuration page: each configured vehicle account (log + API level) and each plugin (MQTT, Web dashboard, ABRP, MQTT Home Assistant) gets its own selector. `default` inherits the global level, so you can for example keep everything at `info` and set only the MQTT plugin to `debug`. A badge on the collapsed line shows how many overrides are active.
+
+Note: a `debug` override on a **vehicle account** also makes the shared HTTP libraries verbose for the whole add-on; plugin overrides are fully isolated.
+
 ### 7. `ABRP - A Better Routeplanner`
 
-For each vehicle you wish to connect to ABRP (A Better Routeplanner), you must provide a unique identifier for each vehicle (`vin`) as well as an authentication token (`token`). These pairs of values allow you to establish a match between your vehicle and its token in the ABRP system.
+Enable **"Send data to ABRP"**, then add one row per vehicle with **"+ Add ABRP token"**:
+
+- `VIN`: the **Vehicle Identification Number** (17 alphanumeric characters), unique to each vehicle.
+- `ABRP token`: the **authentication token** generated by ABRP for that vehicle.
 
 #### Prerequisites
 
-To retrieve your token, go to your vehicle on A Better Routeplanner, select "Live Data," and then link your vehicle using the "Generic" section. The token to paste into the configuration will be displayed. You need to configure a match between the VIN and the token for each vehicle you wish to connect to ABRP.
-
-#### Configuration Format
-
-Each line should follow this format:
-
-- `vin`: This field represents the **Vehicle Identification Number** (VIN). It is unique to each vehicle and contains 17 alphanumeric characters.
-- `token`: This field represents an **authentication token** specific to each vehicle. This token is generated by ABRP when you connect your vehicle to the platform.
-
-##### Example of a valid configuration:
-
-```
-- vin: TMBLJ9NY8SF000000
-  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-- vin: TMLLJ9NY23F000000
-  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
-```
+To retrieve your token, go to your vehicle on A Better Routeplanner, select "Live Data," and then link your vehicle using the "Generic" section. The token to paste into the configuration will be displayed. Add a VIN/token row for each vehicle you wish to connect to ABRP.
 
 ### 8. Expert Mode
 Expert Mode enables the use of all native Carconnectivity functions, including those not available through the graphical interface, as long as the corresponding functions are supported by the add-on binaries.
@@ -181,10 +188,11 @@ Expert Mode is activated simply by the **presence** of a `/addon_configs/1b1291d
 Refer to the official Carconnectivity documentation for the list of supported functions and expected parameters.
 
 ## Best Practices
-- **Only fill in the settings for the vehicle brands you own.**
-- ****Do not share your login credentials.****
-- **Adjust the refresh interval to avoid exceeding API request limits. Remember limit seems to be about 1000 req/day.**
-- **Use the "Debug" logging level only when troubleshooting issues.**`**
+- **Only add vehicle cards for the accounts you own.**
+- **Do not share your login credentials.**
+- **Adjust the refresh interval (where available) to avoid exceeding API request limits. Remember the limit seems to be about 1000 req/day.**
+- **Use the "Debug" logging level only when troubleshooting issues, and prefer a per-component override to keep the rest of the log quiet.**
+- **Restart the add-on after saving the configuration.**
 
 ---
 
