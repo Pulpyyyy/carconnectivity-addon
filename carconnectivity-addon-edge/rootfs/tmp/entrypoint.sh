@@ -177,6 +177,9 @@ NA_COUNTRY="us"
 if [ "${HA_COUNTRY}" = "ca" ]; then
     NA_COUNTRY="ca"
 fi
+# Exported so the configui generator can default country/language in the
+# configs it writes (migrate.py receives them explicitly at startup).
+export HA_COUNTRY HA_LANG NA_COUNTRY
 color_echo "${CYAN}" "🌍 Detected locale: ${LOCALE} / country: ${HA_COUNTRY} / language: ${HA_LANG}"
 
 # Expert mode is implicit: when a hand-written ${EXPERT_NAME} is present it takes

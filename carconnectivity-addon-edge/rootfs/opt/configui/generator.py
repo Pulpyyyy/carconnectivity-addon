@@ -8,9 +8,11 @@ preserved verbatim (passthrough).
 """
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from const import KINDS, SOURCE_EU_DATA_ACT, connector_for, resolve_source
+from migrate import inject_locale
 
 _DEFAULT_LOG = "info"
 _DEFAULT_API_LOG = "error"
@@ -114,7 +116,13 @@ def build_config(state: dict[str, Any]) -> dict[str, Any]:
     plugins.append({"type": "mqtt_homeassistant", "config": {"log_level": _plugin_level("mqtt_homeassistant")}})
     plugins.extend(state.get("_passthrough_plugins") or [])
 
-    return {"carConnectivity": {"log_level": log_level, "connectors": connectors, "plugins": plugins}}
+    config = {"carConnectivity": {"log_level": log_level, "connectors": connectors, "plugins": plugins}}
+    # HA_COUNTRY / HA_LANG / NA_COUNTRY are exported by entrypoint.sh; filling them
+    # here makes the generated file complete on its own. migrate.py still injects
+    # them at startup for configs produced elsewhere (expert.json, older files).
+    inject_locale(config, os.environ.get("HA_COUNTRY", ""), os.environ.get("HA_LANG", ""),
+                  os.environ.get("NA_COUNTRY", ""))
+    return config
 
 
 def parse_config(config: dict[str, Any]) -> dict[str, Any]:
