@@ -30,13 +30,13 @@ RUN echo "ADDON_VERSION=v${BUILD_VERSION}" >> versions.txt && \
         carconnectivity-connector-skoda==${SKODA_VERSION#v} \
         carconnectivity-connector-audi==${AUDI_VERSION#v} \
         carconnectivity-connector-volkswagen_na==${VWNA_VERSION#v} \
-        "carconnectivity-connector-vw-eu-data-act @ git+https://github.com/Pulpyyyy/CarConnectivity-connector-vw-eu-data-act.git@dev" \
+        carconnectivity-connector-vw-eu-data-act==${VWEUDATA_VERSION#v} \
         carconnectivity-connector-renaultdacia==${RENAULTDACIA_VERSION#v} \
         carconnectivity-connector-tronity==${TRONITY_VERSION#v} \
         carconnectivity-plugin-abrp==${ABRP_VERSION#v} \
         carconnectivity-plugin-mqtt==${MQTT_VERSION#v} \
-        "carconnectivity-plugin-webui @ git+https://github.com/Pulpyyyy/CarConnectivity-plugin-webui.git@dev" \
-        "carconnectivity-plugin-mqtt_homeassistant @ git+https://github.com/Pulpyyyy/CarConnectivity-plugin-mqtt_homeassistant.git@dev" \
+        carconnectivity-plugin-webui==${WEBUI_VERSION#v} \
+        carconnectivity-plugin-mqtt_homeassistant==${MQTTHA_VERSION#v} \
         waitress && \
     apk del build-base libffi-dev && \
     echo "CARCONNECTIVITY_VERSION=${CC_VERSION}" >> versions.txt && \
