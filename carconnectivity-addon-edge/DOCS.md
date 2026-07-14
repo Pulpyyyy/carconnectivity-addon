@@ -141,6 +141,12 @@ Define the amount of information recorded in logs:
 - `Error`: Displays only error messages.
 - `Debug`: Displays additional details useful for troubleshooting.
 
+#### Per-component levels (advanced)
+
+The two levels above apply globally. To troubleshoot a single component without flooding the log, expand **"Per-component levels (advanced)"** in the Logging section of the configuration page: each configured vehicle account (log + API level) and each plugin (MQTT, Web dashboard, ABRP, MQTT Home Assistant) gets its own selector. `default` inherits the global level, so you can for example keep everything at `info` and set only the MQTT plugin to `debug`. A badge on the collapsed line shows how many overrides are active.
+
+Note: a `debug` override on a **vehicle account** also makes the shared HTTP libraries verbose for the whole add-on; plugin overrides are fully isolated.
+
 ### 7. `ABRP - A Better Routeplanner`
 
 For each vehicle you wish to connect to ABRP (A Better Routeplanner), you must provide a unique identifier for each vehicle (`vin`) as well as an authentication token (`token`). These pairs of values allow you to establish a match between your vehicle and its token in the ABRP system.
