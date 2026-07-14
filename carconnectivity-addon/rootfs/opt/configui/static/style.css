@@ -1,0 +1,63 @@
+/* Light is the default; the dark palette is keyed on data-bs-theme="dark", the
+   same attribute the webui sets (Bootstrap 5.3 color modes). The config page
+   follows the webui's choice via the shared "cc-theme" localStorage key, so the
+   two pages stay in sync without their own switcher. */
+:root { --bg:#f5f6f8; --card:#fff; --card2:#fafbfc; --field:#fff; --btn2:#eceff1;
+  --line:#e2e5e9; --txt:#1c1e21; --muted:#6b7280; --accent:#03a9f4; --ok:#2e7d32; --err:#c62828;
+  --notice-bg:#fff8e1; --notice-line:#ffe082; --notice-txt:#1c1e21; color-scheme:light; }
+html[data-bs-theme="dark"] {
+  --bg:#1a1d20; --card:#212529; --card2:#2b3035; --field:#2b3035; --btn2:#343a40;
+  --line:#2c3034; --txt:#dee2e6; --muted:#9aa0a6; --accent:#03a9f4; --ok:#69db7c; --err:#ff6b6b;
+  --notice-bg:#332b1a; --notice-line:#5c4a1f; --notice-txt:#ffe6a3; color-scheme:dark; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--txt);
+  font:15px/1.45 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+/* The bar's look (dark container + button/warning styling) lives in appbar.css,
+   a single source shared with the webui dashboard. Here we add only the config
+   page's own positioning (the dashboard uses fixed positioning instead). */
+.appbar { position:sticky; top:0; z-index:10; }
+main { max-width:760px; margin:0 auto; padding:20px 16px 60px; }
+h1 { margin:.2em 0 0; } h2 { margin:0 0 .4em; font-size:1.1rem; }
+.sub { color:var(--muted); margin-top:.3em; }
+section { background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:16px; margin:16px 0; }
+.hint { color:var(--muted); font-size:.85em; }
+.req { color:var(--err); font-size:.8em; }
+.opt { color:var(--muted); font-size:.8em; font-weight:normal; }
+.token { align-items:end; margin-bottom:8px; }
+.token .link { align-self:center; }
+/* align-items:end keeps every input on the same baseline even when a label
+   wraps to two lines (e.g. an "(optional)" hint). */
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; align-items:end; }
+/* block label so the text and its inline "(optional)" hint stay on the SAME line
+   (a flex column would stack the hint on its own line and push the field down). */
+label { display:block; font-size:.85em; color:var(--muted); }
+input, select { font:inherit; padding:8px; border:1px solid var(--line); border-radius:8px;
+  background:var(--field); color:var(--txt); }
+.grid input, .grid select { display:block; width:100%; margin-top:4px; }
+.card { border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:12px;
+  background:var(--card2); }
+.row-actions { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+.v-error { color:var(--err); font-size:.85em; }
+.toggle { display:flex; flex-direction:row; align-items:center; gap:8px; color:var(--txt); font-size:1em; margin-bottom:10px; }
+.toggle input { margin:0; }
+button { font:inherit; padding:9px 16px; border:0; border-radius:8px; cursor:pointer;
+  background:var(--accent); color:#fff; }
+button.secondary { background:var(--btn2); color:var(--txt); }
+button.link { background:none; color:var(--err); padding:0; }
+.actions { display:flex; align-items:center; gap:14px; position:sticky; bottom:0;
+  background:var(--bg); padding:12px 0; }
+#status.ok { color:var(--ok); } #status.err { color:var(--err); }
+.notice { background:var(--notice-bg); border:1px solid var(--notice-line); color:var(--notice-txt);
+  border-radius:10px; padding:10px 14px; margin:16px 0; font-size:.9em; }
+.notice p { margin:.3em 0; }
+
+/* Per-component log levels (advanced, collapsed by default) */
+#adv_logs { margin-top:10px; }
+#adv_logs summary { cursor:pointer; color:var(--muted); }
+#adv_logs summary .hint { margin-left:6px; }
+.adv-row { display:flex; align-items:end; gap:10px; margin-top:8px; flex-wrap:wrap; }
+.adv-name { flex:1 1 160px; padding-bottom:6px; }
+.adv-col { flex:0 1 170px; }
+.adv-col span { display:block; }
+.adv-col select { width:100%; margin-top:4px; }
