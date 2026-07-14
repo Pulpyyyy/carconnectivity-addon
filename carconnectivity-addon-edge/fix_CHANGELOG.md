@@ -1,1 +1,0 @@
-- **CarConnectivity-connector-vw-eu-data-act** → v0.2.0 (multi-brand release)

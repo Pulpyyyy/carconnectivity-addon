@@ -1,3 +1,0 @@
-- **Per-component log levels**: a collapsed "Per-component levels (advanced)" block in the configuration page lets you override the log level of each vehicle account (log + API) and each plugin (MQTT, dashboard, ABRP, MQTT Home Assistant) individually, e.g. debug the MQTT plugin alone while everything else stays at the global level ("default" inherits it, as before).
-- **HA Configuration tab**: the add-on Configuration tab in Home Assistant now simply points to the in-app configuration page.
-- **Locale auto-fill**: the country and language of your Home Assistant are now filled directly into the generated configuration (EU Data Act and Volkswagen North America connectors).

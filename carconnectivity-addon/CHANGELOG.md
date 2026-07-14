@@ -1,3 +1,25 @@
+## 0.8.8
+
+### 🚀 New Features
+- **Volkswagen EU Data Act connector** (read-only): works around the VAG API lockdown that breaks the regular VW/Seat/Cupra connectors (`403`). Available for VW/Seat/Cupra/Bentley, and as an alternative data source for Audi/Skoda.
+- **Multi-brand EU Data Act**: pick the brand directly in the configuration (VW, Seat, Cupra, Audi, Skoda, Bentley).
+- **New in-app configuration page**: configure your vehicles, MQTT, dashboard and ABRP from a web page instead of editing YAML. **How to access it:** open the add-on Web UI (the Ingress entry in the Home Assistant sidebar, or the "Open Web UI" button), then use the **Configuration** tab in the top navigation bar. When the dashboard is disabled, the add-on opens straight on the configuration page.
+- **Automatic config migration**: on first open, your existing configuration is imported into the new page (the old `carconnectivity.UI.json` is kept as a `.bak`). In addition, manufacturer connectors that are now blocked (SEAT/Cupra/VW) are migrated to EU Data Act automatically at startup.
+- **Read-only notice**: a warning is shown (config page and dashboard) when EU Data Act is in use, since location, remote control and vehicle images are not available with it.
+- **Localized interface** in 8 languages (English, French, German, Italian, Spanish, Polish, Portuguese, Norwegian), based on the browser language.
+- **Per-component log levels**: a collapsed "Per-component levels (advanced)" block in the configuration page lets you override the log level of each vehicle account (log + API) and each plugin (MQTT, dashboard, ABRP, MQTT Home Assistant) individually, e.g. debug the MQTT plugin alone while everything else stays at the global level ("default" inherits it, as before).
+- **HA Configuration tab**: the add-on Configuration tab in Home Assistant now simply points to the in-app configuration page (the old YAML options are gone).
+- **Locale auto-fill**: the country and language of your Home Assistant are filled directly into the generated configuration (EU Data Act and Volkswagen North America connectors).
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-vw-eu-data-act** → v0.2.0 (new in this add-on)
+- **CarConnectivity-connector-seatcupra** removed (API blocked since May 2026, replaced by EU Data Act)
+- **CarConnectivity-connector-volkswagen** removed (API blocked since May 2026, replaced by EU Data Act)
+- **CarConnectivity-connector-renaultdacia** → v0.1a1 (new in this add-on)
+
+ --- 
+
 ## 0.8.7
 
 ### 🚀 New Features

@@ -1,4 +1,0 @@
-- **CarConnectivity-connector-vw-eu-data-act** → v0.2.0 (new in this add-on)
-- **CarConnectivity-connector-seatcupra** removed (API blocked since May 2026, replaced by EU Data Act)
-- **CarConnectivity-connector-volkswagen** removed (API blocked since May 2026, replaced by EU Data Act)
-- **CarConnectivity-connector-renaultdacia** → v0.1a1 (new in this add-on)
