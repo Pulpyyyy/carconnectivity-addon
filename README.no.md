@@ -1,4 +1,8 @@
-![Supports aarch64 Architecture][aarch64-shield]![Supports amd64 Architecture][amd64-shield][![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+[![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 
@@ -24,12 +28,12 @@
 
 ## Introduksjon
 
-`CarConnectivity-Addon`Lar deg koble til og hente informasjon om kjøretøyet ditt fra kompatible produsenters online tjenester. Denne guiden forklarer hvordan du konfigurerer modulen riktig.
+`CarConnectivity-Addon` Lar deg koble til og hente informasjon om kjøretøyet ditt fra kompatible produsenters online tjenester. Denne guiden forklarer hvordan du konfigurerer modulen riktig.
 Jeg pakker ganske enkelt[Arbeidet (utmerket) gjort av Till.](https://github.com/tillsteinbach/CarConnectivity)
 
-Hans arbeid er også tilgjengelig som Docker -bilder. Så hvis du bruker`Home Assistant`som en frittstående`docker`, kan du også bruke den direkte.
+Hans arbeid er også tilgjengelig som Docker -bilder. Så hvis du bruker `Home Assistant` som en frittstående `docker`, kan du også bruke den direkte.
 
-**⚠ Prosjektet er fremdeles under utvikling,`reverse engineering`av API som skal fullføres og kommunikasjon med MQTT/Home Assistant som skal tilpasses.⚠**
+**⚠️ Prosjektet er fremdeles under utvikling,`reverse engineering`av API som skal fullføres og kommunikasjon med MQTT/Home Assistant som skal tilpasses.⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 VAG-API-blokkering : Volkswagen / Seat / Cupra (mai 2026)
@@ -66,7 +70,7 @@ Velg produsenten som tilsvarer kjøretøyet ditt fra de støttede merkene:
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America` *(land settes automatisk fra din Home Assistant-landsinnstilling — ussom standard,ca hvis din HA er konfigurert for Canada)*
+- `Volkswagen North America` *(land settes automatisk fra din Home Assistant-landsinnstilling — `us` som standard, `ca` hvis din HA er konfigurert for Canada)*
 - `EU Data Act` *(felles skrivebeskyttet kobling som erstatter de blokkerte koblingene Seat / Cupra / Volkswagen (Europa))*
 
 Hvis du eier flere kjøretøyer fra forskjellige merker, kan du konfigurere flere seksjoner.
@@ -77,7 +81,7 @@ Hver bilprodusent leverer en online tjeneste som lar deg få tilgang til kjøret
 
 #### Nødvendig informasjon:
 
-Til`Skoda`,`Audi`,`Volkswagen North America`og`Tronity`:
+Til `Skoda`, `Audi`, `Volkswagen North America` og `Tronity`:
 
 -   `Brand`: Produsentens merkevare.
 -   `Username`: E -postadressen som ble brukt til å logge på produsentens tjeneste.
@@ -86,7 +90,7 @@ Til`Skoda`,`Audi`,`Volkswagen North America`og`Tronity`:
 -   `Refresh Interval`: Definerer hvor ofte (på sekunder) kjøretøyets data blir oppdatert.
 -   `Warning:`Å sette en oppdateringsfrekvens for ofte kan overstige API -forespørselsgrensene pålagt av produsenten, noe som resulterer i midlertidige tilgangsbegrensninger.
 
-⚠ Du kan bruke 2 kontoer for 2 forskjellige merker eller 2 biler av samme merke som ikke er koblet til samme konto.
+⚠️ Du kan bruke 2 kontoer for 2 forskjellige merker eller 2 biler av samme merke som ikke er koblet til samme konto.
 
 Til `EU Data Act` (Seat, Cupra, Volkswagen Europa; skrivebeskyttet):
 
@@ -108,17 +112,17 @@ Til`Volvo`:
 
 ### 3. MQTT -konfigurasjon (obligatorisk)
 
-Du må bruke`MQTT`å sende kjøretøydata til`Home Assistant`, Konfigurer disse innstillingene:
+Du må bruke `MQTT` å sende kjøretøydata til `Home Assistant`, Konfigurer disse innstillingene:
 
 -   `Username`: MQTT Megler pålogging
 -   `Password`: MQTT Meglerpassord
 -   `Broker Address`: IP eller domenenavn på MQTT -serveren
 
-⚠️ If you're not already using MQTT on `Home Assistant`, kan du for eksempel legge til[`Mosquito Addon`et`MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
+⚠️ Hvis du ikke allerede bruker MQTT på `Home Assistant`, kan du for eksempel legge til[`Mosquito Addon`et`MQTT integration`](https://www.home-assistant.io/integrations/mqtt)
 
 ### 4.`WEBUI`
 
-Du kan få tilgang til`Carconnectivity`sitt originale grensesnitt fra å bruke direkte fra`Home Assistant`.
+Du kan få tilgang til `Carconnectivity` sitt originale grensesnitt fra å bruke direkte fra `Home Assistant`.
 Du kan definere din egen tilgangsopplysning:
 
 -   `Username`: admin
@@ -161,16 +165,18 @@ Hver linje skal følge dette formatet:
 
 ##### Eksempel på en gyldig konfigurasjon:
 
-    - vin: TMBLJ9NY8SF000000
-      token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-    - vin: TMLLJ9NY23F000000
-      token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
+- vin: TMBLJ9NY8SF000000
+  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
+- vin: TMLLJ9NY23F000000
+  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
 
 ### 8. Ekspertmodus
 
 Ekspertmodus muliggjør bruk av alle innfødte carconnectivity-funksjoner, inkludert de som ikke er tilgjengelige gjennom det grafiske grensesnittet-så lenge de tilsvarende funksjonene støttes av tilleggsbokstene.
 
-⚠ Advarsel:
+⚠️ Advarsel:
 Denne modusen deaktiverer all innholdsvalidering og sikkerhetskontroller. Som et resultat kan til og med en liten feil (for eksempel en ugyldig JSON-syntaks) forhindre at tillegget lanseres riktig.
 
 Ekspertmodus er kun ment for avanserte brukere.
@@ -190,9 +196,9 @@ Se den offisielle carconnectivity -dokumentasjonen for listen over støttede fun
 ## Beste praksis
 
 -   **Bare fyll ut innstillingene for kjøretøymerkene du eier.**
--   \***\*Ikke del påloggingsinformasjonen din. \*\***
+-   **Ikke del påloggingsinformasjonen din.**
 -   **Juster oppdateringsintervallet for å unngå å overskride API -forespørselsgrenser. Husk at grensen ser ut til å være omtrent 1000 req/dag.**
--   **Bruk "feilsøking" -loggingsnivå bare når du feilsøker problemer.**\`\*\*
+-   **Bruk "Debug"-loggingsnivå bare når du feilsøker problemer.**
 
 * * *
 

@@ -33,7 +33,7 @@ Ich nutze einfach [Das ausgezeichnete Repository von Till.](https://github.com/t
 
 Sein Repository ist auch als Docker -Bild verfügbar. Also, wenn Sie `Home Assistant`als eigenständiges`docker` verwenden, können Sie es auch direkt verwenden.
 
-**⚠️Das Projekt befindet sich noch in der Entwicklung,`reverse engineering`der API**
+**⚠️Das Projekt befindet sich noch in der Entwicklung, `reverse engineering` der API muss noch abgeschlossen und die Kommunikation mit MQTT/Home Assistant angepasst werden.⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 VAG-API-Sperrung : Volkswagen / Seat / Cupra (Mai 2026)
@@ -70,12 +70,12 @@ Wählen Sie den Hersteller aus, der Ihrem Fahrzeug aus den unterstützten Marken
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America` *(Land wird automatisch durch Ihre Home Assistant-Ländereinstellung festgelegt — standardmäßig us, oder ca, wenn Ihr HA für Kanada konfiguriert ist)*
+- `Volkswagen North America` *(Land wird automatisch durch Ihre Home Assistant-Ländereinstellung festgelegt — standardmäßig `us`, oder `ca`, wenn Ihr HA für Kanada konfiguriert ist)*
 - `EU Data Act` *(gemeinsamer schreibgeschützter Konnektor, der die gesperrten Konnektoren Seat / Cupra / Volkswagen (Europa) ersetzt)*
 
 Wenn Sie mehrere Fahrzeuge aus verschiedenen Marken besitzen, können Sie mehrere Abschnitte konfigurieren.
 
-### 2.. Verbinden Sie sich mit den Online -Diensten des Herstellers
+### 2. Verbinden Sie sich mit den Online -Diensten des Herstellers
 
 Jeder Autohersteller bietet einen Online -Service an, mit dem Sie auf die Daten Ihres Fahrzeugs remote zugreifen können. Um eine Verbindung herzustellen, müssen Sie Ihre Anmeldeinformationen angeben.
 
@@ -103,14 +103,14 @@ Dieser **schreibgeschützte** Konnektor ersetzt die Konnektoren Seat / Cupra / V
 
 Für`Volvo`:
 
--   `API Key primary`: Volvo API primary key.
+-   `API Key primary`: Volvo API Primärschlüssel.
 -   `API Key secondary`: Volvo API Sekundärschlüssel.
--   `Vehicule Token`: Access token for the vehicule.
+-   `Vehicule Token`: Zugang zu Token für das Fahrzeug.
 -   `Vehicule Location Token`: Zugang zu Token für den Standortendpunkt.
 -   `Refresh Interval`: Definiert, wie oft (in Sekunden) die Daten des Fahrzeugs aktualisiert werden.
 -   `Warning:`Das zu häufiges Einstellen einer Aktualisierungsrate kann die vom Hersteller auferlegten API -Anforderungsgrenzen überschreiten, was zu temporären Zugriffsbeschränkungen führt.
 
-### 3.. MQTT -Konfiguration (obligatorisch)
+### 3. MQTT -Konfiguration (obligatorisch)
 
 Sie müssen `MQTT` verwenden um Fahrzeugdaten an `Home Assistant` zu senden. Konfigurieren Sie diese Einstellungen:
 
@@ -122,7 +122,7 @@ Sie müssen `MQTT` verwenden um Fahrzeugdaten an `Home Assistant` zu senden. Kon
 
 ### 4.`WEBUI`
 
-Sie können auf die oberfläche con `Carconnectivity` zugreifen. Die ursprüngliche Schnittstelle.
+Sie können auf die oberfläche von `Carconnectivity` zugreifen. Die ursprüngliche Schnittstelle.
 Sie können Ihre eigenen Zugriffsanmeldeinformationen definieren:
 
 -   `Username`: admin
@@ -194,9 +194,9 @@ In der offiziellen Dokumentation von Carconnectivity finden Sie die Liste der un
 ## Best Practices
 
 -   **Füllen Sie nur die Einstellungen für die Fahrzeugmarken aus, die Sie besitzen.**
--   \***\*Teilen Sie Ihre Login -Anmeldeinformationen nicht. \*\***
+-   **Teilen Sie Ihre Login -Anmeldeinformationen nicht.**
 -   **Passen Sie das Aktualisierungsintervall an, um die Überschreitung von API -Anforderungsgrenzen zu vermeiden. Denken Sie daran, die Grenze scheint ungefähr 1000 REQ/Day zu sein.**
--   **Verwenden Sie das "Debug" -Protokollierungsebene nur bei Problembehebungsproblemen.**\`\*\*
+-   **Verwenden Sie das "Debug" -Protokollierungsebene nur bei Problembehebungsproblemen.**
 
 * * *
 

@@ -1,4 +1,8 @@
-![Supports aarch64 Architecture][aarch64-shield]![Supports amd64 Architecture][amd64-shield][![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+[![GitHub sourcecode](https://img.shields.io/badge/Source-GitHub-green)](https://github.com/Pulpyyyy/carconnectivity-addon/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/releases/latest)
+[![GitHub issues](https://img.shields.io/github/issues/Pulpyyyy/carconnectivity-addon)](https://github.com/Pulpyyyy/carconnectivity-addon/issues)
 
 [aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
 
@@ -29,7 +33,7 @@ Ik ben gewoon een verpakking[Het werk (uitstekend) gedaan door tot.](https://git
 
 Zijn werk is ook beschikbaar als Docker -afbeeldingen. Dus als je gebruikt`Home Assistant`Als stand-alone`docker`, u kunt het ook direct gebruiken.
 
-**⚠️Het project is nog in ontwikkeling,`reverse engineering` of the api to be completed and communication with MQTT/Home assistant to be adapted.⚠️**
+**⚠️Het project is nog in ontwikkeling,`reverse engineering` van de api moet nog worden voltooid en de communicatie met MQTT/Home Assistant moet nog worden aangepast.⚠️**
 
 > [!IMPORTANT]
 > ### 🚧 VAG-API-blokkering : Volkswagen / Seat / Cupra (mei 2026)
@@ -54,7 +58,7 @@ Zijn werk is ook beschikbaar als Docker -afbeeldingen. Dus als je gebruikt`Home 
 
 ## Algemene configuratie
 
-Only fill in the settings for the brands of vehicles you own. **Laat alle andere velden leeg.**
+Vul alleen de instellingen in voor de merken van voertuigen die u bezit. **Laat alle andere velden leeg.**
 
 ### 1. Selecteer uw voertuigmerk
 
@@ -66,7 +70,7 @@ Kies de fabrikant die overeenkomt met uw voertuig uit de ondersteunde merken:
 - `Tronity`
 - `Volvo`
 - `Audi`
-- `Volkswagen North America` *(land automatisch ingesteld via de landinstelling van uw Home Assistant — standaard us, ca als uw HA is geconfigureerd voor Canada)*
+- `Volkswagen North America` *(land automatisch ingesteld via de landinstelling van uw Home Assistant — standaard `us`, `ca` als uw HA is geconfigureerd voor Canada)*
 - `EU Data Act` *(gemeenschappelijke alleen-lezen connector die de geblokkeerde connectoren Seat / Cupra / Volkswagen (Europa) vervangt)*
 
 Als u meerdere voertuigen van verschillende merken bezit, kunt u meerdere secties configureren.
@@ -161,10 +165,12 @@ Elke regel moet dit formaat volgen:
 
 ##### Voorbeeld van een geldige configuratie:
 
-    - vin: TMBLJ9NY8SF000000
-      token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
-    - vin: TMLLJ9NY23F000000
-      token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
+- vin: TMBLJ9NY8SF000000
+  token: 1623fdc3-4aaf-49f5-b51a-1e55435435da2
+- vin: TMLLJ9NY23F000000
+  token: 12afe123-59d4-8a3d-b9ef-29367de7f8749
+```
 
 ### 8. Deskundige modus
 
@@ -190,9 +196,9 @@ Raadpleeg de officiële carconnectiviteitsdocumentatie voor de lijst met onderst
 ## Best practices
 
 -   **Vul alleen de instellingen in voor de voertuigmerken die u bezit.**
--   \***\*Deel uw inloggegevens niet. \*\***
+-   **Deel uw inloggegevens niet.**
 -   **Pas het vernieuwingsinterval aan om te voorkomen dat API -aanvraaglimieten worden overschreden. Onthoud dat de limiet ongeveer 1000 req/dag lijkt te zijn.**
--   **Gebruik het "foutopsporingsniveau" alleen bij problemen met het oplossen van problemen.**\`\*\*
+-   **Gebruik het logniveau "Debug" alleen bij het oplossen van problemen.**
 
 * * *
 
