@@ -1,5 +1,5 @@
 name: "CarConnectivity Add-on"
-version: 0.8.9
+version: 0.8.10
 slug: "carconnectivity-addon"
 description: "CarConnectivity Add-on based on Till's project (https://github.com/tillsteinbach/CarConnectivity). May be unstable. MQTT required. Includes the in-app configuration page and the read-only EU Data Act connector (replaces the blocked VW/Seat/Cupra connectors)."
 image: "docker.io/pulpyyyy/carconnectivity-addon-{arch}"
