@@ -33,8 +33,16 @@
   <nav class="appbar">
     <a class="tab" id="tab-dashboard" href="../" data-i18n="dashboard" hidden>Dashboard</a>
     <a class="tab active" href="./" data-i18n="configuration">Configuration</a>
-    <span class="eu-warning" id="eu-warning" data-i18n="eu_warning">EU Data Act is read-only: features available before are no longer possible (location, remote control, vehicle images, …).</span>
+    <span class="eu-warning" id="eu-warning" data-i18n="eu_warning" hidden>EU Data Act is read-only: features available before are no longer possible (location, remote control, vehicle images, …).</span>
   </nav>
+  <!-- Persistent "restart required" banner: driven by api/meta (server-side
+       fact: config saved after the addon started), so it survives navigating
+       to the dashboard and back. The link jumps out of the Ingress iframe to
+       the HA addon page, where the Restart and Logs buttons live. -->
+  <div class="restart-banner" id="restart-banner" hidden>
+    <span data-i18n="restart_needed">The saved configuration is not applied yet: restart the add-on.</span>
+    <a id="restart-link" target="_top" data-i18n="restart_link" hidden>Open the add-on page (Restart / Logs)</a>
+  </div>
   <main>
     <h1>CarConnectivity</h1>
     <p class="sub" data-i18n="sub">Add your vehicles. Pick your brand: the right data source is chosen for you;

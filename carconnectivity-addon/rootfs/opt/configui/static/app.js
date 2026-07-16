@@ -43,8 +43,23 @@ function refreshSource(card, kindValue, selectedSource) {
   fillSelect(sel, opts, selectedSource || (kind.has_choice ? "auto" : kind.sources[0].value));
 }
 
-// The EU Data Act read-only warning is shown permanently in the top bar (see
-// index.html), so there is no per-vehicle toggling to do here.
+// The EU Data Act read-only warning (top bar) is shown only when at least one
+// vehicle actually uses that source: brands whose only source is EU Data Act
+// (VW / Seat / Cupra / Bentley), or Škoda / Audi explicitly set to it. "auto"
+// resolves to the manufacturer connector, so it does not count.
+function usesEuDataAct(accounts) {
+  return accounts.some((acc) => {
+    const kind = kindByValue(acc.brand);
+    if (!kind) return false;
+    const sources = kind.sources.map((s) => s.value);
+    if (!sources.includes("eu_data_act")) return false;
+    if (!kind.has_choice) return true; // eu_data_act is the only source
+    return acc.data_source === "eu_data_act";
+  });
+}
+function updateEuWarning() {
+  el("eu-warning").hidden = !usesEuDataAct(collect().accounts);
+}
 
 // Inject the fields the selected brand needs (login, keys, client id/secret…).
 function renderFields(card, kindValue, data = {}) {
@@ -232,8 +247,33 @@ async function save() {
       status.textContent = t("save_error"); status.className = "err"; return;
     }
     status.textContent = t("saved", { n: res.connectors }); status.className = "ok";
+    DIRTY = false;
+    refreshRestartBanner();
   } catch (e) { status.textContent = t("error", { msg: e.message }); status.className = "err"; }
 }
+
+// ── Restart banner & unsaved-changes guard ──────────────────────────────────
+// The banner state is a server-side fact (config saved after the addon started),
+// so it survives switching to the dashboard and back. The link leaves the
+// Ingress iframe (target=_top) for the HA addon page: Restart and Logs live
+// there and are NOT duplicated in this page.
+async function refreshRestartBanner() {
+  try {
+    const meta = await getJSON("api/meta");
+    el("restart-banner").hidden = !meta.restart_needed;
+    const link = el("restart-link");
+    if (meta.addon_url) { link.href = meta.addon_url; link.hidden = false; }
+    else link.hidden = true;
+  } catch (_) { /* keep the banner as it is */ }
+}
+
+let DIRTY = false;
+function markDirty() { DIRTY = true; }
+window.addEventListener("beforeunload", (e) => {
+  if (!DIRTY) return;
+  e.preventDefault();
+  e.returnValue = ""; // required by Chrome for the native confirmation dialog
+});
 
 function showNotice(state) {
   const msgs = [];
@@ -296,6 +336,19 @@ async function init() {
   el("add").addEventListener("click", () => addVehicle());
   el("abrp_add").addEventListener("click", () => addToken());
   el("save").addEventListener("click", save);
+
+  // Any edit marks the form dirty: field input/change, and the structural
+  // buttons (add/remove vehicle or token) which do not fire input events.
+  // Brand/source edits also retrigger the EU Data Act warning visibility.
+  const main = document.querySelector("main");
+  main.addEventListener("input", markDirty);
+  main.addEventListener("change", () => { markDirty(); updateEuWarning(); });
+  main.addEventListener("click", (e) => {
+    if (e.target.closest("#add, #abrp_add, .remove, .t-remove")) { markDirty(); updateEuWarning(); }
+  });
+
+  updateEuWarning();
+  refreshRestartBanner();
 }
 
 init().catch((e) => { el("status").textContent = t("load_failed", { msg: e.message }); });

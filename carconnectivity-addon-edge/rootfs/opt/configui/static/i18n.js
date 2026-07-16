@@ -591,3 +591,22 @@ I18N.es.eu_warning = "EU Data Act es de solo lectura: funciones antes disponible
 I18N.pl.eu_warning = "EU Data Act działa tylko do odczytu: funkcje dostępne wcześniej nie są już możliwe (lokalizacja, zdalne sterowanie, zdjęcia pojazdu, …).";
 I18N.pt.eu_warning = "EU Data Act é só de leitura: funções antes disponíveis já não são possíveis (localização, controlo remoto, imagens do veículo, …).";
 I18N.no.eu_warning = "EU Data Act er skrivebeskyttet: funksjoner som var tilgjengelige før, er ikke lenger mulige (posisjon, fjernstyring, kjøretøybilder, …).";
+
+// Persistent "restart required" banner and its shortcut to the HA addon page
+// (where the Restart and Logs buttons live).
+I18N.en.restart_needed = "The saved configuration is not applied yet: restart the addon.";
+I18N.fr.restart_needed = "La configuration enregistrée n’est pas encore appliquée : redémarrez l’addon.";
+I18N.de.restart_needed = "Die gespeicherte Konfiguration ist noch nicht aktiv: Starten Sie das Addon neu.";
+I18N.it.restart_needed = "La configurazione salvata non è ancora applicata: riavvia l’addon.";
+I18N.es.restart_needed = "La configuración guardada aún no está aplicada: reinicia el addon.";
+I18N.pl.restart_needed = "Zapisana konfiguracja nie została jeszcze zastosowana: uruchom ponownie dodatek.";
+I18N.pt.restart_needed = "A configuração guardada ainda não está aplicada: reinicie o addon.";
+I18N.no.restart_needed = "Den lagrede konfigurasjonen er ikke tatt i bruk ennå: start tillegget på nytt.";
+I18N.en.restart_link = "Open the addon page (Restart / Logs)";
+I18N.fr.restart_link = "Ouvrir la page de l’addon (Redémarrer / Journal)";
+I18N.de.restart_link = "Addon-Seite öffnen (Neu starten / Protokoll)";
+I18N.it.restart_link = "Apri la pagina dell’addon (Riavvia / Registro)";
+I18N.es.restart_link = "Abrir la página del addon (Reiniciar / Registro)";
+I18N.pl.restart_link = "Otwórz stronę dodatku (Uruchom ponownie / Dziennik)";
+I18N.pt.restart_link = "Abrir a página do addon (Reiniciar / Registo)";
+I18N.no.restart_link = "Åpne tilleggssiden (Start på nytt / Logg)";

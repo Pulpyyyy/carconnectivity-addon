@@ -10,6 +10,8 @@ import json
 import os
 import socket
 import threading
+import time
+import urllib.request
 
 from flask import Flask, jsonify, request, send_from_directory
 
@@ -117,6 +119,43 @@ def api_webui():
     except OSError:
         up = False
     return jsonify({"up": up})
+
+
+# The page process starts with the addon, so "config saved after this moment"
+# means the running carconnectivity does not use it yet (restart banner).
+_STARTED = time.time()
+# Deep link to the addon page in the HA UI, resolved once from the Supervisor.
+_ADDON_URL = {"resolved": False, "url": None}
+
+
+def _addon_url():
+    if _ADDON_URL["resolved"]:
+        return _ADDON_URL["url"]
+    token = os.environ.get("SUPERVISOR_TOKEN", "")
+    if not token:  # not running under the Supervisor: no link to offer
+        _ADDON_URL["resolved"] = True
+        return None
+    try:
+        req = urllib.request.Request("http://supervisor/addons/self/info",
+                                     headers={"Authorization": "Bearer " + token})
+        with urllib.request.urlopen(req, timeout=2) as resp:
+            slug = ((json.load(resp).get("data") or {}).get("slug") or "")
+    except (OSError, ValueError):
+        return None  # transient Supervisor hiccup: retry on a later call
+    _ADDON_URL["url"] = "/config/app/" + slug + "/info?store=true" if slug else None
+    _ADDON_URL["resolved"] = True
+    return _ADDON_URL["url"]
+
+
+@app.get("/api/meta")
+def api_meta():
+    """Data for the top banner: does the saved config await a restart, and where
+    is the HA addon page (its Restart and Logs buttons) for the shortcut link."""
+    try:
+        restart_needed = os.path.getmtime(CONFIG_PATH) > _STARTED
+    except OSError:
+        restart_needed = False
+    return jsonify({"restart_needed": restart_needed, "addon_url": _addon_url()})
 
 
 @app.get("/api/state")

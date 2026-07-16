@@ -48,6 +48,9 @@ button.link { background:none; color:var(--err); padding:0; }
 .actions { display:flex; align-items:center; gap:14px; position:sticky; bottom:0;
   background:var(--bg); padding:12px 0; }
 #status.ok { color:var(--ok); } #status.err { color:var(--err); }
+.restart-banner { background:var(--notice-bg); border-bottom:1px solid var(--notice-line);
+  color:var(--notice-txt); padding:8px 16px; font-size:.9em; text-align:center; }
+.restart-banner a { color:inherit; font-weight:600; margin-left:.5em; white-space:nowrap; }
 .notice { background:var(--notice-bg); border:1px solid var(--notice-line); color:var(--notice-txt);
   border-radius:10px; padding:10px 14px; margin:16px 0; font-size:.9em; }
 .notice p { margin:.3em 0; }
