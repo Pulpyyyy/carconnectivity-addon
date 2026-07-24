@@ -147,15 +147,33 @@ def _addon_url():
     return _ADDON_URL["url"]
 
 
+# What the entrypoint actually launched carconnectivity with (source config
+# after migration/locale injection, whatever the source: page, expert, legacy).
+_RUNTIME_PATH = "/config/.cache/carconnectivity.runtime.json"
+
+
+def _eu_data_act_running() -> bool:
+    """Whether the RUNNING instance uses the EU Data Act connector. Read from the
+    runtime copy so the dashboard warning reflects what is live, not the form."""
+    cfg = _read_json(_RUNTIME_PATH) or _read_json(CONFIG_PATH) or {}
+    cc = cfg.get("carConnectivity") if isinstance(cfg, dict) else None
+    if not isinstance(cc, dict):
+        return False
+    return any(isinstance(c, dict) and c.get("type") == "vw_eu_data_act"
+               for c in cc.get("connectors") or [])
+
+
 @app.get("/api/meta")
 def api_meta():
-    """Data for the top banner: does the saved config await a restart, and where
-    is the HA addon page (its Restart and Logs buttons) for the shortcut link."""
+    """Data for the top bars (config page and injected dashboard bar): does the
+    saved config await a restart, where is the HA addon page (its Restart and
+    Logs buttons) for the shortcut link, and is EU Data Act in actual use."""
     try:
         restart_needed = os.path.getmtime(CONFIG_PATH) > _STARTED
     except OSError:
         restart_needed = False
-    return jsonify({"restart_needed": restart_needed, "addon_url": _addon_url()})
+    return jsonify({"restart_needed": restart_needed, "addon_url": _addon_url(),
+                    "eu_data_act": _eu_data_act_running()})
 
 
 @app.get("/api/state")

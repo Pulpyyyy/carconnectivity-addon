@@ -247,7 +247,7 @@ async function save() {
       status.textContent = t("save_error"); status.className = "err"; return;
     }
     status.textContent = t("saved", { n: res.connectors }); status.className = "ok";
-    DIRTY = false;
+    markClean();
     refreshRestartBanner();
   } catch (e) { status.textContent = t("error", { msg: e.message }); status.className = "err"; }
 }
@@ -268,7 +268,9 @@ async function refreshRestartBanner() {
 }
 
 let DIRTY = false;
-function markDirty() { DIRTY = true; }
+function updateSaveState() { el("save").disabled = !DIRTY; }
+function markDirty() { DIRTY = true; updateSaveState(); }
+function markClean() { DIRTY = false; updateSaveState(); }
 window.addEventListener("beforeunload", (e) => {
   if (!DIRTY) return;
   e.preventDefault();
@@ -320,6 +322,14 @@ async function init() {
       if (w.up) {
         dash.href = location.pathname.includes("/configui/") ? "../" : "./";
         dash.hidden = false;
+        // In-page guard for the tab switch: beforeunload is ignored by the HA
+        // companion apps (WKWebView), confirm() is not. Cleared on accept so
+        // browsers do not stack their own generic beforeunload dialog on top.
+        dash.addEventListener("click", (e) => {
+          if (!DIRTY) return;
+          if (confirm(t("unsaved_confirm"))) markClean();
+          else e.preventDefault();
+        });
       }
     } catch (_) { /* keep the Dashboard tab hidden */ }
   }
@@ -346,6 +356,11 @@ async function init() {
   main.addEventListener("click", (e) => {
     if (e.target.closest("#add, #abrp_add, .remove, .t-remove")) { markDirty(); updateEuWarning(); }
   });
+
+  // Save stays disabled until something changes. An imported or migrated
+  // config counts as a pending change: it must be saveable as-is to be adopted.
+  if (state._imported_from || (state._migrated && state._migrated.length)) markDirty();
+  else updateSaveState();
 
   updateEuWarning();
   refreshRestartBanner();

@@ -610,3 +610,14 @@ I18N.es.restart_link = "Abrir la página del addon (Reiniciar / Registro)";
 I18N.pl.restart_link = "Otwórz stronę dodatku (Uruchom ponownie / Dziennik)";
 I18N.pt.restart_link = "Abrir a página do addon (Reiniciar / Registo)";
 I18N.no.restart_link = "Åpne tilleggssiden (Start på nytt / Logg)";
+
+// In-page confirmation when leaving the configuration with unsaved changes
+// (used on the Dashboard tab, where the companion apps ignore beforeunload).
+I18N.en.unsaved_confirm = "You have unsaved changes. Leave the page anyway?";
+I18N.fr.unsaved_confirm = "Des modifications ne sont pas enregistrées. Quitter la page quand même ?";
+I18N.de.unsaved_confirm = "Es gibt nicht gespeicherte Änderungen. Seite trotzdem verlassen?";
+I18N.it.unsaved_confirm = "Ci sono modifiche non salvate. Uscire comunque dalla pagina?";
+I18N.es.unsaved_confirm = "Hay cambios sin guardar. ¿Salir de la página de todos modos?";
+I18N.pl.unsaved_confirm = "Masz niezapisane zmiany. Czy mimo to opuścić stronę?";
+I18N.pt.unsaved_confirm = "Existem alterações não guardadas. Sair da página mesmo assim?";
+I18N.no.unsaved_confirm = "Du har ulagrede endringer. Vil du forlate siden likevel?";

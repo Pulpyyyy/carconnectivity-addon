@@ -1,0 +1,3 @@
+- **Dashboard top bar**: the EU Data Act read-only warning is now shown only when the running configuration actually uses that source, and the "restart required" notice (with its link to the add-on page) now also appears there (#151)
+- **Configuration page**: the Save button is disabled until something is changed (an imported or migrated configuration counts as a pending change), and switching to the dashboard with unsaved changes asks for confirmation, including in the Home Assistant companion apps (#151)
+- **Dark mode**: the form fields were invisible inside the vehicle cards (field background identical to the card background); the dark palette now uses distinct field colors (#151)

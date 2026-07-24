@@ -3,11 +3,14 @@
    follows the webui's choice via the shared "cc-theme" localStorage key, so the
    two pages stay in sync without their own switcher. */
 :root { --bg:#f5f6f8; --card:#fff; --card2:#fafbfc; --field:#fff; --btn2:#eceff1;
-  --line:#e2e5e9; --txt:#1c1e21; --muted:#6b7280; --accent:#03a9f4; --ok:#2e7d32; --err:#c62828;
+  --line:#e2e5e9; --field-line:#e2e5e9; --txt:#1c1e21; --muted:#6b7280; --accent:#03a9f4; --ok:#2e7d32; --err:#c62828;
   --notice-bg:#fff8e1; --notice-line:#ffe082; --notice-txt:#1c1e21; color-scheme:light; }
 html[data-bs-theme="dark"] {
-  --bg:#1a1d20; --card:#212529; --card2:#2b3035; --field:#2b3035; --btn2:#343a40;
-  --line:#2c3034; --txt:#dee2e6; --muted:#9aa0a6; --accent:#03a9f4; --ok:#69db7c; --err:#ff6b6b;
+  /* --field must differ from BOTH section (--card) and vehicle-card (--card2)
+     backgrounds, and --field-line must stand out against them, or the inputs
+     become invisible inside the vehicle cards (#151). */
+  --bg:#1a1d20; --card:#212529; --card2:#2b3035; --field:#16191c; --btn2:#343a40;
+  --line:#2c3034; --field-line:#495057; --txt:#dee2e6; --muted:#9aa0a6; --accent:#03a9f4; --ok:#69db7c; --err:#ff6b6b;
   --notice-bg:#332b1a; --notice-line:#5c4a1f; --notice-txt:#ffe6a3; color-scheme:dark; }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--bg); color:var(--txt);
@@ -32,7 +35,7 @@ section { background:var(--card); border:1px solid var(--line); border-radius:12
 /* block label so the text and its inline "(optional)" hint stay on the SAME line
    (a flex column would stack the hint on its own line and push the field down). */
 label { display:block; font-size:.85em; color:var(--muted); }
-input, select { font:inherit; padding:8px; border:1px solid var(--line); border-radius:8px;
+input, select { font:inherit; padding:8px; border:1px solid var(--field-line); border-radius:8px;
   background:var(--field); color:var(--txt); }
 .grid input, .grid select { display:block; width:100%; margin-top:4px; }
 .card { border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:12px;
@@ -44,6 +47,7 @@ input, select { font:inherit; padding:8px; border:1px solid var(--line); border-
 button { font:inherit; padding:9px 16px; border:0; border-radius:8px; cursor:pointer;
   background:var(--accent); color:#fff; }
 button.secondary { background:var(--btn2); color:var(--txt); }
+button:disabled { opacity:.45; cursor:not-allowed; }
 button.link { background:none; color:var(--err); padding:0; }
 .actions { display:flex; align-items:center; gap:14px; position:sticky; bottom:0;
   background:var(--bg); padding:12px 0; }
