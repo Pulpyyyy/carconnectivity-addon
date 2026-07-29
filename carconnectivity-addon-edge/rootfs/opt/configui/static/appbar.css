@@ -20,3 +20,13 @@
 
 .appbar .eu-warning { margin-left:auto; color:#ff6b6b; font-size:.82em; font-weight:600;
   text-align:right; line-height:1.2; }
+
+/* "Restart required" banner: full-width bar right below the appbar, same look
+   on both pages. Like the appbar, positioning is set per context (config page:
+   sticky via style.css; dashboard: fixed via the injected script), and colours
+   are literal with a dark variant keyed on the page's data-bs-theme. */
+.cc-restart-bar { display:none; background:#fff8e1; border-bottom:1px solid #ffe082;
+  color:#1c1e21; padding:8px 16px; box-sizing:border-box; text-align:center;
+  font:500 13px/1.35 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+html[data-bs-theme="dark"] .cc-restart-bar { background:#332b1a; border-color:#5c4a1f; color:#ffe6a3; }
+.cc-restart-bar a { color:inherit; font-weight:600; }

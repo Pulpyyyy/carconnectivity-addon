@@ -233,7 +233,14 @@ function tError(msg) {
 }
 function showErrors(errors) {
   const cards = document.querySelectorAll(".vehicle");
-  for (const e of errors) if (e.index >= 0 && cards[e.index]) cards[e.index].querySelector(".v-error").textContent = tError(e.error);
+  let first = null;
+  for (const e of errors) if (e.index >= 0 && cards[e.index]) {
+    cards[e.index].querySelector(".v-error").textContent = tError(e.error);
+    if (!first) first = cards[e.index];
+  }
+  // Bring the first offending card into view: with several vehicles the error
+  // can sit far above the Save button the user just clicked.
+  if (first) first.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 async function save() {
@@ -260,7 +267,13 @@ async function save() {
 async function refreshRestartBanner() {
   try {
     const meta = await getJSON("api/meta");
-    el("restart-banner").hidden = !meta.restart_needed;
+    const banner = el("restart-banner");
+    if (meta.restart_needed) {
+      // Stick right below the appbar; its height is content-driven, measure it.
+      const bar = document.querySelector(".appbar");
+      if (bar) banner.style.top = bar.offsetHeight + "px";
+      banner.style.display = "block";
+    } else banner.style.display = "none";
     const link = el("restart-link");
     if (meta.addon_url) { link.href = meta.addon_url; link.hidden = false; }
     else link.hidden = true;
