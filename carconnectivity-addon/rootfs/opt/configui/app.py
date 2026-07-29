@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import socket
+import tempfile
 import threading
 import time
 import urllib.request
@@ -90,11 +91,45 @@ def _ensure_shape(state) -> str | None:
     return None
 
 
+_ALLOWED_WRITE_PATHS = frozenset({STATE_PATH, CONFIG_PATH})
+
+
 def _atomic_write(path: str, data: dict) -> None:
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=2, ensure_ascii=False)
-    os.replace(tmp, path)
+    if path not in _ALLOWED_WRITE_PATHS:
+        raise ValueError(f"Refusing to write to non-allowed path: {path!r}")
+    dir_name = os.path.dirname(path)
+    fd, tmp = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            json.dump(data, fh, indent=2, ensure_ascii=False)
+        os.replace(tmp, path)
+    except Exception:
+        os.unlink(tmp)
+        raise
+
+
+@app.before_request
+def _require_auth():
+    supervisor_token = os.environ.get("SUPERVISOR_TOKEN", "")
+    if not supervisor_token:
+        return None  # not running under HA Supervisor — skip auth
+    session = request.cookies.get("ingress_session", "")
+    if not session:
+        return jsonify({"error": "Unauthorized"}), 401
+    try:
+        req = urllib.request.Request(
+            "http://supervisor/ingress/validate_session",
+            data=json.dumps({"session": session}).encode(),
+            headers={"Authorization": f"Bearer {supervisor_token}",
+                     "Content-Type": "application/json"},
+            method="POST",
+        )
+        urllib.request.urlopen(req, timeout=2).close()
+    except urllib.error.HTTPError:
+        return jsonify({"error": "Unauthorized"}), 401
+    except OSError:
+        return None  # Supervisor temporarily unreachable: fail open
+    return None
 
 
 @app.get("/")
