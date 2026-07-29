@@ -38,8 +38,10 @@
   <!-- Persistent "restart required" banner: driven by api/meta (server-side
        fact: config saved after the addon started), so it survives navigating
        to the dashboard and back. The link jumps out of the Ingress iframe to
-       the HA addon page, where the Restart and Logs buttons live. -->
-  <div class="restart-banner" id="restart-banner" hidden>
+       the HA addon page, where the Restart and Logs buttons live. Shared look
+       with the dashboard banner (appbar.css); shown via style.display since
+       the class hides it by default. -->
+  <div class="cc-restart-bar" id="restart-banner">
     <span data-i18n="restart_needed">The saved configuration is not applied yet: restart the add-on.</span>
     <a id="restart-link" target="_top" data-i18n="restart_link" hidden>Open the add-on page (Restart / Logs)</a>
   </div>

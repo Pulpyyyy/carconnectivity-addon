@@ -1,0 +1,2 @@
+- **"Restart required" banner**: on the dashboard it is now a full-width banner below the top bar (same layout as the configuration page) that wraps on small screens instead of overflowing, and on both pages it stays visible below the bar while scrolling (#151)
+- **Configuration page**: saving with validation errors now scrolls to the first offending vehicle card (#151)
