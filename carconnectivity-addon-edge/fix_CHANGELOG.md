@@ -1,1 +1,0 @@
-- **CarConnectivity-connector-vw-eu-data-act** → v0.3.0b1 (pre-release: browser-like session headers and clearer login errors, opt-in terms acceptance, range mapped on vehicles that only expose it by portal key)
