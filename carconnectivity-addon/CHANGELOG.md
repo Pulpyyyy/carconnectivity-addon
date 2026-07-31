@@ -1,17 +1,11 @@
-## 0.8.14
+## 0.8.15
 
 
 ### 🛠️ Fixes & Updates
 
+- **"Restart required" banner**: on the dashboard it is now a full-width banner below the top bar (same layout as the configuration page) that wraps on small screens instead of overflowing, and on both pages it stays visible below the bar while scrolling (#151)
+- **Configuration page**: saving with validation errors now scrolls to the first offending vehicle card (#151)
 - **CarConnectivity-connector-volkswagen-na** → v0.1.24
-
- --- 
-
-## 0.8.13
-
-
-### 🛠️ Fixes & Updates
-
 - **hassio-addons/base** → [21.0.1](https://github.com/hassio-addons/addon-base/releases/tag/v21.0.1)
 
  --- 
