@@ -1,2 +1,3 @@
 - **"Restart required" banner**: on the dashboard it is now a full-width banner below the top bar (same layout as the configuration page) that wraps on small screens instead of overflowing, and on both pages it stays visible below the bar while scrolling (#151)
 - **Configuration page**: saving with validation errors now scrolls to the first offending vehicle card (#151)
+- **CarConnectivity-connector-vw-eu-data-act** → v0.3.0b1 (pre-release: browser-like session headers and clearer login errors, opt-in terms acceptance, range mapped on vehicles that only expose it by portal key)
