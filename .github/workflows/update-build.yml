@@ -292,10 +292,18 @@ jobs:
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git pull
+          # Commit BEFORE pulling: a bare "git pull" aborts when the working tree
+          # carries the edits made above and another job (typically update-base
+          # earlier in the same pipeline) has pushed meanwhile. Rebase replays
+          # this commit on top, and the push is retried on a lost race.
           git add .
           git diff --cached --quiet || git commit -m "Update build.yaml with latest submodule versions"
-          git push
+          git pull --rebase --autostash
+          for attempt in 1 2 3; do
+            git push && break
+            echo "Push rejected (attempt ${attempt}), rebasing on the new head"
+            git pull --rebase --autostash
+          done
 
       - name: Report pip dependency conflict
         if: ${{ env.CONFLICT_DETECTED == 'true' }}
