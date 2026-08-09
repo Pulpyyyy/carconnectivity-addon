@@ -1,3 +1,14 @@
+## 0.8.17
+
+
+### 🛠️ Fixes & Updates
+
+- **MQTT**: leaving `Broker host` empty now really applies the Home Assistant Mosquitto defaults (`core-mosquitto`, port `1883`), as the field hint and the documentation promise. It previously wrote a configuration CarConnectivity refuses to start with (`No MQTT broker specified in config`), which stopped the add-on at boot (#159)
+- **Configuration page**: when the dashboard is not running, opening the add-on now lands on the `/configui/` path instead of serving the page in place. Saving from there works; before, the Save request went to the stopped dashboard and failed with `Unexpected non-whitespace character after JSON` (#159)
+- **Configuration page**: a reply that is not JSON is now reported as a readable message (add-on stopped or restarting) instead of the raw parse error (#159)
+
+ --- 
+
 ## 0.8.16
 
 
