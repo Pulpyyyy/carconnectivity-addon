@@ -11,6 +11,13 @@ from __future__ import annotations
 STATE_PATH = "/config/carconnectivity.configui.json"
 CONFIG_PATH = "/config/carconnectivity.json"
 
+# CarConnectivity refuses to start without an MQTT broker, so an empty broker
+# field falls back to the Home Assistant Mosquitto add-on defaults (what the page
+# and DOCS advertise). Used when generating a config and when repairing one at
+# startup, hence here rather than in generator.py.
+DEFAULT_MQTT_BROKER = "core-mosquitto"
+DEFAULT_MQTT_PORT = 1883
+
 SOURCE_EU_DATA_ACT = "eu_data_act"
 SOURCE_MANUFACTURER = "manufacturer"
 SOURCE_AUTO = "auto"

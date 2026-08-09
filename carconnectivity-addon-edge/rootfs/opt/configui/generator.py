@@ -11,17 +11,12 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from const import KINDS, SOURCE_EU_DATA_ACT, connector_for, resolve_source
+from const import (DEFAULT_MQTT_BROKER, DEFAULT_MQTT_PORT, KINDS,
+                   SOURCE_EU_DATA_ACT, connector_for, resolve_source)
 from migrate import inject_locale
 
 _DEFAULT_LOG = "info"
 _DEFAULT_API_LOG = "error"
-# CarConnectivity refuses to start at all without a broker ("No MQTT broker
-# specified in config"), so an empty MQTT field must fall back to the Home
-# Assistant Mosquitto add-on defaults the page advertises (field placeholder and
-# hint) instead of producing a config that cannot boot.
-_DEFAULT_MQTT_BROKER = "core-mosquitto"
-_DEFAULT_MQTT_PORT = 1883
 
 _EU_BRAND_TO_KEY = {k["eu_brand"]: key for key, k in KINDS.items() if k.get("eu_brand")}
 _MANU_CONN_TO_KEY = {k["manufacturer_connector"]: key for key, k in KINDS.items() if k.get("manufacturer_connector")}
@@ -99,9 +94,9 @@ def build_config(state: dict[str, Any]) -> dict[str, Any]:
 
     mqtt = dict(settings.get("mqtt") or {})
     if not mqtt.get("broker"):
-        mqtt["broker"] = _DEFAULT_MQTT_BROKER
+        mqtt["broker"] = DEFAULT_MQTT_BROKER
     if not mqtt.get("port"):
-        mqtt["port"] = _DEFAULT_MQTT_PORT
+        mqtt["port"] = DEFAULT_MQTT_PORT
     mqtt["log_level"] = _plugin_level("mqtt")
     plugins: list[dict[str, Any]] = [{"type": "mqtt", "config": mqtt}]
 

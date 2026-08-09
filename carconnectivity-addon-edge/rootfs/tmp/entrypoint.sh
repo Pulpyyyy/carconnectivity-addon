@@ -237,6 +237,14 @@ fi
 if [ -n "${MIGRATED}" ]; then
     color_echo "${YELLOW}" "🔁 Migrated to EU Data Act: ${MIGRATED}"
 fi
+
+# migrate.py fills a missing MQTT broker in the runtime copy (without it
+# CarConnectivity exits at startup). Say so, since the source config still has
+# the field empty and the value only becomes permanent on the next save.
+MQTT_NO_BROKER=$(jq -r '[.carConnectivity.plugins[]? | select(.type == "mqtt") | select((.config.broker // "") == "")] | length' "${SRC_CONFIG}" 2>/dev/null || echo 0)
+if [ "${MQTT_NO_BROKER}" != "0" ] && [ -n "${MQTT_NO_BROKER}" ]; then
+    color_echo "${YELLOW}" "🔧 No MQTT broker in the configuration: using core-mosquitto:1883. Open the configuration page and save to store it."
+fi
 CONFIG_FILE=${RUNTIME_FILE}
 
 DEBUG_LEVEL=$(jq -r '.carConnectivity.log_level'  ${CONFIG_FILE} 2>/dev/null || echo "")
