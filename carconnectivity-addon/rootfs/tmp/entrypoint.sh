@@ -219,7 +219,9 @@ else
     color_echo "${BLUE}" "🛠️ No configuration yet — starting with defaults. Configure in the Web UI (Ingress → Configuration page)."
     DEFAULT_FILE="/config/.cache/carconnectivity.default.json"
     mkdir -p "$(dirname "${DEFAULT_FILE}")"
-    /opt/venv/bin/python -c "import sys, json; sys.path.insert(0, '/opt/configui'); from generator import build_config; json.dump(build_config({'settings': {'mqtt': {'broker': 'core-mosquitto', 'port': 1883}}}), open('${DEFAULT_FILE}', 'w'), indent=2)"
+    # build_config fills the MQTT defaults itself, so there is a single source
+    # of truth for them (generator._DEFAULT_MQTT_BROKER / _DEFAULT_MQTT_PORT).
+    /opt/venv/bin/python -c "import sys, json; sys.path.insert(0, '/opt/configui'); from generator import build_config; json.dump(build_config({}), open('${DEFAULT_FILE}', 'w'), indent=2)"
     SRC_CONFIG=${DEFAULT_FILE}
 fi
 
