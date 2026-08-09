@@ -248,7 +248,14 @@ async function save() {
   const status = el("status"); status.textContent = t("saving"); status.className = "";
   try {
     const r = await fetch("api/state", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(collect()) });
-    const res = await r.json();
+    // The backend answers JSON on every path, errors included. Anything else
+    // means the request never reached it (HA Ingress replies "502: Bad Gateway"
+    // as plain text when the addon is down), so say that instead of letting the
+    // JSON parse error surface as-is.
+    const body = await r.text();
+    let res;
+    try { res = JSON.parse(body); }
+    catch (_) { status.textContent = t("save_unreachable", { code: r.status }); status.className = "err"; return; }
     if (!r.ok || !res.ok) {
       showErrors(res.errors || []);
       status.textContent = t("save_error"); status.className = "err"; return;
