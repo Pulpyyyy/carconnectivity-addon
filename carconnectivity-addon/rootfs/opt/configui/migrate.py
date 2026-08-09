@@ -8,6 +8,9 @@ generated UI config), so the migration is not limited to the config page.
 Idempotent: a config already on EU Data Act is left unchanged. Other connectors
 (Volvo, Škoda/Audi/VW-NA manufacturer, …) are untouched.
 
+The same pass also fills a missing MQTT broker (see ensure_mqtt_broker), the one
+omission that stops CarConnectivity from starting at all.
+
 CLI:  python migrate.py <in.json> <out.json>   # prints migrated brand labels
 """
 from __future__ import annotations
@@ -17,7 +20,7 @@ import os
 import sys
 from typing import Any
 
-from const import KINDS
+from const import DEFAULT_MQTT_BROKER, DEFAULT_MQTT_PORT, KINDS
 
 
 def migrate_config(config: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
@@ -71,6 +74,31 @@ def inject_locale(config: dict[str, Any], country: str, lang: str, na_country: s
                 cfg["country"] = na_country
 
 
+def ensure_mqtt_broker(config: dict[str, Any]) -> bool:
+    """Fill an enabled mqtt plugin's missing broker/port. Returns True if it did.
+
+    CarConnectivity exits at startup when the broker is missing ("No MQTT broker
+    specified in config"), and a config page older than 0.8.17 could save one
+    without it. Repairing the RUNTIME copy makes such an addon boot again on
+    update instead of leaving the user with a container that never starts; the
+    source config is untouched, so the page still shows the field as they left it.
+    """
+    cc = config.get("carConnectivity") if isinstance(config, dict) else None
+    if not isinstance(cc, dict):
+        return False
+    for plugin in cc.get("plugins") or []:
+        if not isinstance(plugin, dict) or plugin.get("type") != "mqtt" or plugin.get("disabled"):
+            continue
+        cfg = plugin.setdefault("config", {})
+        if not isinstance(cfg, dict) or cfg.get("broker"):
+            return False
+        cfg["broker"] = DEFAULT_MQTT_BROKER
+        if not cfg.get("port"):
+            cfg["port"] = DEFAULT_MQTT_PORT
+        return True
+    return False
+
+
 def _ensure_unique_ids(connectors: list[dict[str, Any]]) -> None:
     """Give every connector a unique connector_id (migration can create duplicate
     vw_eu_data_act instances that would otherwise collide)."""
@@ -95,6 +123,7 @@ def main(argv: list[str]) -> int:
     config, migrated = migrate_config(config)
     inject_locale(config, os.environ.get("HA_COUNTRY", ""), os.environ.get("HA_LANG", ""),
                   os.environ.get("NA_COUNTRY", ""))
+    ensure_mqtt_broker(config)
     with open(argv[2], "w", encoding="utf-8") as fh:
         json.dump(config, fh, indent=2, ensure_ascii=False)
     # Printed for the entrypoint to surface in the addon log.
