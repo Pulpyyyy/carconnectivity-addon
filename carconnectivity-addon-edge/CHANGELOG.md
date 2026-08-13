@@ -1,3 +1,13 @@
+## 0.8.18
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-vw-eu-data-act** → v0.3.0b3
+- **MQTT**: an add-on whose saved configuration has no broker now starts anyway, with `core-mosquitto:1883` applied to the running configuration and a notice in the log, instead of stopping at boot. The saved file is left untouched: open the configuration page and save to store the value (#159)
+
+ --- 
+
 ## 0.8.17
 
 
