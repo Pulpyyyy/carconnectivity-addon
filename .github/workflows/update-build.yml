@@ -32,6 +32,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          # Checkout the branch head, not the dispatch-time SHA: an earlier job
+          # in the same pipeline (update-base) may have pushed a version bump,
+          # and a stale base makes the CHANGELOG prepend conflict on rebase.
+          ref: ${{ github.ref }}
           fetch-depth: 0
           submodules: false
 

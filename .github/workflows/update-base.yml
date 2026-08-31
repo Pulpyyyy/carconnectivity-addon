@@ -19,6 +19,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          # Checkout the branch head, not the dispatch-time SHA, so each matrix
+          # iteration sees the previous iteration's push (see update-build.yml).
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - name: Get latest base image version
