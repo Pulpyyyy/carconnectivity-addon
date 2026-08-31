@@ -1,3 +1,13 @@
+## 0.8.21
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → v0.13a1
+- **CarConnectivity-connector-volkswagen-na** → v0.2.0
+
+ --- 
+
 ## 0.8.20
 
 
