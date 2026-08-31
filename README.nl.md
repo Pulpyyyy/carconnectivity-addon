@@ -89,6 +89,13 @@ Voor de VAG-merken (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, 
 - `S-PIN` *(optioneel)*: De 4-cijferige code die nodig is voor externe toegang tot bepaalde voertuigfuncties.
 - `VIN` *(optioneel)*: Beperk het account tot één voertuig.
 
+Voor `Škoda` met de **fabrikant**-gegevensbron op de **Edge-add-on** (officiële publieke Škoda-API, connector v0.13+; de stabiele add-on gebruikt nog de aanmelding met gebruikersnaam/wachtwoord hierboven):
+- `API-sleutel`: aangemaakt in de **MyŠkoda-app** (v8.16 of nieuwer), in het sleutelbeheerscherm.
+- `VIN('s)`: de VIN('s) die de sleutel dekt, gescheiden door komma's. **Verplicht**: de publieke API kan uw voertuigen niet opsommen.
+- `Interval` *(optioneel, seconden)*: verversingsinterval, **minimaal 300 s** (de API staat 20 verzoeken per uur per sleutel toe).
+
+⚠️ De publieke API biedt geen ver-/ontgrendelen, claxon/lichten, wake-up of onderhoudsgegevens meer; afstandsbediening dekt **alleen klimaat en laden** (geen S-PIN nodig). Een bestaand Škoda-account met gebruikersnaam/wachtwoord wordt bij het opstarten automatisch gemigreerd naar de alleen-lezen EU Data Act-bron zodat de add-on blijft starten; zet het terug zodra de API-sleutel is aangemaakt.
+
 Voor `Volvo`:
 - `API key (primary)` / `API key (secondary)`: Volvo API-sleutels.
 - `Vehicle token`: Toegangstoken voor het voertuig.

@@ -89,6 +89,13 @@ For the VAG brands (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, 
 - `S-PIN` *(optional)*: The 4-digit code required for remote access to certain vehicle features.
 - `VIN` *(optional)*: Restrict the account to one vehicle.
 
+For `Škoda` with the **manufacturer** data source on the **Edge add-on** (official Škoda public API, connector v0.13+; the stable add-on keeps the username/password login above):
+- `API key`: Created in the **MyŠkoda app** (v8.16 or newer), in the key-management screen.
+- `VIN(s)`: The VIN(s) covered by the key, comma-separated. **Mandatory**: the public API cannot list your vehicles.
+- `Interval` *(optional, seconds)*: Refresh interval, **minimum 300 s** (the API allows 20 requests per hour per key).
+
+⚠️ The public API no longer offers lock/unlock, honk & flash, wake-up or maintenance data; remote control covers **climate and charging only** (no S-PIN needed). An existing Škoda account using username/password is migrated automatically at startup to the read-only EU Data Act source so the add-on keeps starting; switch it back once the API key is created.
+
 For `Volvo`:
 - `API key (primary)` / `API key (secondary)`: Volvo API keys.
 - `Vehicle token`: Access token for the vehicle.

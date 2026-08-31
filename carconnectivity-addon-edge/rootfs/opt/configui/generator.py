@@ -12,7 +12,8 @@ import os
 from typing import Any
 
 from const import (DEFAULT_MQTT_BROKER, DEFAULT_MQTT_PORT, KINDS,
-                   SOURCE_EU_DATA_ACT, connector_for, resolve_source)
+                   SOURCE_EU_DATA_ACT, SOURCE_MANUFACTURER, connector_for,
+                   fields_for, resolve_source)
 from migrate import inject_locale
 
 _DEFAULT_LOG = "info"
@@ -43,13 +44,19 @@ def build_connector(account: dict[str, Any], api_log_level: str = _DEFAULT_API_L
         source = resolve_source(kind_key, account.get("data_source", "auto"))
         ctype, extra = connector_for(kind_key, source)
     else:
+        source = None
         ctype, extra = connector_for(kind_key, None)
 
     config: dict[str, Any] = dict(extra)  # brand for EU Data Act
-    for f in kind["fields"]:
+    for f in fields_for(kind_key, source):
         v = account.get(f["key"])
         if v not in (None, ""):
-            config[f["key"]] = _field_value(f, v)
+            v = _field_value(f, v)
+            # A connector-enforced floor (Škoda public API: 300 s) raises at the
+            # addon's startup, so refuse it at save time instead.
+            if f.get("min") is not None and isinstance(v, int) and v < f["min"]:
+                raise ValueError(f'{f["label"]} must be at least {f["min"]}')
+            config[f["key"]] = v
     # Optional per-account level overrides; absent means "inherit the globals"
     # (log_level is then simply not written, api_log_level gets the global).
     if account.get("log_level"):
@@ -148,19 +155,29 @@ def parse_config(config: dict[str, Any]) -> dict[str, Any]:
             api_levels.append(cfg["api_log_level"])
 
         data_source = None
+        source = None  # resolved source, drives the field schema
         if ctype == "vw_eu_data_act":
             kind_key = _EU_BRAND_TO_KEY.get(cfg.get("brand"))
-            data_source = SOURCE_EU_DATA_ACT
+            data_source = source = SOURCE_EU_DATA_ACT
+        elif ctype == "skoda" and not cfg.get("api_key") and not cfg.get("vins"):
+            # Pre-0.13 Škoda config (username/password login): the connector now
+            # wants the public-API key, so keep the account alive on EU Data Act
+            # where those credentials still work (mirrors migrate.migrate_config).
+            kind_key = "skoda"
+            data_source = source = SOURCE_EU_DATA_ACT
+            migrated.append(KINDS["skoda"]["label"])
         elif ctype in _MANU_CONN_TO_KEY:
             kind_key = _MANU_CONN_TO_KEY[ctype]  # skoda / audi / volkswagen_na
+            source = SOURCE_MANUFACTURER
         elif ctype == "seatcupra":
             kind_key = (cfg.get("brand") or "").lower()
             if kind_key not in KINDS:
                 passthrough_connectors.append(c); continue
-            data_source = SOURCE_EU_DATA_ACT
+            data_source = source = SOURCE_EU_DATA_ACT
             migrated.append(KINDS[kind_key]["label"])
         elif ctype == "volkswagen":
             kind_key, data_source = "volkswagen", SOURCE_EU_DATA_ACT
+            source = SOURCE_EU_DATA_ACT
             migrated.append(KINDS["volkswagen"]["label"])
         elif ctype in _FIXED_CONN_TO_KIND:
             kind_key = _FIXED_CONN_TO_KIND[ctype]  # volvo / renaultdacia / tronity
@@ -172,9 +189,11 @@ def parse_config(config: dict[str, Any]) -> dict[str, Any]:
         acc: dict[str, Any] = {"brand": kind_key}
         if data_source:
             acc["data_source"] = data_source
-        for f in KINDS[kind_key]["fields"]:
-            if cfg.get(f["key"]) not in (None, ""):
-                acc[f["key"]] = cfg[f["key"]]
+        for f in fields_for(kind_key, source):
+            v = cfg.get(f["key"])
+            if v not in (None, ""):
+                # The UI edits vins as one comma-separated text field.
+                acc[f["key"]] = ", ".join(v) if isinstance(v, list) else v
         if cfg.get("log_level"):
             acc["log_level"] = cfg["log_level"]
         account_api.append((acc, cfg.get("api_log_level")))

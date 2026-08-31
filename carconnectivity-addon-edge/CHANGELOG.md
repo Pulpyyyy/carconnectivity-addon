@@ -1,3 +1,12 @@
+## 0.8.22
+
+
+### 🛠️ Fixes & Updates
+
+- **Škoda**: configuration page updated for connector v0.13 (official public API). The manufacturer source now asks for the MyŠkoda API key and the VIN list (interval minimum 300 s); accounts still configured with username/password are switched automatically to the EU Data Act source at startup so the add-on keeps booting.
+
+ --- 
+
 ## 0.8.21
 
 

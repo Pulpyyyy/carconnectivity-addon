@@ -57,7 +57,7 @@ The add-on is configured entirely from its **built-in configuration page**, not 
 
 **How to open it:** add-on **Info** tab → **OPEN WEB UI** button → **Configuration** button in the top bar of the page. When the web dashboard is disabled (or not started yet), the Web UI opens straight on the configuration page.
 
-On first open, an existing configuration is **imported automatically** (including one produced by an older version of the add-on), and blocked Seat / Cupra / Volkswagen (Europe) connectors are **migrated automatically** to the EU Data Act connector at startup. After saving, **restart the add-on** to apply the new configuration.
+On first open, an existing configuration is **imported automatically** (including one produced by an older version of the add-on), and blocked Seat / Cupra / Volkswagen (Europe) connectors are **migrated automatically** to the EU Data Act connector at startup. A Škoda account still configured with a username/password login (connector older than v0.13) is migrated the same way, so the add-on keeps starting; switch it back to the manufacturer source once you have created an API key in the MyŠkoda app. After saving, **restart the add-on** to apply the new configuration.
 
 ### 1. Vehicles
 
@@ -81,11 +81,18 @@ The right **data source** is chosen for you. A choice only appears when more tha
 
 The fields shown on each vehicle card depend on the brand:
 
-For the VAG brands (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
+For the VAG brands (`Volkswagen`, `SEAT`, `Cupra`, `Audi`, `Bentley`, `Volkswagen North America`; also `Škoda` on the EU Data Act source):
 - `Username`: The email address used to log into the manufacturer’s service.
 - `Password`: The password for your manufacturer account.
 - `S-PIN` *(optional)*: The 4-digit code required for remote access to certain vehicle features.
 - `VIN` *(optional)*: Restrict the account to one vehicle.
+
+For `Škoda` with the **manufacturer** data source (official Škoda public API, connector v0.13+):
+- `API key`: Created in the **MyŠkoda app** (v8.16 or newer), in the key-management screen.
+- `VIN(s)`: The VIN(s) covered by the key, comma-separated. **Mandatory**: the public API cannot list your vehicles.
+- `Interval` *(optional, seconds)*: Refresh interval, **minimum 300 s** (the API allows 20 requests per hour per key).
+
+⚠️ The public API no longer offers lock/unlock, honk & flash, wake-up or maintenance data; remote control covers **climate and charging only** (no S-PIN needed). For a read-only alternative with your username/password, pick the EU Data Act source instead.
 
 For `Volvo`:
 - `API key (primary)` / `API key (secondary)`: Volvo API keys.
