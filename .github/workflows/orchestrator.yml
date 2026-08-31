@@ -88,7 +88,10 @@ jobs:
   # 🔥 Scan après manifest (inclus dans build-normal)
   security-scan-normal:
     needs: build-normal
-    if: needs.build-normal.result == 'success' && needs.build-normal.outputs.built == 'true'
+    # always() like the other normal-side jobs: sync-edge-to-normal is usually
+    # skipped upstream, and without always() the implicit success() check
+    # skips this job on every run.
+    if: always() && needs.build-normal.result == 'success' && needs.build-normal.outputs.built == 'true'
     uses: ./.github/workflows/security-scan.yml
     with:
       addon: carconnectivity-addon

@@ -31,6 +31,9 @@ jobs:
       - name: Checkout config
         uses: actions/checkout@v7
         with:
+          # Branch head, not the dispatch-time SHA: the update jobs earlier in
+          # the pipeline bump config.yaml, and the scan must read that version.
+          ref: ${{ github.ref }}
           sparse-checkout: ${{ inputs.addon }}/config.yaml
 
       - name: Read archs from config.yaml
@@ -57,6 +60,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
+        with:
+          # Branch head, not the dispatch-time SHA (see the prepare job).
+          ref: ${{ github.ref }}
 
       - name: Normalize arch
         id: norm
