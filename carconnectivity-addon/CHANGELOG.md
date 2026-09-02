@@ -1,3 +1,12 @@
+## 0.8.24
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity** → v0.11.11
+
+ --- 
+
 ## 0.8.21
 
 
