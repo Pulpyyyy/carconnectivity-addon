@@ -1,3 +1,13 @@
+## 0.8.25
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → v0.13
+- **CarConnectivity-plugin-mqtt** → v0.10.6
+
+ --- 
+
 ## 0.8.24
 
 
