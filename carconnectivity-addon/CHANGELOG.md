@@ -1,3 +1,12 @@
+## 0.8.26
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-plugin-mqtt** → v0.10.6
+
+ --- 
+
 ## 0.8.24
 
 
