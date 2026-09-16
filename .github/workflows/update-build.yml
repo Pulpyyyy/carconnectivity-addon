@@ -64,9 +64,12 @@ jobs:
                   local t="$1"
                   local clean="${t#v}"
           
-                  if [[ "$clean" =~ ^([0-9]+\.[0-9]+\.[0-9]+)(.*)$ ]]; then
-                      local base="${BASH_REMATCH[1]}"
-                      local suffix="${BASH_REMATCH[2]}"
+                  # X.Y.Z ou X.Y (ex. Skoda "v0.13") : un tag stable a deux composantes
+                  # ne doit pas tomber dans le fallback, sinon il n'est jamais retenu
+                  # comme stable. X.Y est complété en X.Y.0 pour le tri uniquement.
+                  if [[ "$clean" =~ ^([0-9]+\.[0-9]+)(\.[0-9]+)?(.*)$ ]]; then
+                      local base="${BASH_REMATCH[1]}${BASH_REMATCH[2]:-.0}"
+                      local suffix="${BASH_REMATCH[3]}"
           
                       if [[ -z "$suffix" ]]; then
                           # Stable = suffix "zzz" pour qu'il soit toujours trié AVANT les prereleases
