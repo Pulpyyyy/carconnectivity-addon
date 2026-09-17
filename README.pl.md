@@ -83,13 +83,13 @@ Właściwe **źródło danych** jest wybierane za Ciebie. Wybór pojawia się ty
 
 Pola wyświetlane na każdej karcie pojazdu zależą od marki:
 
-Dla marek VAG (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
+Dla marek VAG (`Volkswagen`, `SEAT`, `Cupra`, `Audi`, `Bentley`, `Volkswagen North America`; także `Škoda` ze źródłem EU Data Act):
 - `Username`: Adres e-mail używany do zalogowania się do usługi producenta.
 - `Password`: Hasło do konta producenta.
 - `S-PIN` *(opcjonalne)*: 4-cyfrowy kod wymagany do zdalnego dostępu do niektórych funkcji pojazdu.
 - `VIN` *(opcjonalne)*: Ogranicza konto do jednego pojazdu.
 
-Dla `Škoda` ze źródłem danych **producent** w dodatku **Edge** (oficjalne publiczne API Škody, konektor v0.13+; stabilny dodatek nadal używa logowania nazwą użytkownika/hasłem powyżej):
+Dla `Škoda` ze źródłem danych **producent** (oficjalne publiczne API Škody, konektor v0.13+):
 - `Klucz API`: tworzony w aplikacji **MyŠkoda** (v8.16 lub nowszej), na ekranie zarządzania kluczami.
 - `VIN-y`: VIN-y objęte kluczem, rozdzielone przecinkami. **Obowiązkowe**: publiczne API nie może wylistować pojazdów.
 - `Interwał` *(opcjonalnie, sekundy)*: interwał odświeżania, **minimum 300 s** (API pozwala na 20 zapytań na godzinę na klucz).

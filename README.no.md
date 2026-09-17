@@ -83,13 +83,13 @@ Riktig **datakilde** velges for deg. Et valg vises bare når mer enn én fungere
 
 Feltene som vises på hvert kjøretøykort avhenger av merket:
 
-For VAG-merkene (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
+For VAG-merkene (`Volkswagen`, `SEAT`, `Cupra`, `Audi`, `Bentley`, `Volkswagen North America`; også `Škoda` med EU Data Act-kilden):
 - `Username`: E-postadressen som brukes til å logge på produsentens tjeneste.
 - `Password`: Passordet for produsentkontoen din.
 - `S-PIN` *(valgfritt)*: Den 4-sifrede koden som kreves for fjerntilgang til visse kjøretøyfunksjoner.
 - `VIN` *(valgfritt)*: Begrens kontoen til ett kjøretøy.
 
-For `Škoda` med datakilden **produsent** på **Edge-tillegget** (offisiell offentlig Škoda-API, konnektor v0.13+; det stabile tillegget bruker fortsatt innloggingen med brukernavn/passord ovenfor):
+For `Škoda` med datakilden **produsent** (offisiell offentlig Škoda-API, konnektor v0.13+):
 - `API-nøkkel`: opprettes i **MyŠkoda-appen** (v8.16 eller nyere), i skjermbildet for nøkkeladministrasjon.
 - `VIN-er`: VIN-ene nøkkelen dekker, kommaseparert. **Obligatorisk**: den offentlige API-en kan ikke liste kjøretøyene dine.
 - `Intervall` *(valgfritt, sekunder)*: oppdateringsintervall, **minimum 300 s** (API-en tillater 20 forespørsler per time per nøkkel).

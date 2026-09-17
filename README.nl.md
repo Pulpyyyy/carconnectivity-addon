@@ -83,13 +83,13 @@ De juiste **gegevensbron** wordt voor u gekozen. Een keuze verschijnt alleen wan
 
 De velden die op elke voertuigkaart worden getoond, zijn afhankelijk van het merk:
 
-Voor de VAG-merken (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
+Voor de VAG-merken (`Volkswagen`, `SEAT`, `Cupra`, `Audi`, `Bentley`, `Volkswagen North America`; ook `Škoda` met de EU Data Act-bron):
 - `Username`: Het e-mailadres dat wordt gebruikt om in te loggen op de service van de fabrikant.
 - `Password`: Het wachtwoord voor uw fabrikantaccount.
 - `S-PIN` *(optioneel)*: De 4-cijferige code die nodig is voor externe toegang tot bepaalde voertuigfuncties.
 - `VIN` *(optioneel)*: Beperk het account tot één voertuig.
 
-Voor `Škoda` met de **fabrikant**-gegevensbron op de **Edge-add-on** (officiële publieke Škoda-API, connector v0.13+; de stabiele add-on gebruikt nog de aanmelding met gebruikersnaam/wachtwoord hierboven):
+Voor `Škoda` met de **fabrikant**-gegevensbron (officiële publieke Škoda-API, connector v0.13+):
 - `API-sleutel`: aangemaakt in de **MyŠkoda-app** (v8.16 of nieuwer), in het sleutelbeheerscherm.
 - `VIN('s)`: de VIN('s) die de sleutel dekt, gescheiden door komma's. **Verplicht**: de publieke API kan uw voertuigen niet opsommen.
 - `Interval` *(optioneel, seconden)*: verversingsinterval, **minimaal 300 s** (de API staat 20 verzoeken per uur per sleutel toe).

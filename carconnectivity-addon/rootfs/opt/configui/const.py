@@ -27,8 +27,11 @@ SOURCE_LABELS = {
 }
 
 
-def _f(key, label, secret=False, optional=False, typ="text"):
-    return {"key": key, "label": label, "secret": secret, "optional": optional, "type": typ}
+def _f(key, label, secret=False, optional=False, typ="text", minimum=None):
+    f = {"key": key, "label": label, "secret": secret, "optional": optional, "type": typ}
+    if minimum is not None:
+        f["min"] = minimum
+    return f
 
 
 # Field schemas per connector family. The field `key` is the actual config key.
@@ -37,6 +40,15 @@ _VAG_FIELDS = [
     _f("password", "Password", secret=True),
     _f("spin", "S-PIN", secret=True, optional=True),
     _f("vin", "VIN", optional=True),
+]
+# Škoda connector ≥ v0.13: the official public API replaces the username/password
+# login. The key comes from the MyŠkoda app; the API cannot list vehicles, so the
+# VIN(s) are mandatory (the connector accepts a comma-separated string). Poll
+# interval is capped by the API's 20 requests/hour budget (connector minimum 300).
+_SKODA_PUBLIC_FIELDS = [
+    _f("api_key", "API key (MyŠkoda app)", secret=True),
+    _f("vins", "VIN(s), comma-separated"),
+    _f("interval", "Interval (s)", optional=True, typ="number", minimum=300),
 ]
 _VOLVO_FIELDS = [
     _f("key_primary", "API key (primary)", secret=True),
@@ -60,14 +72,16 @@ _TRONITY_FIELDS = [
 
 # Each kind = one entry in the brand dropdown.
 # VAG kinds carry `sources` (+ eu_brand / manufacturer_connector); others a fixed
-# `connector`. All carry `fields`.
+# `connector`. All carry `fields`; a kind whose manufacturer connector needs a
+# different schema than its EU Data Act source adds `manufacturer_fields`.
 KINDS: dict[str, dict] = {
     "volkswagen":    {"label": "Volkswagen (Europe)", "sources": [SOURCE_EU_DATA_ACT], "eu_brand": "VOLKSWAGEN_PASSENGER_CARS", "fields": _VAG_FIELDS},
     "volkswagen_na": {"label": "Volkswagen (North America)", "sources": [SOURCE_MANUFACTURER], "manufacturer_connector": "volkswagen_na", "fields": _VAG_FIELDS},
     "seat":          {"label": "SEAT", "sources": [SOURCE_EU_DATA_ACT], "eu_brand": "SEAT", "fields": _VAG_FIELDS},
     "cupra":         {"label": "Cupra", "sources": [SOURCE_EU_DATA_ACT], "eu_brand": "CUPRA", "fields": _VAG_FIELDS},
     "bentley":       {"label": "Bentley", "sources": [SOURCE_EU_DATA_ACT], "eu_brand": "BENTLEY", "fields": _VAG_FIELDS},
-    "skoda":         {"label": "Škoda", "sources": [SOURCE_MANUFACTURER, SOURCE_EU_DATA_ACT], "eu_brand": "SKODA", "manufacturer_connector": "skoda", "fields": _VAG_FIELDS},
+    "skoda":         {"label": "Škoda", "sources": [SOURCE_MANUFACTURER, SOURCE_EU_DATA_ACT], "eu_brand": "SKODA", "manufacturer_connector": "skoda", "fields": _VAG_FIELDS,
+                      "manufacturer_fields": _SKODA_PUBLIC_FIELDS, "manufacturer_note": "skoda_public_api"},
     "audi":          {"label": "Audi", "sources": [SOURCE_MANUFACTURER, SOURCE_EU_DATA_ACT], "eu_brand": "AUDI", "manufacturer_connector": "audi", "fields": _VAG_FIELDS},
     "volvo":         {"label": "Volvo", "connector": "volvo", "fields": _VOLVO_FIELDS},
     "renaultdacia":  {"label": "Renault / Dacia", "sources": [SOURCE_MANUFACTURER], "manufacturer_connector": "renaultdacia", "fields": _RENAULT_FIELDS},
@@ -77,18 +91,37 @@ KINDS: dict[str, dict] = {
 _AUTO_PREFERENCE = (SOURCE_MANUFACTURER, SOURCE_EU_DATA_ACT)
 
 
+def fields_for(kind_key: str, source: str | None) -> list[dict]:
+    """Field schema for a kind, given its resolved source (None for fixed kinds).
+    Kinds whose manufacturer connector diverged from the shared schema (Škoda's
+    public API) declare `manufacturer_fields`; everything else uses `fields`."""
+    k = KINDS[kind_key]
+    if source == SOURCE_MANUFACTURER and k.get("manufacturer_fields"):
+        return k["manufacturer_fields"]
+    return k["fields"]
+
+
 def kind_catalog() -> list[dict]:
     """Kind metadata for the UI: value, label, fields, and (if any) source choice."""
     out = []
     for key, k in sorted(KINDS.items(), key=lambda kv: kv[1]["label"]):
         sources = k.get("sources") or []
-        out.append({
+        entry = {
             "value": key,
             "label": k["label"],
             "fields": k["fields"],
             "sources": [{"value": s, "label": SOURCE_LABELS[s]} for s in sources],
             "has_choice": len(sources) > 1,
-        })
+        }
+        if k.get("manufacturer_fields"):
+            entry["manufacturer_fields"] = k["manufacturer_fields"]
+            # i18n key for a note shown under the manufacturer-source fields.
+            if k.get("manufacturer_note"):
+                entry["manufacturer_note"] = k["manufacturer_note"]
+        if len(sources) > 1:
+            # What "Automatic" resolves to, so the UI can show the right fields.
+            entry["auto_source"] = resolve_source(key, SOURCE_AUTO)
+        out.append(entry)
     return out
 
 
@@ -96,7 +129,8 @@ def redaction_pattern() -> str:
     """Regex (for ``jq test``) matching config keys whose values must be redacted
     when the config is dumped to the addon log. Driven by the per-field ``secret``
     flag so adding a secret field (e.g. client_secret) cannot silently leak."""
-    keys = {f["key"] for k in KINDS.values() for f in k["fields"] if f["secret"]}
+    keys = {f["key"] for k in KINDS.values()
+            for f in k["fields"] + k.get("manufacturer_fields", []) if f["secret"]}
     keys |= {"password", "username", "token", "tokens"}  # plugin creds + abrp map
     return "|".join(sorted(keys))
 

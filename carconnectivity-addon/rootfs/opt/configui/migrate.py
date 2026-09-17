@@ -5,8 +5,15 @@ connectors (seatcupra / volkswagen) — only through EU Data Act. This rewrites 
 such connector in place, in ANY config the addon loads (expert.json or the
 generated UI config), so the migration is not limited to the config page.
 
+Škoda gets the same treatment when its config predates connector v0.13: the
+public-API connector raises AuthenticationError without an `api_key`, and the
+core instantiates connectors without a net, so one stale Škoda entry would stop
+the whole addon. Moving it to EU Data Act (where the username/password still
+work) keeps the addon booting; the user can switch back after creating an API
+key in the MyŠkoda app.
+
 Idempotent: a config already on EU Data Act is left unchanged. Other connectors
-(Volvo, Škoda/Audi/VW-NA manufacturer, …) are untouched.
+(Volvo, Audi/VW-NA manufacturer, Škoda with an api_key, …) are untouched.
 
 The same pass also fills a missing MQTT broker (see ensure_mqtt_broker), the one
 omission that stops CarConnectivity from starting at all.
@@ -46,10 +53,32 @@ def migrate_config(config: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
             c["type"] = "vw_eu_data_act"
             cfg["brand"] = KINDS["volkswagen"]["eu_brand"]
             migrated.append(KINDS["volkswagen"]["label"])
+        elif ctype == "skoda" and not cfg.get("api_key") and not cfg.get("vins"):
+            c["type"] = "vw_eu_data_act"
+            cfg["brand"] = KINDS["skoda"]["eu_brand"]
+            migrated.append(KINDS["skoda"]["label"])
 
     if migrated:
         _ensure_unique_ids(connectors)
     return config, migrated
+
+
+def migrate_state(state: dict[str, Any]) -> list[str]:
+    """Same Škoda pre-v0.13 move, but on the page's own model (STATE_PATH).
+
+    The state file is authoritative once it exists and is never re-parsed from
+    the generated config, so without this pass the page would keep showing a
+    manufacturer-source Škoda account whose runtime copy migrate_config already
+    rewrote. Returns the migrated brand labels (for the page notice)."""
+    labels: list[str] = []
+    for acc in state.get("accounts") or []:
+        if (acc.get("brand") == "skoda"
+                and acc.get("data_source") != "eu_data_act"
+                and not acc.get("api_key") and not acc.get("vins")
+                and (acc.get("username") or acc.get("password"))):
+            acc["data_source"] = "eu_data_act"
+            labels.append(KINDS["skoda"]["label"])
+    return labels
 
 
 def inject_locale(config: dict[str, Any], country: str, lang: str, na_country: str) -> None:

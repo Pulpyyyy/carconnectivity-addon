@@ -17,6 +17,7 @@ from flask import Flask, jsonify, request, send_from_directory
 
 from const import STATE_PATH, CONFIG_PATH, kind_catalog
 from generator import build_config, parse_config
+from migrate import migrate_state
 
 # Existing addon-managed configs to import from on first open (in priority order).
 _IMPORT_SOURCES = (
@@ -43,9 +44,15 @@ def _read_json(path: str):
 
 
 def _load_state() -> dict:
-    # 1) The page's own model is authoritative once it exists.
+    # 1) The page's own model is authoritative once it exists. It may still
+    # carry accounts written for an older connector schema (pre-v0.13 Škoda):
+    # migrate them on the fly; the notice marks the form dirty so the next
+    # save persists the move.
     own = _read_json(STATE_PATH)
     if own is not None:
+        migrated = migrate_state(own)
+        if migrated:
+            own["_migrated"] = list(dict.fromkeys((own.get("_migrated") or []) + migrated))
         return own
     # 2) First open: import an existing addon config so the user edits what's live.
     for path in _IMPORT_SOURCES:
@@ -189,8 +196,9 @@ def api_post_state():
         return jsonify({"ok": False, "errors": [{"index": -1, "error": shape_err}]}), 400
     accounts = state.get("accounts") or []
     # Per-account validation driven by the kind's field schema, so the UI can
-    # point at the offending row (fields differ per brand: VAG login, Volvo keys…).
-    from const import KINDS
+    # point at the offending row (fields differ per brand and, for Škoda, per
+    # data source: public-API key vs EU Data Act login).
+    from const import KINDS, fields_for, resolve_source
     from generator import build_connector
     errors = []
     for idx, acc in enumerate(accounts):
@@ -198,7 +206,13 @@ def api_post_state():
         if not kind:
             errors.append({"index": idx, "error": "Brand is required"})
             continue
-        missing = [f["label"] for f in kind["fields"] if not f.get("optional") and not acc.get(f["key"])]
+        try:
+            source = resolve_source(acc["brand"], acc.get("data_source", "auto")) if kind.get("sources") else None
+        except ValueError as err:
+            errors.append({"index": idx, "error": str(err)})
+            continue
+        missing = [f["label"] for f in fields_for(acc["brand"], source)
+                   if not f.get("optional") and not acc.get(f["key"])]
         if missing:
             errors.append({"index": idx, "error": "Required: " + ", ".join(missing)})
             continue

@@ -629,3 +629,30 @@ I18N.es.unsaved_confirm = "Hay cambios sin guardar. ¿Salir de la página de tod
 I18N.pl.unsaved_confirm = "Masz niezapisane zmiany. Czy mimo to opuścić stronę?";
 I18N.pt.unsaved_confirm = "Existem alterações não guardadas. Sair da página mesmo assim?";
 I18N.no.unsaved_confirm = "Du har ulagrede endringer. Vil du forlate siden likevel?";
+
+// Škoda public API (connector v0.13+): the manufacturer source asks for the
+// MyŠkoda API key and the VIN list instead of the username/password login.
+I18N_FIELDS.en.api_key = "API key (MyŠkoda app)";
+I18N_FIELDS.fr.api_key = "Clé API (app MyŠkoda)";
+I18N_FIELDS.de.api_key = "API-Schlüssel (MyŠkoda-App)";
+I18N_FIELDS.it.api_key = "Chiave API (app MyŠkoda)";
+I18N_FIELDS.es.api_key = "Clave API (app MyŠkoda)";
+I18N_FIELDS.pl.api_key = "Klucz API (aplikacja MyŠkoda)";
+I18N_FIELDS.pt.api_key = "Chave de API (app MyŠkoda)";
+I18N_FIELDS.no.api_key = "API-nøkkel (MyŠkoda-appen)";
+I18N_FIELDS.en.vins = "VIN(s), comma-separated";
+I18N_FIELDS.fr.vins = "VIN (séparés par des virgules)";
+I18N_FIELDS.de.vins = "VIN(s), durch Komma getrennt";
+I18N_FIELDS.it.vins = "VIN (separati da virgola)";
+I18N_FIELDS.es.vins = "VIN (separados por comas)";
+I18N_FIELDS.pl.vins = "VIN (rozdzielone przecinkami)";
+I18N_FIELDS.pt.vins = "VIN (separados por vírgulas)";
+I18N_FIELDS.no.vins = "VIN-er (kommaseparert)";
+I18N.en.skoda_public_api = "Official Škoda public API: create the API key in the MyŠkoda app (v8.16+) and list your VIN(s). Limits: 20 requests/hour, minimum interval 300 s; remote control covers climate and charging only.";
+I18N.fr.skoda_public_api = "API publique officielle Škoda : créez la clé API dans l’app MyŠkoda (v8.16+) et listez vos VIN. Limites : 20 requêtes/heure, intervalle minimum 300 s ; le contrôle à distance couvre uniquement la climatisation et la charge.";
+I18N.de.skoda_public_api = "Offizielle öffentliche Škoda-API: Erstellen Sie den API-Schlüssel in der MyŠkoda-App (v8.16+) und geben Sie Ihre VIN(s) an. Limits: 20 Anfragen/Stunde, Mindestintervall 300 s; Fernsteuerung nur für Klimatisierung und Laden.";
+I18N.it.skoda_public_api = "API pubblica ufficiale Škoda: crea la chiave API nell’app MyŠkoda (v8.16+) ed elenca i tuoi VIN. Limiti: 20 richieste/ora, intervallo minimo 300 s; il controllo remoto copre solo climatizzazione e ricarica.";
+I18N.es.skoda_public_api = "API pública oficial de Škoda: crea la clave API en la app MyŠkoda (v8.16+) e indica tus VIN. Límites: 20 solicitudes/hora, intervalo mínimo 300 s; el control remoto cubre solo climatización y carga.";
+I18N.pl.skoda_public_api = "Oficjalne publiczne API Škody: utwórz klucz API w aplikacji MyŠkoda (v8.16+) i podaj swoje VIN-y. Limity: 20 zapytań/godzinę, minimalny interwał 300 s; zdalne sterowanie obejmuje tylko klimatyzację i ładowanie.";
+I18N.pt.skoda_public_api = "API pública oficial da Škoda: crie a chave de API na app MyŠkoda (v8.16+) e indique os seus VIN. Limites: 20 pedidos/hora, intervalo mínimo de 300 s; o controlo remoto cobre apenas climatização e carregamento.";
+I18N.no.skoda_public_api = "Offisiell offentlig Škoda-API: opprett API-nøkkelen i MyŠkoda-appen (v8.16+) og oppgi VIN-ene dine. Grenser: 20 forespørsler/time, minimumsintervall 300 s; fjernstyring dekker kun klima og lading.";

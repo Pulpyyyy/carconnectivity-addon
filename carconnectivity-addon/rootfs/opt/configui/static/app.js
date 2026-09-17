@@ -61,23 +61,58 @@ function updateEuWarning() {
   el("eu-warning").hidden = !usesEuDataAct(collect().accounts);
 }
 
+// Fields can depend on the selected data source: a kind whose manufacturer
+// connector has its own schema (Škoda public API) carries `manufacturer_fields`.
+// "auto" resolves the way the backend does (kind.auto_source).
+function fieldsFor(kind, source) {
+  if (!kind) return [];
+  if (!kind.manufacturer_fields) return kind.fields;
+  const effective = (!source || source === "auto")
+    ? (kind.auto_source || (kind.sources[0] && kind.sources[0].value))
+    : source;
+  return effective === "eu_data_act" ? kind.fields : kind.manufacturer_fields;
+}
+function cardSource(card) {
+  const wrap = card.querySelector(".v-source-wrap");
+  return wrap.hidden ? null : card.querySelector(".v-source").value;
+}
+function collectCardFields(card) {
+  const d = {};
+  for (const inp of card.querySelectorAll(".v-field")) {
+    const v = inp.value.trim();
+    if (v) d[inp.dataset.key] = v;
+  }
+  return d;
+}
+
 // Inject the fields the selected brand needs (login, keys, client id/secret…).
 function renderFields(card, kindValue, data = {}) {
   const kind = kindByValue(kindValue);
   const wrap = card.querySelector(".v-fields");
   wrap.innerHTML = "";
   if (!kind) return;
-  for (const f of kind.fields) {
+  const fields = fieldsFor(kind, cardSource(card));
+  for (const f of fields) {
     const label = document.createElement("label");
     label.innerHTML = tField(f.key, f.label) + (f.optional ? ` <span class="hint">${t("optional")}</span>` : "");
     const input = document.createElement("input");
     input.className = "v-field";
     input.dataset.key = f.key;
     if (f.secret) input.type = "password";
-    else if (f.type === "number") input.type = "number";
+    else if (f.type === "number") {
+      input.type = "number";
+      if (f.min != null) { input.min = f.min; input.placeholder = f.min; }
+    }
     if (data[f.key] !== undefined && data[f.key] !== null) input.value = data[f.key];
     label.appendChild(input);
     wrap.appendChild(label);
+  }
+  // Source-specific note (e.g. where the Škoda API key comes from and its limits).
+  if (kind.manufacturer_note && fields === kind.manufacturer_fields) {
+    const p = document.createElement("p");
+    p.className = "hint v-note";
+    p.textContent = t(kind.manufacturer_note);
+    wrap.appendChild(p);
   }
 }
 
@@ -92,10 +127,18 @@ function addVehicle(data = {}) {
   // and are edited from the advanced logging table.
   if (data.log_level) card.dataset.logLevel = data.log_level;
   if (data.api_log_level) card.dataset.apiLogLevel = data.api_log_level;
+  // Typed values survive a source flip (and flip back): Škoda's two sources
+  // show different fields, so stash what the hidden schema held.
+  card._stash = Object.assign({}, data);
   brandSel.addEventListener("change", () => {
+    card._stash = {};
     refreshSource(card, brandSel.value);
     renderFields(card, brandSel.value);
     renderAdvLogs();
+  });
+  card.querySelector(".v-source").addEventListener("change", () => {
+    card._stash = Object.assign({}, card._stash, collectCardFields(card));
+    renderFields(card, brandSel.value, card._stash);
   });
   card.querySelector(".remove").addEventListener("click", () => { card.remove(); renderAdvLogs(); });
   el("vehicles").appendChild(card);

@@ -38,6 +38,8 @@ label { display:block; font-size:.85em; color:var(--muted); }
 input, select { font:inherit; padding:8px; border:1px solid var(--field-line); border-radius:8px;
   background:var(--field); color:var(--txt); }
 .grid input, .grid select { display:block; width:100%; margin-top:4px; }
+/* Source-specific note under the brand fields: full row of the grid. */
+.v-note { grid-column:1 / -1; margin:0; }
 .card { border:1px solid var(--line); border-radius:10px; padding:12px; margin-bottom:12px;
   background:var(--card2); }
 .row-actions { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }

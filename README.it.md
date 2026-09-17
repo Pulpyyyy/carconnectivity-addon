@@ -83,13 +83,13 @@ La **fonte dati** corretta viene selezionata per te. Una scelta appare solo quan
 
 I campi mostrati su ogni scheda veicolo dipendono dalla marca:
 
-Per le marche VAG (`Volkswagen`, `SEAT`, `Cupra`, `Škoda`, `Audi`, `Bentley`, `Volkswagen North America`):
+Per le marche VAG (`Volkswagen`, `SEAT`, `Cupra`, `Audi`, `Bentley`, `Volkswagen North America`; anche `Škoda` con l'origine EU Data Act):
 - `Username`: l'indirizzo e-mail utilizzato per accedere al servizio del produttore.
 - `Password`: la password del tuo account del produttore.
 - `S-PIN` *(facoltativo)*: il codice a 4 cifre richiesto per l'accesso remoto a determinate funzionalità del veicolo.
 - `VIN` *(facoltativo)*: limita l'account a un solo veicolo.
 
-Per `Škoda` con l'origine dati **produttore** sull'add-on **Edge** (API pubblica ufficiale Škoda, connettore v0.13+; l'add-on stabile mantiene l'accesso con nome utente/password qui sopra):
+Per `Škoda` con l'origine dati **produttore** (API pubblica ufficiale Škoda, connettore v0.13+):
 - `Chiave API`: creata nell'app **MyŠkoda** (v8.16 o successiva), nella schermata di gestione delle chiavi.
 - `VIN`: il o i VIN coperti dalla chiave, separati da virgola. **Obbligatorio**: l'API pubblica non può elencare i veicoli.
 - `Intervallo` *(opzionale, secondi)*: intervallo di aggiornamento, **minimo 300 s** (l'API consente 20 richieste all'ora per chiave).
