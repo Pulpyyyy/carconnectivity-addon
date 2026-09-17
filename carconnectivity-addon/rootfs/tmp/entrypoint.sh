@@ -51,7 +51,9 @@ term_handler() {
         local pid="$1"
         if [ -n "${pid}" ] && kill -0 "${pid}" 2>/dev/null; then
             kill -TERM "${pid}"
-            wait "${pid}"
+            # `|| true`: under `set -e` a non-zero status here would exit before
+            # the remaining processes are stopped.
+            wait "${pid}" || true
         fi
     }
 
@@ -283,9 +285,27 @@ REDACT_PID=$!
 CC_PID=$!
 
 color_echo "${GREEN}" "👏 CARCONNECTIVITY started (PID: ${CC_PID})"
-wait "${CC_PID}"
-exit_code=$?
+# `|| exit_code=$?`: under `set -e` a bare `wait` returning non-zero would end the
+# script right here, taking nginx and the config page down with it (#162).
+exit_code=0
+wait "${CC_PID}" || exit_code=$?
+CC_PID=""
 wait "${REDACT_PID}" 2>/dev/null || true
 rm -f "${CC_LOG_FIFO}"
 color_echo "${BLUE}" "ℹ️ Process exited with code $exit_code"
+
+if [ "$exit_code" -ne 0 ] && [ "$exit_code" -ne 143 ]; then
+    # Recovery mode: CarConnectivity failed (bad credentials, connector schema
+    # change…). Keep nginx and the config page up so the configuration can be
+    # fixed without the add-on crash-looping; the Supervisor's stop/restart
+    # (SIGTERM) still goes through term_handler.
+    color_echo "${RED}" "⛑️ RECOVERY MODE: CarConnectivity stopped with an error (see above)."
+    color_echo "${RED}" "⛑️ The configuration page stays available (Web UI → Configuration): fix the configuration, save, then restart the add-on."
+    # Short sleeps in the background so the SIGTERM trap fires promptly.
+    while kill -0 "${NGINX_PID}" 2>/dev/null && kill -0 "${CONFIGUI_PID}" 2>/dev/null; do
+        sleep 5 &
+        wait $! || true
+    done
+    color_echo "${RED}" "❌ NGINX or the config page stopped, leaving recovery mode."
+fi
 exit "$exit_code"
