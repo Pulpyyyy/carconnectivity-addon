@@ -1,3 +1,13 @@
+## 0.8.29
+
+
+### 🛠️ Fixes & Updates
+
+- **Škoda connector v0.13**: the configuration page now supports the official Škoda public API (API key + VINs, interval minimum 300 s). Existing username/password Škoda accounts are migrated automatically to the EU Data Act source, so the add-on starts again (#162)
+- **Recovery mode**: when CarConnectivity stops with an error, the add-on no longer exits; NGINX and the configuration page stay available to fix the configuration (#162)
+
+ --- 
+
 ## 0.8.28
 
 

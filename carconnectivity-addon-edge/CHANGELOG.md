@@ -1,3 +1,12 @@
+## 0.8.28
+
+
+### 🛠️ Fixes & Updates
+
+- **Recovery mode**: when CarConnectivity stops with an error, the add-on no longer exits; NGINX and the configuration page stay available to fix the configuration (#162)
+
+ --- 
+
 ## 0.8.27
 
 
