@@ -1,3 +1,12 @@
+## 0.8.31
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-vw-eu-data-act** → v0.3.2b1
+
+ --- 
+
 ## 0.8.30
 
 
