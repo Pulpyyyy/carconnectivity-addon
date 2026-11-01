@@ -1,3 +1,16 @@
+## 0.8.38
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-skoda** → v0.13.3
+- **CarConnectivity-connector-volkswagen-na** → v0.3.0
+- **CarConnectivity-connector-vw-eu-data-act** → v0.3.3
+- ✅ **EU Data Act: SEAT and CUPRA login works again** (#163, #164). Since 26 October, VW serves SEAT and CUPRA accounts a new Auth0 sign-in page, and the add-on failed with `Login failed (Could not parse the sign-in form (fields found: ['password', 'state', 'username']))`. Connector v0.3.3 recognises the sign-in form from the page itself instead of expecting one layout per brand, so the other brands (Volkswagen, Škoda, Audi, Bentley) keep working today and will keep working when VW moves them to the new page. No configuration change is needed: update the add-on and it logs in again on its next attempt. Full connector notes: <https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act/releases/tag/v0.3.3>
+- ⚠️ **EU Data Act: login blocked by VW's updated terms and conditions.** VW's identity provider stops the login on a `terms-and-conditions?updated=...` page until the account owner accepts the new terms, and the connector reports `Login interrupted: the identity provider requires accepting updated terms and conditions for this account`. The credentials are fine, but nothing is published while it lasts and the add-on retries with a growing back-off. **Fix it yourself:** sign in once in a browser with the same account (your brand app or <https://eu-data-act.drivesomethinggreater.com>) and accept the terms; the add-on reconnects on its next attempt, no restart needed. Alternatively, in Expert Mode, set `"accept_terms_on_login": true` on the `vw_eu_data_act` connector in `carconnectivity.expert.json` so the connector accepts them for you (it accepts a contract in your name). Concerns every brand on the EU Data Act source (Volkswagen, SEAT, Cupra, Škoda, Audi, Bentley).
+
+ --- 
+
 ## 0.8.37
 
 
