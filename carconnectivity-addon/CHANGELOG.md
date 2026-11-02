@@ -1,3 +1,14 @@
+## 0.8.40
+
+### 🚀 New Features
+- **EU Data Act: climatisation state and 12 V battery voltage** (connector v0.3.4b1, issue mikrohard/CarConnectivity-connector-vw-eu-data-act#59). Cars that send them now publish the climatisation state (`climatization/state`: off, heating, cooling, ventilation) and the 12 V battery voltage in volts (`battery_12v_voltage`). Not every car sends these fields; cars that do not are unchanged. The voltage is published as an MQTT topic. A Home Assistant entity for it needs a pending change in the MQTT Home Assistant plugin.
+
+### 🛠️ Fixes & Updates
+
+- **hassio-addons/base** → [21.0.10](https://github.com/hassio-addons/addon-base/releases/tag/v21.0.10)
+
+ --- 
+
 ## 0.8.38
 
 
