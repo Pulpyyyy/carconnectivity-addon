@@ -193,6 +193,9 @@ jobs:
           PIP_SKIP="VOLVO"
           PIP_NO_DEPS=""
 
+          python3 -m venv /tmp/pip-check-venv
+          /tmp/pip-check-venv/bin/pip install --quiet --upgrade pip packaging
+
           pkg_args=""
           while IFS='=' read -r key repo_url; do
             [[ -z "$key" || "$key" == \#* ]] && continue
@@ -212,21 +215,45 @@ jobs:
             ver=$(grep "${key}_VERSION" "$ADDON/build.yaml" | awk '{print $2}' | tr -d '"' | sed 's/^v//')
 
             if [ -n "$ver" ]; then
-              pypi_status=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/${pkg_name}/${ver}/json")
-              if [ "$pypi_status" != "200" ]; then
-                echo "⏭ Skipping $key==$ver (not yet published on PyPI)"
+              # Ask the simple index, pip's own view of what exists: the JSON API
+              # is refreshed first, so a just-published version passed this check
+              # and then failed in pip (#165).
+              # -L: PyPI redirects a non-normalised name (mqtt_homeassistant) to
+              # its normalised one, and a 301 would read as "absent".
+              if ! curl -sfL -H 'Accept: application/vnd.pypi.simple.v1+json' \
+                  "https://pypi.org/simple/${pkg_name}/" \
+                  | /tmp/pip-check-venv/bin/python .github/scripts/pypi_has_version.py "$ver"; then
+                echo "⏭ Skipping $key==$ver (not on the PyPI simple index yet)"
                 continue
               fi
               pkg_args="$pkg_args ${pkg_name}==$ver"
             fi
           done < .github/submodules.list
 
-          python3 -m venv /tmp/pip-check-venv
-          /tmp/pip-check-venv/bin/pip install --quiet --upgrade pip
+          # A version the index does not serve yet is a propagation delay, not a
+          # dependency conflict: retry once before concluding.
+          pip_install() {
+            # shellcheck disable=SC2086
+            /tmp/pip-check-venv/bin/pip install --no-cache-dir $pkg_args > /tmp/pip-conflict.txt 2>&1
+          }
+          not_on_index_yet() {
+            grep -qE 'No matching distribution found|Could not find a version that satisfies' /tmp/pip-conflict.txt
+          }
 
           echo "Validating: $pkg_args"
-          # shellcheck disable=SC2086
-          if /tmp/pip-check-venv/bin/pip install --no-cache-dir $pkg_args > /tmp/pip-conflict.txt 2>&1; then
+          pip_ok="false"
+          if pip_install; then
+            pip_ok="true"
+          elif not_on_index_yet; then
+            echo "::notice::A requested version is not on the PyPI index yet: retrying in 90 s"
+            cat /tmp/pip-conflict.txt
+            sleep 90
+            if pip_install; then
+              pip_ok="true"
+            fi
+          fi
+
+          if [ "$pip_ok" = "true" ]; then
             echo "✅ All dependencies compatible — proceeding"
 
             # Warn in changelog about packages installed with --no-deps
@@ -245,12 +272,19 @@ jobs:
               done < .github/submodules.list
             fi
           else
-            echo "::warning::Dependency conflict detected — reverting $ADDON/build.yaml"
             cat /tmp/pip-conflict.txt
             git checkout -- "$ADDON/build.yaml"
             rm -f "$ADDON/bot_changelog.md"
             echo "CHANGES=false" >> $GITHUB_ENV
-            echo "CONFLICT_DETECTED=true" >> $GITHUB_ENV
+            if not_on_index_yet; then
+              # Still absent after the retry: PyPI is behind the GitHub release.
+              # The next run picks it up on its own, so do not open an issue
+              # blaming an upstream dependency conflict (#165).
+              echo "::warning::Version not on PyPI yet: $ADDON/build.yaml reverted, next run will retry"
+            else
+              echo "::warning::Dependency conflict detected — reverting $ADDON/build.yaml"
+              echo "CONFLICT_DETECTED=true" >> $GITHUB_ENV
+            fi
           fi
 
       - name: Increment version ${{ matrix.addon }}
