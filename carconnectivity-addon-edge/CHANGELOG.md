@@ -1,3 +1,13 @@
+## 0.8.46
+
+
+### 🛠️ Fixes & Updates
+
+- **CarConnectivity-connector-vw-eu-data-act** → v0.3.5b1
+- ✅ **EU Data Act: no more four-billion-km odometer, and SEAT/CUPRA login past the new marketing consent screen** (connector v0.3.5b1, mikrohard/CarConnectivity-connector-vw-eu-data-act#65 and #66). Since late October 2026 the portal sometimes sends `4294967294` as the mileage when it has no reading. That value was published as `odometer` and showed up as a spike in long-term statistics. It is now ignored, along with the other "no reading" maxima, and the last real value stays. SEAT and CUPRA accounts that never answered the marketing question no longer get stuck at login on the new `/v2/login/ui/marketing-consent` screen: it is skipped without giving any consent. Full connector notes: <https://github.com/mikrohard/CarConnectivity-connector-vw-eu-data-act/releases/tag/v0.3.5b1>
+
+ --- 
+
 ## 0.8.45
 
 
